@@ -1,0 +1,7 @@
+# Ignoră mediul virtual de python
+venv/
+.env
+__pycache__/
+
+# Ignoră fișierele de date mari (dacă vrei să nu depășești limita Git) 
+*.csv
