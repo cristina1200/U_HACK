@@ -6,6 +6,9 @@ import os
 import unicodedata
 from google import genai
 import json
+from fastapi.staticfiles import StaticFiles
+
+
 
 # ==========================================
 # CONFIGURARE GOOGLE GEMINI
@@ -27,6 +30,7 @@ app.add_middleware(
 )
 
 BASE_PATH = r'C:/Users/amzan/Desktop/Data'
+app.mount("/static", StaticFiles(directory=os.path.join(BASE_PATH, "static")), name="static")
 DATA_FILE = os.path.join(BASE_PATH, 'date_jucatori_complet.csv')
 BIO_NOV = os.path.join(BASE_PATH, '2025 - NOIEMBRIE .xlsx')
 BIO_DEC = os.path.join(BASE_PATH, '2025 - DECEMBRIE .xlsx')
@@ -54,8 +58,8 @@ def load_tactical():
 
 def load_gps():
     try:
-        d1 = pd.read_csv(BIO_NOV, encoding='latin1', on_bad_lines='skip', sep=',')
-        d2 = pd.read_csv(BIO_DEC, encoding='latin1', on_bad_lines='skip', sep=',')
+        d1 = pd.read_excel(BIO_NOV)
+        d2 = pd.read_excel(BIO_DEC)
         df_bio = pd.concat([d1, d2], ignore_index=True)
         df_bio.columns = df_bio.columns.str.strip()
 
@@ -69,7 +73,10 @@ def load_gps():
         acc_col = find_col(['Acc Abs'], df_bio)
         sprint_col = find_col(['Sprints Abs'], df_bio)
 
-        if not all([p_col, dist_col, acc_col, sprint_col]): return pd.DataFrame()
+        if not all([p_col, dist_col, acc_col, sprint_col]):
+            print(f"⚠️ GPS: Coloane lipsă. Găsite: player={p_col}, dist={dist_col}, acc={acc_col}, sprint={sprint_col}")
+            print(f"   Coloane disponibile: {list(df_bio.columns)}")
+            return pd.DataFrame()
 
         for c in [dist_col, acc_col, sprint_col]:
             df_bio[c] = pd.to_numeric(df_bio[c], errors='coerce').fillna(0)
@@ -81,8 +88,10 @@ def load_gps():
         }).reset_index()
         
         bio_avg.columns = ['MatchKey', 'gps_dist', 'gps_accel', 'gps_sprints']
+        print(f"✅ GPS încărcat: {len(bio_avg)} jucători cu date biometrice")
         return bio_avg
     except Exception as e:
+        print(f"❌ Eroare GPS: {e}")
         return pd.DataFrame()
 
 df_tactical = load_tactical()

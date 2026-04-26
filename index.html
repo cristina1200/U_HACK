@@ -10,11 +10,13 @@
         :root {
             --gold: #D4A843;
             --cyan: #00FFFF;
+            --red: #FF0033;
             --dark: #0A0A0A;
         }
 
         body {
-            background: var(--dark);
+            background-color: #000;
+            /* Fundal negru solid */
             color: white;
             font-family: 'Rajdhani', sans-serif;
             margin: 0;
@@ -23,7 +25,31 @@
             justify-content: center;
             height: 100vh;
             overflow: hidden;
-            background-image: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
+            position: relative;
+            /* Necesar pentru a ancora fundalul de mai jos */
+        }
+
+        /* Tehnica corectă pentru fundal transparent: folosim un pseudo-element */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Calea către imagine - asigură-te că logo.png e lângă fișierul html */
+            background-image: url('logo.png');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+
+            /* AICI CONTROLEZI TRANSPARENȚA LOGO-ULUI (0.1 = 10%, 0.3 = 30%) */
+            opacity: 1;
+
+            z-index: -1;
+            /* Trimite imaginea în spatele tuturor elementelor */
+            pointer-events: none;
+            /* Ignoră click-urile pe fundal */
         }
 
         .hub-container {
@@ -37,6 +63,71 @@
             letter-spacing: 5px;
             margin-bottom: 50px;
             text-shadow: 0 0 20px rgba(212, 168, 67, 0.3);
+        }
+
+
+        /* Stiluri pentru jucătorii decorativi */
+        .player-decor {
+            position: fixed;
+            bottom: 0;
+            height: 80vh;
+            /* Ajustează înălțimea imaginii */
+            z-index: 0;
+            /* Imaginile stau în spatele conținutului */
+            pointer-events: none;
+            /* Nu permit interacțiunea (nu blochează click-urile) */
+            opacity: 0;
+            /* Pornesc de la invizibil */
+        }
+
+        /* Poziționare și animație Stânga */
+        .player-left {
+            left: 0;
+            animation: fadeInSlideLeft 2s ease-out forwards;
+        }
+
+        /* Poziționare și animație Dreapta */
+        .player-right {
+            right: 0;
+            animation: fadeInSlideRight 2s ease-out forwards;
+        }
+
+        /* Definiție animație Stânga (Fade + Mișcare spre dreapta) */
+        @keyframes fadeInSlideLeft {
+            0% {
+                opacity: 0;
+                transform: translateX(-100px);
+                /* Vine de la stânga */
+            }
+
+            100% {
+                opacity: 0.6;
+                /* Devine parțial vizibil */
+                transform: translateX(50px);
+                /* Se oprește puțin spre centru */
+            }
+        }
+
+        /* Definiție animație Dreapta (Fade + Mișcare spre stânga) */
+        @keyframes fadeInSlideRight {
+            0% {
+                opacity: 0;
+                transform: translateX(100px);
+                /* Vine de la dreapta */
+            }
+
+            100% {
+                opacity: 0.6;
+                /* Devine parțial vizibil */
+                transform: translateX(-50px);
+                /* Se oprește puțin spre centru */
+            }
+        }
+
+        /* Asigură-te că panoul central (container) este deasupra lor */
+        .container {
+            position: relative;
+            z-index: 10;
         }
 
         .cards-wrapper {
@@ -120,6 +211,9 @@
 </head>
 
 <body>
+
+    <!-- <img src="/static/AA.png" class="player-decor player-left">
+    <img src="/static/AT.png" class="player-decor player-right"> -->
 
     <div class="hub-container">
         <h1>TACTICILE JUCĂTORILOR DE LA "U" CLUJ</h1>

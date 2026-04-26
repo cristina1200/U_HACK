@@ -71,6 +71,23 @@
       opacity: 0
     }
 
+    .nav-home {
+      background: #222;
+      color: #fff;
+      padding: 8px 15px;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+      display: inline-block;
+      margin-bottom: 10px;
+      border: 1px solid #444;
+    }
+
+    .nav-home:hover {
+      background: #444;
+      border-color: #00e5ff;
+    }
+
     @keyframes floatUp {
       0% {
         transform: translateY(100vh) scale(0) rotate(0deg);
@@ -1239,6 +1256,7 @@
           <canvas id="drawCanvas"></canvas>
           <div id="goalFlashOverlay"></div>
           <!-- Drawing toolbar -->
+
           <div class="draw-toolbar" id="drawToolbar">
             <button class="draw-btn active" id="dtArrow" onclick="setDrawMode('arrow')"
               style="background:rgba(255,200,0,.2);color:var(--gold);border:1px solid var(--gold)">→ Săgeată</button>
@@ -1252,6 +1270,8 @@
         </div>
         <canvas id="timeline"></canvas>
         <div class="controls">
+          <div class="control-group" style="margin-bottom: 20px; border-bottom: 1px solid #444; padding-bottom: 15px;">
+          </div>
           <button class="btn btn-play paused" id="btnPlay" onclick="togglePlay()">▶ PLAY</button>
           <button class="btn btn-nav" onclick="step(-1)">◀ PREV</button>
           <button class="btn btn-nav" onclick="step(1)">NEXT ▶</button>

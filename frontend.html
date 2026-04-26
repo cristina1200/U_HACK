@@ -25,6 +25,25 @@
             overflow: hidden;
         }
 
+        .home-link {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #00e5ff;
+            text-decoration: none;
+            border: 1px solid #00e5ff;
+            padding: 5px 15px;
+            border-radius: 4px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .home-link:hover {
+            background: rgba(0, 229, 255, 0.2);
+        }
+
         .container {
             display: grid;
             grid-template-columns: 320px 1fr;
@@ -134,6 +153,7 @@
 </head>
 
 <body>
+
     <div class="container">
         <aside id="sidebar">
             <h2 style="color: var(--gold); letter-spacing: 2px;">Superliga AI</h2>
