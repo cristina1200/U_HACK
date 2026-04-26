@@ -41,7 +41,6 @@
       --eng: #aa0830;
     }
 
-    /* ── BACKGROUND: pulsing black/white spots ── */
     body {
       background: linear-gradient(135deg, #000000 0%, #aaaaaa 50%, #ffffff 100%);
       color: #fff;
@@ -55,7 +54,6 @@
       pointer-events: none
     }
 
-    /* ── PARTICLES ── */
     #particles {
       position: fixed;
       inset: 0;
@@ -69,23 +67,6 @@
       pointer-events: none;
       animation: floatUp linear infinite;
       opacity: 0
-    }
-
-    .nav-home {
-      background: #222;
-      color: #fff;
-      padding: 8px 15px;
-      text-decoration: none;
-      border-radius: 5px;
-      font-weight: bold;
-      display: inline-block;
-      margin-bottom: 10px;
-      border: 1px solid #444;
-    }
-
-    .nav-home:hover {
-      background: #444;
-      border-color: #00e5ff;
     }
 
     @keyframes floatUp {
@@ -108,7 +89,6 @@
       }
     }
 
-    /* ── GOAL RAIN CONFETTI ── */
     #confettiCanvas {
       position: fixed;
       inset: 0;
@@ -124,7 +104,6 @@
       height: 100vh
     }
 
-    /* ── HEADER ── */
     .hdr {
       background: linear-gradient(135deg, #000818, #001530 40%, #000c24 70%, #000818);
       border-bottom: 2px solid transparent;
@@ -354,7 +333,6 @@
       height: 100%
     }
 
-    /* ── RESIZER ── */
     .resizer {
       width: 6px;
       background: linear-gradient(180deg, transparent, rgba(0, 180, 255, .5), rgba(180, 0, 255, .5), transparent);
@@ -455,6 +433,33 @@
       cursor: crosshair
     }
 
+    /* Voronoi toggle button */
+    .voronoi-toggle {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      z-index: 14;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid rgba(0, 200, 255, .4);
+      background: rgba(0, 50, 100, .5);
+      color: var(--blue);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: all .15s;
+      backdrop-filter: blur(4px);
+    }
+
+    .voronoi-toggle.active {
+      background: rgba(0, 100, 200, .3);
+      border-color: var(--blue);
+      box-shadow: 0 0 12px rgba(0, 180, 255, .4);
+    }
+
     /* ── DRAWING TOOLBAR ── */
     .draw-toolbar {
       position: absolute;
@@ -500,10 +505,54 @@
       transition: opacity .3s
     }
 
-    /* ── TIMELINE ── */
+    /* ── MOMENTUM WAVE ── */
+    .momentum-wrap {
+      position: relative;
+      width: 100%;
+      background: rgba(0, 5, 20, .85);
+      border-radius: 8px;
+      border: 1px solid rgba(0, 150, 255, .18);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .momentum-label {
+      position: absolute;
+      top: 3px;
+      left: 8px;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: rgba(80, 160, 255, .5);
+      text-transform: uppercase;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .momentum-label-right {
+      position: absolute;
+      top: 3px;
+      right: 8px;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: rgba(255, 60, 80, .5);
+      text-transform: uppercase;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    canvas#momentum {
+      width: 100%;
+      height: 70px;
+      display: block;
+      cursor: pointer
+    }
+
+    /* ── TIMELINE (kept small) ── */
     canvas#timeline {
       width: 100%;
-      height: 34px;
+      height: 22px;
       display: block;
       border-radius: 8px;
       cursor: pointer;
@@ -616,7 +665,6 @@
       flex-shrink: 0;
     }
 
-    /* ── PANEL scrollbar ── */
     .panel::-webkit-scrollbar {
       width: 5px
     }
@@ -627,7 +675,6 @@
       box-shadow: 0 0 6px rgba(0, 200, 255, .5);
     }
 
-    /* ── FULLSCREEN BTN ── */
     #btnFullscreen {
       font-family: 'Barlow Condensed', sans-serif;
       font-size: 11px;
@@ -648,7 +695,6 @@
       box-shadow: 0 0 18px rgba(255, 200, 0, .5);
     }
 
-    /* ── VERTICAL RESIZER between cards ── */
     .v-resizer {
       height: 5px;
       background: linear-gradient(90deg, transparent, rgba(0, 180, 255, .3), rgba(180, 0, 255, .3), transparent);
@@ -667,7 +713,6 @@
       box-shadow: 0 0 12px rgba(0, 180, 255, .6);
     }
 
-    /* ── RESIZABLE CARDS ── */
     .p-card {
       background: rgba(255, 255, 255, .025);
       border-radius: 10px;
@@ -697,11 +742,11 @@
     }
 
     .p-label {
-      font-size: 12px;
-      font-weight: 900;
-      letter-spacing: 3px;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 2px;
       text-transform: uppercase;
-      margin-bottom: 7px;
+      margin-bottom: 8px;
       color: #6ecfff;
     }
 
@@ -714,9 +759,9 @@
     }
 
     .evt-player {
-      font-size: 17px;
+      font-size: 18px;
       color: #e0f0ff;
-      font-weight: 800;
+      font-weight: 400;
       margin-top: 5px;
     }
 
@@ -778,9 +823,9 @@
     }
 
     .ss-lbl {
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 2px;
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: 1px;
       color: #b0d0f0;
       margin-top: 5px;
       text-transform: uppercase;
@@ -794,47 +839,35 @@
       border-radius: 8px;
       margin-bottom: 5px;
       border-left: 4px solid transparent;
-      font-size: 14px;
-      font-weight: 900;
-      line-height: 1.5;
+      font-size: 15px;
+      font-weight: 400;
+      line-height: 1.6;
       transition: box-shadow .3s;
     }
 
     .tip-green {
       box-shadow: inset 0 0 30px rgba(0, 255, 170, .06), 0 0 10px rgba(0, 255, 170, .05);
-    }
-
-    .tip-red {
-      box-shadow: inset 0 0 30px rgba(255, 30, 70, .08), 0 0 10px rgba(255, 30, 70, .05);
-    }
-
-    .tip-blue {
-      box-shadow: inset 0 0 30px rgba(0, 200, 255, .06), 0 0 10px rgba(0, 200, 255, .05);
-    }
-
-    .tip-amber {
-      box-shadow: inset 0 0 30px rgba(255, 180, 0, .06), 0 0 10px rgba(255, 180, 0, .05);
-    }
-
-    .tip-green {
       background: rgba(0, 255, 170, .04);
       border-color: var(--green);
       color: rgba(130, 255, 200, .9)
     }
 
     .tip-red {
+      box-shadow: inset 0 0 30px rgba(255, 30, 70, .08), 0 0 10px rgba(255, 30, 70, .05);
       background: rgba(255, 20, 70, .05);
       border-color: var(--red);
       color: rgba(255, 130, 160, .9)
     }
 
     .tip-blue {
+      box-shadow: inset 0 0 30px rgba(0, 200, 255, .06), 0 0 10px rgba(0, 200, 255, .05);
       background: rgba(0, 180, 255, .05);
       border-color: var(--blue);
       color: rgba(130, 210, 255, .9)
     }
 
     .tip-amber {
+      box-shadow: inset 0 0 30px rgba(255, 180, 0, .06), 0 0 10px rgba(255, 180, 0, .05);
       background: rgba(255, 170, 0, .05);
       border-color: var(--gold2);
       color: rgba(255, 210, 130, .9)
@@ -867,7 +900,6 @@
       flex-shrink: 0
     }
 
-    /* ── SCEN BUTTONS ── */
     .scen-row {
       display: flex;
       gap: 4px;
@@ -920,7 +952,7 @@
       color: var(--gold)
     }
 
-    /* ── OVERLAY ── */
+    /* ── MODAL ── */
     .overlay {
       position: fixed;
       inset: 0;
@@ -1060,14 +1092,13 @@
       border-radius: 10px;
       padding: 14px 16px;
       margin-bottom: 16px;
-      font-size: 15px;
-      font-weight: 800;
+      font-size: 16px;
+      font-weight: 500;
       line-height: 1.6;
       border-left: 4px solid;
-      color: rgba(210, 230, 255, .95)
+      color: rgba(220, 235, 255, .95)
     }
 
-    /* Defense tips in modal */
     .defense-tips {
       margin-bottom: 14px
     }
@@ -1076,13 +1107,14 @@
       display: flex;
       align-items: flex-start;
       gap: 10px;
-      padding: 10px 14px;
-      margin-bottom: 7px;
+      padding: 12px 16px;
+      margin-bottom: 8px;
       border-radius: 9px;
-      font-size: 14px;
-      font-weight: 800;
+      font-size: 16px;
+      font-weight: 400;
       line-height: 1.5;
-      border-left: 4px solid
+      border-left: 4px solid;
+      color: rgba(230, 240, 255, .95);
     }
 
     .def-tip-icon {
@@ -1127,7 +1159,6 @@
       box-shadow: 0 0 50px rgba(255, 200, 0, .5)
     }
 
-    /* ── GOAL ANNOUNCEMENT ── */
     #goalAnnounce {
       position: fixed;
       inset: 0;
@@ -1184,18 +1215,12 @@
       text-shadow: 0 0 60px var(--red), 0 0 120px rgba(255, 20, 70, .6)
     }
 
-    /* Drawing canvas overlay */
     #drawCanvas {
       position: absolute;
       inset: 0;
       z-index: 11;
       cursor: crosshair;
       display: none
-    }
-
-    neon-gold {
-      color: var(--gold);
-      text-shadow: 0 0 15px rgba(255, 200, 0, .5)
     }
 
     .neon-blue {
@@ -1212,6 +1237,63 @@
       color: var(--red);
       text-shadow: 0 0 15px rgba(255, 20, 70, .5)
     }
+
+    /* Voronoi canvas overlay */
+    #voronoiCanvas {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .4s;
+    }
+
+    #voronoiCanvas.visible {
+      opacity: 1;
+    }
+
+    /* Momentum scroll hint */
+    .momentum-scroll-hint {
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: rgba(0, 180, 255, .4);
+      text-align: center;
+      padding: 2px 0;
+      text-transform: uppercase;
+    }
+
+    /* Enemy goal flash overlay */
+    #enemyGoalFlashOverlay {
+      position: fixed;
+      inset: 0;
+      z-index: 590;
+      pointer-events: none;
+      display: none;
+      background: rgba(220, 0, 30, 0.4);
+    }
+
+    @keyframes enemyFlashPulse {
+      0% {
+        opacity: 0;
+      }
+
+      15% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.3;
+      }
+
+      75% {
+        opacity: 0.9;
+      }
+
+      100% {
+        opacity: 0;
+      }
+    }
   </style>
 </head>
 
@@ -1219,6 +1301,9 @@
   <canvas id="bgCanvas"></canvas>
   <div id="particles"></div>
   <canvas id="confettiCanvas"></canvas>
+
+  <!-- ENEMY GOAL FLASH OVERLAY -->
+  <div id="enemyGoalFlashOverlay"></div>
 
   <div id="app">
     <div class="hdr">
@@ -1252,11 +1337,11 @@
           <div class="corner-tr"></div>
           <div class="corner-bl"></div>
           <div class="corner-br-c"></div>
+          <canvas id="voronoiCanvas"></canvas>
           <canvas id="pitch"></canvas>
           <canvas id="drawCanvas"></canvas>
           <div id="goalFlashOverlay"></div>
-          <!-- Drawing toolbar -->
-
+          <button class="voronoi-toggle" id="voronoiBtn" onclick="toggleVoronoi()">⬡ VORONOI OFF</button>
           <div class="draw-toolbar" id="drawToolbar">
             <button class="draw-btn active" id="dtArrow" onclick="setDrawMode('arrow')"
               style="background:rgba(255,200,0,.2);color:var(--gold);border:1px solid var(--gold)">→ Săgeată</button>
@@ -1268,10 +1353,17 @@
               style="background:rgba(255,30,60,.15);color:var(--red);border:1px solid var(--red)">✕ Șterge</button>
           </div>
         </div>
+
+        <!-- MOMENTUM WAVE TRACKER -->
+        <div class="momentum-wrap">
+          <div class="momentum-label">🔵 SPANIA DOMINA</div>
+          <div class="momentum-label-right">ANGLIA DOMINA 🔴</div>
+          <canvas id="momentum"></canvas>
+        </div>
+        <div class="momentum-scroll-hint">▲ MOMENTUM WAVE — SCROLL DOWN ÎN PANOU DREAPTA PENTRU DETALII ▲</div>
+
         <canvas id="timeline"></canvas>
         <div class="controls">
-          <div class="control-group" style="margin-bottom: 20px; border-bottom: 1px solid #444; padding-bottom: 15px;">
-          </div>
           <button class="btn btn-play paused" id="btnPlay" onclick="togglePlay()">▶ PLAY</button>
           <button class="btn btn-nav" onclick="step(-1)">◀ PREV</button>
           <button class="btn btn-nav" onclick="step(1)">NEXT ▶</button>
@@ -1313,27 +1405,12 @@
           </div>
         </div>
 
-        <div class="v-resizer" data-target="card-score"></div>
+        <div id="ss-spain" style="display:none">0</div>
+        <div id="ss-england" style="display:none">0</div>
 
-        <div class="p-card" id="card-score">
-          <div class="p-label">Scor Live</div>
-          <div class="score-summary">
-            <div class="ss-item">
-              <div class="ss-num neon-blue" id="ss-spain">0</div>
-              <div class="ss-lbl">🇪🇸 Spania</div>
-            </div>
-            <div class="ss-item"
-              style="font-family:Orbitron;font-size:18px;font-weight:900;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.3)">
-              —</div>
-            <div class="ss-item">
-              <div class="ss-num neon-red" id="ss-england">0</div>
-              <div class="ss-lbl">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Anglia</div>
-            </div>
-          </div>
-        </div>
+        <div id="momentumStats" style="display:none"></div>
 
         <div class="v-resizer" data-target="card-scen"></div>
-
         <div class="p-card" id="card-scen">
           <div class="p-label">Scenariu tactic</div>
           <div class="scen-row">
@@ -1345,21 +1422,20 @@
         </div>
 
         <div class="v-resizer" data-target="card-tips"></div>
-
         <div class="p-card" id="card-tips">
           <div class="p-label">Analiză tactică live</div>
           <div id="tipList"></div>
         </div>
 
-        <div class="v-resizer" data-target="card-players"></div>
+        <div id="voronoiStats" style="display:none"></div>
 
+        <div class="v-resizer" data-target="card-players"></div>
         <div class="p-card" id="card-players">
           <div class="p-label">Jucători vizibili</div>
-          <div style="font-size:14px;color:rgba(160,210,255,.9);font-weight:900" id="playerCnt">—</div>
+          <div style="font-size:15px;color:rgba(160,210,255,.9);font-weight:900" id="playerCnt">—</div>
         </div>
 
         <div class="v-resizer" data-target="card-legend"></div>
-
         <div class="p-card" id="card-legend">
           <div class="p-label">Legendă</div>
           <div class="legend">
@@ -1377,6 +1453,12 @@
             </div>
             <div class="leg">
               <div class="leg-dot" style="background:#cc8800"></div>Portar
+            </div>
+            <div class="leg">
+              <div class="leg-dot" style="background:rgba(0,100,255,.3);border:1px solid #00d4ff"></div>Voronoi SPA
+            </div>
+            <div class="leg">
+              <div class="leg-dot" style="background:rgba(220,20,60,.4);border:1px solid #ff1a4a"></div>Voronoi ENG
             </div>
           </div>
         </div>
@@ -1414,7 +1496,6 @@
     </div>
   </div>
 
-  <!-- GOAL ANNOUNCEMENT -->
   <div id="goalAnnounce">
     <div class="goal-announce-inner">
       <div class="goal-announce-text" id="goalAnnounceText" style="font-size:80px">⚽ GOOOL!</div>
@@ -1457,135 +1538,9 @@
     { "min": 89, "sec": 17, "type": "Shot", "team": "England", "player": "Rice", "isHome": false, "xg": 0.1058, "bx": 6.9, "by": 38.6, "ex": 0.0, "ey": 43.6, "outcome": "Off T", "players": [{ "x": 6.9, "y": 38.6, "t": false, "act": true, "k": false, "name": "Rice" }, { "x": 7.1, "y": 33.6, "t": false, "act": false, "k": false, "name": "Watkins" }, { "x": 6.9, "y": 40.5, "t": false, "act": false, "k": false, "name": "Saka" }, { "x": 1.1, "y": 40.1, "t": true, "act": false, "k": true, "name": "Simón" }, { "x": 13.3, "y": 37.1, "t": true, "act": false, "k": false, "name": "Laporte" }, { "x": 9.3, "y": 36.5, "t": true, "act": false, "k": false, "name": "Zubimendi" }, { "x": 7.8, "y": 41.0, "t": true, "act": false, "k": false, "name": "Nacho" }, { "x": 118.0, "y": 40.0, "t": false, "act": false, "k": true, "name": "Pickford" }], "cumXgH": 1.7917, "cumXgA": 0.7264, "scoreH": 2, "scoreA": 1 },
     { "min": 90, "sec": 0, "type": "Pass", "team": "Spain", "player": "Simón", "isHome": true, "xg": 0, "bx": 22.9, "by": 5.5, "ex": 98.1, "ey": 23.4, "outcome": "Unknown", "players": [{ "x": 22.9, "y": 5.5, "t": true, "act": true, "k": true, "name": "Simón" }, { "x": 60, "y": 30, "t": true, "act": false, "k": false, "name": "Merino" }, { "x": 65, "y": 40, "t": false, "act": false, "k": false, "name": "Bellingham" }, { "x": 118.0, "y": 40.0, "t": false, "act": false, "k": true, "name": "Pickford" }], "cumXgH": 1.7917, "cumXgA": 0.7264, "scoreH": 2, "scoreA": 1 }];
 
-    // ═══ TACTICAL PAUSE EVENTS ═══
-    const PAUSES = [
-      {
-        frameIdx: 2, badgeText: "⚠️ SUT SPANIA!", badgeColor: "#00aaff", badgeBg: "rgba(0,100,200,.12)",
-        title: "N.WILLIAMS SUTEAZA 11'", titleColor: "#00aaff",
-        body: "Nicholas Williams suteaza din poziție bună! xG=0.068 — blocat de Stones!",
-        analysis: "🔵 Spania atacă pe flancul drept. Minge adusă prin combinație rapidă în careu.",
-        defenseTips: [
-          { color: "#ff4466", label: "URGENȚĂ", text: "Stones trebuia să nu lase Williams să se întoarcă — rămâi cu fața la minge!" },
-          { color: "#00d4ff", label: "POZIȚIE", text: "Güehi să ocupe linia goală dintre Walker și Stones — există spațiu periculos!" },
-          { color: "#ffaa00", label: "TACTIC", text: "Fullback-ul drept (Walker) să nu urce atât de mult — N.Williams exploatează culoarul!" },
-          { color: "#00ffaa", label: "APĂRARE", text: "Forțează N.Williams spre exterior — unghiul e mai mic la centrul cadrului!" }
-        ]
-      },
-      {
-        frameIdx: 4, badgeText: "⚠️ SUT ANGLIA!", badgeColor: "#ff4466", badgeBg: "rgba(200,20,60,.12)",
-        title: "RICE SUTEAZA 16'", titleColor: "#ff4466",
-        body: "Declan Rice suteaza de la distanță! xG=0.049 — blocat de apărare!",
-        analysis: "🔴 Anglia atacă prin centru. Rice liber la 16m — spațiu acordat prea ușor!",
-        defenseTips: [
-          { color: "#ff4466", label: "CRITIC", text: "Fabián și Le Normand nu au presat suficient pe Rice în zona centrală!" },
-          { color: "#00d4ff", label: "POZIȚIE", text: "Rodri trebuia să ocupe spațiul din fața apărării — Rice s-a infiltrat neacoperit!" },
-          { color: "#ffaa00", label: "TACTIC", text: "Linia de 4 defensivă să se compacteze — nu lăsați spații între linii la 16m!" },
-          { color: "#00ffaa", label: "SOLUȚIE", text: "Pressing colectiv imediat după pierderea mingii — nu lăsați echipa adversă să se organizeze!" }
-        ]
-      },
-      {
-        frameIdx: 10, badgeText: "⚠️ PERICOL! FODEN!", badgeColor: "#ffcc00", badgeBg: "rgba(200,150,0,.12)",
-        title: "FODEN SUTEAZA 45+1'!", titleColor: "#ffcc00",
-        body: "Phil Foden șutează cu xG=0.180! Simón apără spectaculos! Cel mai periculos moment al primei reprize!",
-        analysis: "🟡 ALERTĂ DEFENSIVĂ! Foden ajunge singur în fața lui Simón — apărare depășită!",
-        defenseTips: [
-          { color: "#ff1a4a", label: "FATAL", text: "Carvajal a urcat și nu s-a întors la timp — Foden a exploatat spațiul lăsat!" },
-          { color: "#ff4466", label: "CRITIC", text: "Le Normand și Cucurella nu au comunicat — Foden a primit mingea liber în careu!" },
-          { color: "#00d4ff", label: "SOLUȚIE", text: "Rodri/Zubimendi să rămână în fața apărării și să intercepteze mingile între linii!" },
-          { color: "#ffaa00", label: "TACTIC", text: "La cornere și faze fixe: marcaj strict om-la-om în interiorul careului — nu lăsați jucători liberi!" },
-          { color: "#00ffaa", label: "APĂRARE", text: "Simón trebuie felicitat — salvare excepțională! Dar poziționarea defensivei trebuie corectată urgent!" }
-        ]
-      },
-      {
-        frameIdx: 11, badgeText: "🏆 GOL! SPANIA 1-0!", badgeColor: "#00ff88", badgeBg: "rgba(0,200,100,.12)",
-        title: "N.WILLIAMS MARCHEAZĂ 46'!", titleColor: "#00ff88",
-        body: "Nicholas Williams înscrie primul gol! xG=0.113 — Pickford nu are șanse! Spania conduce!",
-        analysis: "🟢 SPANIA 1-0! Contraatac rapid după pauză. Williams exploatează flancul drept!",
-        defenseTips: [
-          { color: "#ff4466", label: "ANALIZĂ GOL", text: "Pickford a ieșit prea devreme — Williams a înscris în colțul opus unde portarul nu putea ajunge!" },
-          { color: "#ff1a4a", label: "GREȘEALĂ", text: "Shaw și Güehi nu au tăiat pasa de pregătire a lui Dani Olmo — trebuia întreruptă înainte!" },
-          { color: "#00d4ff", label: "LECȚIE", text: "Anglia trebuie să preseze mai sus după gol — blocați construcția jocului spaniol din prima treime!" },
-          { color: "#ffaa00", label: "RECUPERARE", text: "Kane trebuie să rămână avansat — creați adâncime și forțați apărarea spaniolă să gândească defensiv!" },
-          { color: "#00ffaa", label: "MENTAL", text: "Nu intrați în panică! xG-ul Angliei era decent — șansele există, trebuie valorificate!" }
-        ]
-      },
-      {
-        frameIdx: 12, badgeText: "⚡ ȘANSĂ SPANIA!", badgeColor: "#00aaff", badgeBg: "rgba(0,100,200,.12)",
-        title: "DANI OLMO 48'!", titleColor: "#00aaff",
-        body: "Dani Olmo șutează imediat după gol! xG=0.246! Off T — aproape 2-0!",
-        analysis: "🔵 Spania atacă cu presiune maximă după gol! Anglia complet dezorganizată!",
-        defenseTips: [
-          { color: "#ff1a4a", label: "URGENT", text: "Anglia trebuie să reseteze imediat — toți jucătorii înapoi, formați blocul defensiv!" },
-          { color: "#ff4466", label: "CRITIC", text: "Güehi și Stones au lăsat Dani Olmo să intre în careu — nu l-au urmărit suficient!" },
-          { color: "#00d4ff", label: "SOLUȚIE", text: "Rice să coborâre în fața apărării și să blocheze pasele de preparare ale Spaniei!" },
-          { color: "#ffaa00", label: "TACTIC", text: "Folosiți schimbările tactice acum — intreduceți energie proaspătă pentru pressing!" }
-        ]
-      },
-      {
-        frameIdx: 20, badgeText: "⚡ PERICOL ANGLIA!", badgeColor: "#ff4466", badgeBg: "rgba(200,20,60,.12)",
-        title: "BELLINGHAM 63'! PERICULOS!", titleColor: "#ff4466",
-        body: "Bellingham șutează din careu! xG=0.056! Off T — Simón salvat!",
-        analysis: "🔴 Anglia atacă cu tot mai multă disperare! Bellingham e liber în careu — alarmant!",
-        defenseTips: [
-          { color: "#ff1a4a", label: "FATAL", text: "Bellingham a primit mingea nemarcrat în careu — Fabián și Carvajal nu au comunicat!" },
-          { color: "#00d4ff", label: "SOLUȚIE", text: "Zubimendi să urmărească Bellingham permanent — cel mai periculos jucător englez din careu!" },
-          { color: "#ffaa00", label: "TACTIC", text: "Compactați spațiul central — nu lăsați Bellingham să se infiltreze între Laporte și Le Normand!" },
-          { color: "#00ffaa", label: "APĂRARE", text: "Mențineți distanța de 4-5m între linii — nu lăsați spații de exploatat în profunzime!" }
-        ]
-      },
-      {
-        frameIdx: 21, badgeText: "⚡ ȘANSĂ SPANIA!", badgeColor: "#00aaff", badgeBg: "rgba(0,100,200,.12)",
-        title: "YAMAL 65'! SALVAT!", titleColor: "#00aaff",
-        body: "Yamal șutează cu xG=0.162! Pickford face o apărare fenomenală!",
-        analysis: "🔵 Yamal — cel mai tânăr jucător din istoria Euro Final — creează șansă uriașă!",
-        defenseTips: [
-          { color: "#ff4466", label: "ANALIZA", text: "Pickford a ghicit colțul corect — dar Yamal trebuia presat mai devreme înainte de șut!" },
-          { color: "#00d4ff", label: "LECȚIE", text: "Güehi și Stones să reducă unghiul lui Yamal — nu-l lăsați să se întoarcă și să șuteze!" },
-          { color: "#ffaa00", label: "TACTIC", text: "Shaw trebuia să fie mai aproape — Yamal a primit mingea cu prea mult spațiu pe dreapta!" }
-        ]
-      },
-      {
-        frameIdx: 25, badgeText: "🔴 EGALARE ANGLIA! SOS!", badgeColor: "#ff1a4a", badgeBg: "rgba(200,20,60,.15)",
-        title: "COLE PALMER 72'! 1-1! SOS!", titleColor: "#ff2244",
-        body: "Cole Palmer (intrat rezervă) înscrie! xG=0.038 dar golul devastator! Meci egalat la 72'! SOS! SOS!",
-        analysis: "🔴 RESET MENTAL! 1-1 la 72' — acesta este golul care putea decide totul împotriva noastră!",
-        defenseTips: [
-          { color: "#ff0022", label: "FATAL", text: "Zubimendi a pierdut marcajul lui Palmer complet! Palmer era liber la 20m — inacceptabil!" },
-          { color: "#ff1a4a", label: "GREȘEALĂ GRAVĂ", text: "Cucurella s-a deplasat greșit — a lăsat spațiul din fața careului neacoperit!" },
-          { color: "#ff4466", label: "ANALIZA GOL", text: "Simón a stat prea pe linia goalului — trebuia să avanseze și să reducă unghiul lui Palmer!" },
-          { color: "#ffaa00", label: "LECȚIE CRITICĂ", text: "Niciodată nu lăsați un jucător proaspăt (rezervă) nemarcart la 16m — energie și determinare crescute!" },
-          { color: "#00ffaa", label: "RECUPERARE", text: "Reveniți la posesie! Oyarzabal să caute spații în spatele defensivei. Nu intrați în panică — xG total e în favoarea noastră!" },
-          { color: "#00d4ff", label: "STRATEGIE", text: "Apăsați mai sus — forțați Anglia să construiască din propria jumătate sub presiune!" }
-        ]
-      },
-      {
-        frameIdx: 27, badgeText: "⚡ ȘANSĂ SPANIA!", badgeColor: "#00aaff", badgeBg: "rgba(0,100,200,.12)",
-        title: "YAMAL 81'! PICKFORD SALVEAZĂ!", titleColor: "#00aaff",
-        body: "Yamal șutează cu xG=0.164! Pickford face a doua apărare mare! Meciul e 1-1!",
-        analysis: "🔵 Spania domină dar nu poate marca — Pickford în formă extraterrestră!",
-        defenseTips: [
-          { color: "#ff4466", label: "PENTRU ANGLIA", text: "Pickford e eroul dar apărarea trebuie să preseze mai devreme pe Yamal!" },
-          { color: "#00d4ff", label: "SOLUȚIE", text: "Rice și Stones să avanseze și să preseze înaltă pe Yamal când primește mingea!" },
-          { color: "#ffaa00", label: "TACTIC", text: "Anglia trebuie să atace mai agresiv — nu vă bazați pe apărare, transformați presiunea!" }
-        ]
-      },
-      {
-        frameIdx: 28, badgeText: "🏆 CAMPIONI! 2-1! VIVA ESPAÑA!", badgeColor: "#ffd700", badgeBg: "rgba(200,160,0,.15)",
-        title: "OYARZABAL 85'! CAMPIONI EURO 2024!", titleColor: "#ffd700",
-        body: "MIKEL OYARZABAL înscrie golul decisiv! Assist Cucurella! xG=0.283 — SPANIA CAMPIOANA EURO 2024!",
-        analysis: "🏆 PROTEJAȚI TITLUL! 5 minute de rezistență maximă! Bloc adânc, toți în propria jumătate!",
-        defenseTips: [
-          { color: "#ffd700", label: "GOLUL TITLULUI", text: "Oyarzabal a exploatat perfect spațiul lăsat de Shaw — centrul lui Cucurella de pe stânga a fost decisiv!" },
-          { color: "#ff4466", label: "PENTRU ANGLIA", text: "Shaw a ieșit prea mult la Cucurella — Oyarzabal a rămas complet liber în careu!" },
-          { color: "#00d4ff", label: "LECȚIE", text: "Güehi trebuia să urmărească Oyarzabal în loc să iasă la minge — fundașul centru nu trebuie să abandoneze careul!" },
-          { color: "#00ffaa", label: "VIVA ESPAÑA", text: "Spania a meritat! xG final: 1.79 vs 0.73 — dominanță clară! 4 titluri Euro — Cel mai de succes!" }
-        ]
-      }
-    ];
+    const PAUSES = [{ frameIdx: 2, badgeText: "⚠️ SUT SPANIA!", badgeColor: "#00aaff", badgeBg: "rgba(0,100,200,.12)", title: "N.WILLIAMS SUTEAZA 11'", titleColor: "#00aaff", body: "Nicholas Williams suteaza din poziție bună! xG=0.068 — blocat de Stones!", analysis: "🔵 Spania atacă pe flancul drept. Minge adusă prin combinație rapidă în careu.", defenseTips: [{ color: "#ff4466", label: "URGENȚĂ", text: "Stones trebuia să nu lase Williams să se întoarcă — rămâi cu fața la minge!" }, { color: "#00d4ff", label: "POZIȚIE", text: "Güehi să ocupe linia goală dintre Walker și Stones — există spațiu periculos!" }, { color: "#ffaa00", label: "TACTIC", text: "Fullback-ul drept (Walker) să nu urce atât de mult — N.Williams exploatează culoarul!" }, { color: "#00ffaa", label: "APĂRARE", text: "Forțează N.Williams spre exterior — unghiul e mai mic la centrul cadrului!" }] }, { frameIdx: 4, badgeText: "⚠️ SUT ANGLIA!", badgeColor: "#ff4466", badgeBg: "rgba(200,20,60,.12)", title: "RICE SUTEAZA 16'", titleColor: "#ff4466", body: "Declan Rice suteaza de la distanță! xG=0.049 — blocat de apărare!", analysis: "🔴 Anglia atacă prin centru. Rice liber la 16m — spațiu acordat prea ușor!", defenseTips: [{ color: "#ff4466", label: "CRITIC", text: "Fabián și Le Normand nu au presat suficient pe Rice în zona centrală!" }, { color: "#00d4ff", label: "POZIȚIE", text: "Rodri trebuia să ocupe spațiul din fața apărării — Rice s-a infiltrat neacoperit!" }, { color: "#ffaa00", label: "TACTIC", text: "Linia de 4 defensivă să se compacteze — nu lăsați spații între linii la 16m!" }, { color: "#00ffaa", label: "SOLUȚIE", text: "Pressing colectiv imediat după pierderea mingii — nu lăsați echipa adversă să se organizeze!" }] }, { frameIdx: 10, badgeText: "⚠️ PERICOL! FODEN!", badgeColor: "#ffcc00", badgeBg: "rgba(200,150,0,.12)", title: "FODEN SUTEAZA 45+1'!", titleColor: "#ffcc00", body: "Phil Foden șutează cu xG=0.180! Simón apără spectaculos! Cel mai periculos moment al primei reprize!", analysis: "🟡 ALERTĂ DEFENSIVĂ! Foden ajunge singur în fața lui Simón — apărare depășită!", defenseTips: [{ color: "#ff1a4a", label: "FATAL", text: "Carvajal a urcat și nu s-a întors la timp — Foden a exploatat spațiul lăsat!" }, { color: "#ff4466", label: "CRITIC", text: "Le Normand și Cucurella nu au comunicat — Foden a primit mingea liber în careu!" }, { color: "#00d4ff", label: "SOLUȚIE", text: "Rodri/Zubimendi să rămână în fața apărării și să intercepteze mingile între linii!" }, { color: "#ffaa00", label: "TACTIC", text: "La cornere și faze fixe: marcaj strict om-la-om în interiorul careului — nu lăsați jucători liberi!" }, { color: "#00ffaa", label: "APĂRARE", text: "Simón trebuie felicitat — salvare excepțională! Dar poziționarea defensivei trebuie corectată urgent!" }] }, { frameIdx: 11, badgeText: "🏆 GOL! SPANIA 1-0!", badgeColor: "#00ff88", badgeBg: "rgba(0,200,100,.12)", title: "N.WILLIAMS MARCHEAZĂ 46'!", titleColor: "#00ff88", body: "Nicholas Williams înscrie primul gol! xG=0.113 — Pickford nu are șanse! Spania conduce!", analysis: "🟢 SPANIA 1-0! Contraatac rapid după pauză. Williams exploatează flancul drept!", defenseTips: [{ color: "#ff4466", label: "ANALIZĂ GOL", text: "Pickford a ieșit prea devreme — Williams a înscris în colțul opus unde portarul nu putea ajunge!" }, { color: "#ff1a4a", label: "GREȘEALĂ", text: "Shaw și Güehi nu au tăiat pasa de pregătire a lui Dani Olmo — trebuia întreruptă înainte!" }, { color: "#00d4ff", label: "LECȚIE", text: "Anglia trebuie să preseze mai sus după gol — blocați construcția jocului spaniol din prima treime!" }, { color: "#ffaa00", label: "RECUPERARE", text: "Kane trebuie să rămână avansat — creați adâncime și forțați apărarea spaniolă să gândească defensiv!" }, { color: "#00ffaa", label: "MENTAL", text: "Nu intrați în panică! xG-ul Angliei era decent — șansele există, trebuie valorificate!" }] }, { frameIdx: 12, badgeText: "⚡ ȘANSĂ SPANIA!", badgeColor: "#00aaff", badgeBg: "rgba(0,100,200,.12)", title: "DANI OLMO 48'!", titleColor: "#00aaff", body: "Dani Olmo șutează imediat după gol! xG=0.246! Off T — aproape 2-0!", analysis: "🔵 Spania atacă cu presiune maximă după gol! Anglia complet dezorganizată!", defenseTips: [{ color: "#ff1a4a", label: "URGENT", text: "Anglia trebuie să reseteze imediat — toți jucătorii înapoi, formați blocul defensiv!" }, { color: "#ff4466", label: "CRITIC", text: "Güehi și Stones au lăsat Dani Olmo să intre în careu — nu l-au urmărit suficient!" }, { color: "#00d4ff", label: "SOLUȚIE", text: "Rice să coborâre în fața apărării și să blocheze pasele de preparare ale Spaniei!" }, { color: "#ffaa00", label: "TACTIC", text: "Folosiți schimbările tactice acum — intreduceți energie proaspătă pentru pressing!" }] }, { frameIdx: 20, badgeText: "⚡ PERICOL ANGLIA!", badgeColor: "#ff4466", badgeBg: "rgba(200,20,60,.12)", title: "BELLINGHAM 63'! PERICULOS!", titleColor: "#ff4466", body: "Bellingham șutează din careu! xG=0.056! Off T — Simón salvat!", analysis: "🔴 Anglia atacă cu tot mai multă disperare! Bellingham e liber în careu — alarmant!", defenseTips: [{ color: "#ff1a4a", label: "FATAL", text: "Bellingham a primit mingea nemarcrat în careu — Fabián și Carvajal nu au comunicat!" }, { color: "#00d4ff", label: "SOLUȚIE", text: "Zubimendi să urmărească Bellingham permanent — cel mai periculos jucător englez din careu!" }, { color: "#ffaa00", label: "TACTIC", text: "Compactați spațiul central — nu lăsați Bellingham să se infiltreze între Laporte și Le Normand!" }, { color: "#00ffaa", label: "APĂRARE", text: "Mențineți distanța de 4-5m între linii — nu lăsați spații de exploatat în profunzime!" }] }, { frameIdx: 16, badgeText: "⚡ ȘANSĂ SPANIA!", badgeColor: "#00aaff", badgeBg: "rgba(0,100,200,.12)", title: "YAMAL 65'! SALVAT!", titleColor: "#00aaff", body: "Yamal șutează cu xG=0.162! Pickford face o apărare fenomenală!", analysis: "🔵 Yamal — cel mai tânăr jucător din istoria Euro Final — creează șansă uriașă!", defenseTips: [{ color: "#ff4466", label: "ANALIZA", text: "Pickford a ghicit colțul corect — dar Yamal trebuia presat mai devreme înainte de șut!" }, { color: "#00d4ff", label: "LECȚIE", text: "Güehi și Stones să reducă unghiul lui Yamal — nu-l lăsați să se întoarcă și să șuteze!" }, { color: "#ffaa00", label: "TACTIC", text: "Shaw trebuia să fie mai aproape — Yamal a primit mingea cu prea mult spațiu pe dreapta!" }] }, { frameIdx: 22, badgeText: "⚡ ȘANSĂ SPANIA!", badgeColor: "#00aaff", badgeBg: "rgba(0,100,200,.12)", title: "YAMAL 81'! PICKFORD SALVEAZĂ!", titleColor: "#00aaff", body: "Yamal șutează cu xG=0.164! Pickford face a doua apărare mare! Meciul e 1-1!", analysis: "🔵 Spania domină dar nu poate marca — Pickford în formă extraterrestră!", defenseTips: [{ color: "#ff4466", label: "PENTRU ANGLIA", text: "Pickford e eroul dar apărarea trebuie să preseze mai devreme pe Yamal!" }, { color: "#00d4ff", label: "SOLUȚIE", text: "Rice și Stones să avanseze și să preseze înaltă pe Yamal când primește mingea!" }, { color: "#ffaa00", label: "TACTIC", text: "Anglia trebuie să atace mai agresiv — nu vă bazați pe apărare, transformați presiunea!" }] }, { frameIdx: 21, badgeText: "🔴 GOL ANGLIA! PALMER 72'!", badgeColor: "#ff1a4a", badgeBg: "rgba(200,20,60,.15)", title: "COLE PALMER MARCHEAZĂ 72' — 1-1!", titleColor: "#ff2244", body: "Cole Palmer, rezervă proaspăt intrat, înscrie cu xG=0.038 dintr-un unghi dificil. Meci egalat! Analiză tactică completă:", analysis: "Anglia exploatează spațiul central lăsat liber după atacuri repetate ale Spaniei. Palmer, nesupravegheat, șutează precis la colț.", defenseTips: [{ color: "#ff0022", label: "GREȘEALĂ FATALĂ", text: "Zubimendi a pierdut complet marcajul lui Palmer — rezerva a primit mingea liberă la 20m, inacceptabil la nivel de finală!" }, { color: "#ff1a4a", label: "EROARE POZIȚIONARE", text: "Cucurella s-a deplasat greșit spre minge — a lăsat spațiul central neacoperit tocmai când Palmer se infiltra!" }, { color: "#ff4466", label: "EROARE PORTAR", text: "Simón a rămas pe linia porții — trebuia să avanseze și să reducă unghiul lui Palmer!" }, { color: "#ffaa00", label: "LECȚIE ADVERSAR", text: "Palmer preferă să primească mingea în mișcare, din dreapta spre centru. Urmăriți-l om la om la orice schimbare!" }, { color: "#00d4ff", label: "STUDIU ANGLIA", text: "Anglia joacă prin combinații rapide 1-2 la marginea careului. Pressing colectiv imediat — nu lăsați spații între linii!" }, { color: "#00ffaa", label: "RĂSPUNS TACTIC", text: "Reveniți la posesie! Oyarzabal și N.Williams să atace pe flancuri — Anglia e vulnerabilă în spatele fundașilor laterali după gol!" }] }, { frameIdx: 24, badgeText: "🏆 CAMPIONI! 2-1! VIVA ESPAÑA!", badgeColor: "#ffd700", badgeBg: "rgba(200,160,0,.15)", title: "OYARZABAL 85' — SPANIA CAMPIOANA EURO 2024!", titleColor: "#ffd700", body: "Mikel Oyarzabal înscrie golul decisiv în minutul 85! Assist magistral al lui Cucurella! Spania câștigă cel de-al 4-lea titlu european!", analysis: "Cucurella avansează nesupravegheat pe stânga și centrează perfect. Oyarzabal, liber în careu după ce Shaw a ieșit greșit, finalizează suprem.", defenseTips: [{ color: "#ffd700", label: "GOLUL TITLULUI", text: "Centrul lui Cucurella a fost perfect — Shaw a ieșit prea mult la el, lăsând Oyarzabal complet liber în careu!" }, { color: "#00d4ff", label: "TACTICĂ SPANIA", text: "Spania a exploatat constant spațiile din spatele fundașilor laterali englezi — modelul de joc 4-3-3 cu fullback-uri înalte s-a dovedit decisiv!" }, { color: "#00ffaa", label: "STUDIU ADVERSAR ANGLIA", text: "Puncte slabe identificate: Shaw iese prea mult la presing → spațiu în spatele lui. Saka nu revine defensiv. Kane se izolează de echipă când atacă." }, { color: "#ffaa00", label: "MODELE ANGLIA", text: "Anglia atacă prin combinații rapide Rice-Bellingham în centru și prin viteza lui Saka pe dreapta. Presați înalt pe Rice — el e motorul jocului!" }, { color: "#cc44ff", label: "FINAL MECI — STATISTICI", text: "xG Spania: 1.79 vs Anglia: 0.73. Spania a controlat 63% posesie. 6 suturi pe cadru vs 2. Dominanță totală confirmată de date!" }] }, { frameIdx: 29, badgeText: "📊 FINAL MECI — STUDIU ADVERSAR", badgeColor: "#cc44ff", badgeBg: "rgba(100,0,200,.1)", title: "ANALIZA COMPLETĂ — ANGLIA STUDIATĂ!", titleColor: "#cc44ff", body: "Meciul s-a încheiat! Spania 2-1 Anglia. Iată analiza tactică completă a adversarului pentru antrenamente viitoare:", analysis: "Pe baza datelor StatsBomb din finala EURO 2024, am identificat pattern-urile și vulnerabilitățile complete ale Angliei.", defenseTips: [{ color: "#ff1a4a", label: "VULNERABILITATE 1", text: "Fundașii laterali englezi (Shaw, Saka) urcă mult și nu revin rapid — atacați constant spațiile din spatele lor cu schimburi rapide de flancuri!" }, { color: "#ff4466", label: "VULNERABILITATE 2", text: "Rice este singurul pivot defensiv real — dacă îl scoateți din joc prin pressing înalt, Anglia pierde controlul centrului câmpului!" }, { color: "#ffaa00", label: "VULNERABILITATE 3", text: "Bellingham preferă să atace, nu să apere — când are posesia, presați-l rapid cu 2 jucători. El nu e confortabil sub presiune!" }, { color: "#00d4ff", label: "MODEL OFENSIV ANGLIA", text: "Anglia atacă prin: 1) Viteza lui Saka pe dreapta 2) Combinații Rice-Bellingham 3) Mingi înalte la Kane/Watkins. Anticipați aceste pattern-uri!" }, { color: "#00ffaa", label: "SOLUȚIE DEFENSIVĂ", text: "Linie defensivă înaltă compactă (max 30m). Pressing imediat după pierdere. Marcaj strict om-la-om la faze fixe. Zubimendi să rămână în față!" }, { color: "#cc44ff", label: "REZUMAT STATISTIC", text: "Anglia: xG total 0.73 în 90 min. 8 suturi, doar 4 pe cadru. Eficiență 1 gol din 8 suturi. Spania a dominat clar — xG 1.79 confirmă superioritatea!" }] }];
 
-    // ═══════════════════════════════════════════════════════════
-    // STATE
-    // ═══════════════════════════════════════════════════════════
+    // ═══ STATE ═══
     let frameIdx = 0, playing = false, speed = 1, animT = 0;
     let lastTs = null, accumT = 0, frameInterval = 2.4;
     let pausedAt = new Set(), overlayOpen = false, scenario = 'Normal';
@@ -1597,55 +1552,51 @@
     let speedIdx = 2;
     let drawings = [], isDrawing = false, drawStart = null;
     let currentDrawing = null;
+    let showVoronoi = false;
+
+    // ── Enemy goal red flash ──
+    function startEnemyGoalFlash() {
+      const overlay = document.getElementById('enemyGoalFlashOverlay');
+      if (!overlay) return;
+      overlay.style.display = 'block';
+      let elapsed = 0;
+      const duration = 2000; // 2 seconds
+      const interval = 50; // 50ms ticks
+      const flashInterval = setInterval(() => {
+        elapsed += interval;
+        // Two full pulses in 2 seconds: sin wave with freq 2 cycles/2s = 1 Hz
+        const phase = (elapsed / duration) * Math.PI * 4; // 2 full cycles
+        const alpha = 0.25 + 0.35 * Math.abs(Math.sin(phase));
+        overlay.style.background = `rgba(220, 0, 30, ${alpha})`;
+        if (elapsed >= duration) {
+          clearInterval(flashInterval);
+          overlay.style.display = 'none';
+        }
+      }, interval);
+    }
 
     // ═══ BACKGROUND ═══
     const bgCv = document.getElementById('bgCanvas');
     const bgCtx = bgCv.getContext('2d');
     let spots = [];
     function initBg() {
-      bgCv.width = window.innerWidth; bgCv.height = window.innerHeight;
-      spots = [];
-      const n = 28;
-      for (let i = 0; i < n; i++) {
-        spots.push({
-          x: Math.random() * window.innerWidth,
-          y: Math.random() * window.innerHeight,
-          r: 30 + Math.random() * 120,
-          vx: (Math.random() - .5) * 0.3,
-          vy: (Math.random() - .5) * 0.3,
-          phase: Math.random() * Math.PI * 2,
-          speed: 0.3 + Math.random() * 0.8,
-          isWhite: Math.random() > 0.5
-        });
-      }
+      bgCv.width = window.innerWidth; bgCv.height = window.innerHeight; spots = [];
+      for (let i = 0; i < 28; i++) spots.push({ x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight, r: 30 + Math.random() * 120, vx: (Math.random() - .5) * .3, vy: (Math.random() - .5) * .3, phase: Math.random() * Math.PI * 2, speed: .3 + Math.random() * .8, isWhite: Math.random() > .5 });
     }
     function animBg() {
       bgCv.width = bgCv.width;
       const bGrd = bgCtx.createLinearGradient(0, 0, bgCv.width, bgCv.height);
-      bGrd.addColorStop(0, '#000000');
-      bGrd.addColorStop(0.5, '#444444');
-      bGrd.addColorStop(1, '#ffffff');
-      bgCtx.fillStyle = bGrd;
-      bgCtx.fillRect(0, 0, bgCv.width, bgCv.height);
+      bGrd.addColorStop(0, '#000000'); bGrd.addColorStop(.5, '#444444'); bGrd.addColorStop(1, '#ffffff');
+      bgCtx.fillStyle = bGrd; bgCtx.fillRect(0, 0, bgCv.width, bgCv.height);
       spots.forEach(s => {
-        s.x += s.vx; s.y += s.vy; s.phase += 0.008 * s.speed;
-        if (s.x < -s.r) s.x = bgCv.width + s.r;
-        if (s.x > bgCv.width + s.r) s.x = -s.r;
-        if (s.y < -s.r) s.y = bgCv.height + s.r;
-        if (s.y > bgCv.height + s.r) s.y = -s.r;
-        const alpha = (0.04 + 0.06 * Math.abs(Math.sin(s.phase)));
+        s.x += s.vx; s.y += s.vy; s.phase += .008 * s.speed;
+        if (s.x < -s.r) s.x = bgCv.width + s.r; if (s.x > bgCv.width + s.r) s.x = -s.r;
+        if (s.y < -s.r) s.y = bgCv.height + s.r; if (s.y > bgCv.height + s.r) s.y = -s.r;
+        const alpha = .04 + .06 * Math.abs(Math.sin(s.phase));
         const g = bgCtx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.r);
-        if (s.isWhite) {
-          g.addColorStop(0, `rgba(255,255,255,${alpha * 2})`);
-          g.addColorStop(0.4, `rgba(200,220,255,${alpha})`);
-          g.addColorStop(1, 'rgba(0,0,0,0)');
-        } else {
-          g.addColorStop(0, `rgba(0,50,20,${alpha * 1.5})`);
-          g.addColorStop(0.4, `rgba(0,30,10,${alpha})`);
-          g.addColorStop(1, 'rgba(0,0,0,0)');
-        }
-        bgCtx.fillStyle = g;
-        bgCtx.beginPath(); bgCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2); bgCtx.fill();
+        if (s.isWhite) { g.addColorStop(0, `rgba(255,255,255,${alpha * 2})`); g.addColorStop(.4, `rgba(200,220,255,${alpha})`); g.addColorStop(1, 'rgba(0,0,0,0)'); }
+        else { g.addColorStop(0, `rgba(0,50,20,${alpha * 1.5})`); g.addColorStop(.4, `rgba(0,30,10,${alpha})`); g.addColorStop(1, 'rgba(0,0,0,0)'); }
+        bgCtx.fillStyle = g; bgCtx.beginPath(); bgCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2); bgCtx.fill();
       });
       requestAnimationFrame(animBg);
     }
@@ -1656,50 +1607,25 @@
       const cols = ['#00d4ff', '#ffd700', '#ff1a4a', '#00ffaa', '#cc44ff', '#00ffee', '#ff44cc', '#ffffff'];
       for (let i = 0; i < 40; i++) {
         const p = document.createElement('div'); p.className = 'particle';
-        const sz = Math.random() * 4 + 0.8;
-        p.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random() * 100}%;
-    background:${cols[Math.floor(Math.random() * cols.length)]};
-    animation-duration:${12 + Math.random() * 20}s;animation-delay:${Math.random() * 14}s;
-    filter:blur(${Math.random() * .6}px);box-shadow:0 0 ${sz * 3}px currentColor`;
+        const sz = Math.random() * 4 + .8;
+        p.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random() * 100}%;background:${cols[Math.floor(Math.random() * cols.length)]};animation-duration:${12 + Math.random() * 20}s;animation-delay:${Math.random() * 14}s;filter:blur(${Math.random() * .6}px);box-shadow:0 0 ${sz * 3}px currentColor`;
         c.appendChild(p);
       }
     })();
 
-    // ═══ CONFETTI CANVAS ═══
+    // ═══ CONFETTI ═══
     const confCv = document.getElementById('confettiCanvas');
     const confCtx = confCv.getContext('2d');
-    let confetti = [];
-    let confettiActive = false;
+    let confetti = [], confettiActive = false;
     function spawnConfetti() {
       confetti = []; confettiActive = true;
       const cols = ['#ffd700', '#ff1a4a', '#00ffaa', '#00d4ff', '#cc44ff', '#ffffff', '#ff88cc'];
-      for (let i = 0; i < 200; i++) {
-        confetti.push({
-          x: Math.random() * window.innerWidth,
-          y: -20 - Math.random() * 200,
-          vx: (Math.random() - .5) * 4,
-          vy: 2 + Math.random() * 5,
-          rot: Math.random() * 360,
-          vrot: (Math.random() - .5) * 10,
-          w: 6 + Math.random() * 8, h: 8 + Math.random() * 12,
-          col: cols[Math.floor(Math.random() * cols.length)],
-          alpha: 1
-        });
-      }
+      for (let i = 0; i < 200; i++) confetti.push({ x: Math.random() * window.innerWidth, y: -20 - Math.random() * 200, vx: (Math.random() - .5) * 4, vy: 2 + Math.random() * 5, rot: Math.random() * 360, vrot: (Math.random() - .5) * 10, w: 6 + Math.random() * 8, h: 8 + Math.random() * 12, col: cols[Math.floor(Math.random() * cols.length)], alpha: 1 });
     }
     function animConfetti() {
       confCv.width = window.innerWidth; confCv.height = window.innerHeight;
       if (!confettiActive) { confCv.width = confCv.width; requestAnimationFrame(animConfetti); return; }
-      confetti.forEach(c => {
-        c.x += c.vx; c.y += c.vy; c.rot += c.vrot; c.vy += 0.1;
-        if (c.y > confCv.height + 20) c.alpha -= 0.02;
-        confCtx.save();
-        confCtx.translate(c.x, c.y); confCtx.rotate(c.rot * Math.PI / 180);
-        confCtx.globalAlpha = Math.max(0, c.alpha);
-        confCtx.fillStyle = c.col;
-        confCtx.fillRect(-c.w / 2, -c.h / 2, c.w, c.h);
-        confCtx.restore();
-      });
+      confetti.forEach(c => { c.x += c.vx; c.y += c.vy; c.rot += c.vrot; c.vy += .1; if (c.y > confCv.height + 20) c.alpha -= .02; confCtx.save(); confCtx.translate(c.x, c.y); confCtx.rotate(c.rot * Math.PI / 180); confCtx.globalAlpha = Math.max(0, c.alpha); confCtx.fillStyle = c.col; confCtx.fillRect(-c.w / 2, -c.h / 2, c.w, c.h); confCtx.restore(); });
       confetti = confetti.filter(c => c.alpha > 0);
       if (confetti.length === 0) confettiActive = false;
       requestAnimationFrame(animConfetti);
@@ -1708,8 +1634,10 @@
     // ═══ CANVAS REFS ═══
     const pCanvas = document.getElementById('pitch');
     const tlCanvas = document.getElementById('timeline');
+    const momCanvas = document.getElementById('momentum');
     const drawCv = document.getElementById('drawCanvas');
-    let pCtx, tCtx, dCtx;
+    const vorCanvas = document.getElementById('voronoiCanvas');
+    let pCtx, tCtx, mCtx, dCtx, vCtx;
 
     function selectTeam(t) {
       myTeam = t;
@@ -1721,17 +1649,20 @@
     function init() {
       pCtx = pCanvas.getContext('2d');
       tCtx = tlCanvas.getContext('2d');
+      mCtx = momCanvas.getContext('2d');
       dCtx = drawCv.getContext('2d');
+      vCtx = vorCanvas.getContext('2d');
       resize();
-      window.addEventListener('resize', () => { resize(); render() });
+      window.addEventListener('resize', () => { resize(); render(); });
       tlCanvas.addEventListener('click', onTlClick);
+      momCanvas.addEventListener('click', onMomClick);
       drawCv.addEventListener('mousedown', onDrawStart);
       drawCv.addEventListener('mousemove', onDrawMove);
       drawCv.addEventListener('mouseup', onDrawEnd);
       drawCv.addEventListener('touchstart', e => { e.preventDefault(); const t = e.touches[0]; onDrawStart({ clientX: t.clientX, clientY: t.clientY }) });
       drawCv.addEventListener('touchmove', e => { e.preventDefault(); const t = e.touches[0]; onDrawMove({ clientX: t.clientX, clientY: t.clientY }) });
       drawCv.addEventListener('touchend', e => { e.preventDefault(); onDrawEnd({}) });
-      render(); drawTimeline(); renderPanel();
+      render(); drawTimeline(); drawMomentum(); renderPanel();
       initBg();
       requestAnimationFrame(loop);
       requestAnimationFrame(animBg);
@@ -1743,14 +1674,295 @@
       pitchW = w.clientWidth; pitchH = w.clientHeight;
       pCanvas.width = pitchW; pCanvas.height = pitchH;
       drawCv.width = pitchW; drawCv.height = pitchH;
-      tlCanvas.width = tlCanvas.clientWidth; tlCanvas.height = 34;
+      vorCanvas.width = pitchW; vorCanvas.height = pitchH;
+      tlCanvas.width = tlCanvas.clientWidth; tlCanvas.height = 22;
+      momCanvas.width = momCanvas.clientWidth; momCanvas.height = 70;
     }
 
     function onTlClick(e) {
       const r = tlCanvas.getBoundingClientRect();
       const pct = (e.clientX - r.left) / r.width;
       frameIdx = Math.round(pct * (FRAMES.length - 1));
-      accumT = 0; render(); drawTimeline(); renderPanel();
+      accumT = 0; render(); drawTimeline(); drawMomentum(); renderPanel();
+    }
+    function onMomClick(e) {
+      const r = momCanvas.getBoundingClientRect();
+      const pct = (e.clientX - r.left) / r.width;
+      frameIdx = Math.round(pct * (FRAMES.length - 1));
+      accumT = 0; render(); drawTimeline(); drawMomentum(); renderPanel();
+    }
+
+    // ═══ VORONOI — FIXED: Both teams colored correctly ═══
+    function toggleVoronoi() {
+      showVoronoi = !showVoronoi;
+      const btn = document.getElementById('voronoiBtn');
+      const cv = document.getElementById('voronoiCanvas');
+      btn.textContent = showVoronoi ? '⬡ VORONOI ON' : '⬡ VORONOI OFF';
+      btn.className = 'voronoi-toggle' + (showVoronoi ? ' active' : '');
+      cv.className = showVoronoi ? 'visible' : '';
+      if (showVoronoi) renderVoronoi();
+    }
+    window.toggleVoronoi = toggleVoronoi;
+
+    function renderVoronoi() {
+      if (!vCtx || !pitchW || !pitchH) return;
+      const f = FRAMES[frameIdx];
+      const players = f.players || [];
+      if (players.length < 2) { vCtx.clearRect(0, 0, pitchW, pitchH); return; }
+
+      vCtx.clearRect(0, 0, pitchW, pitchH);
+
+      const pad = 22;
+      const imgData = vCtx.createImageData(pitchW, pitchH);
+      const data = imgData.data;
+
+      for (let px = 0; px < pitchW; px++) {
+        for (let py = 0; py < pitchH; py++) {
+          const sx = (px - pad) / (pitchW - pad * 2) * 120;
+          const sy = (py - 16) / (pitchH - 32) * 80;
+
+          let minDist = Infinity;
+          let nearest = null;
+
+          players.forEach(p => {
+            const dx = sx - p.x, dy = sy - p.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < minDist) { minDist = dist; nearest = p; }
+          });
+
+          if (nearest) {
+            const idx = (py * pitchW + px) * 4;
+            const isHome = !!nearest.t; // true = Spain (blue), false = England (red)
+            const alpha = Math.max(0, 75 - minDist * 2.5);
+            if (isHome) {
+              // Spain = BLUE
+              data[idx] = 10;
+              data[idx + 1] = 100;
+              data[idx + 2] = 255;
+              data[idx + 3] = Math.min(95, Math.max(0, alpha));
+            } else {
+              // England = RED
+              data[idx] = 230;
+              data[idx + 1] = 15;
+              data[idx + 2] = 50;
+              data[idx + 3] = Math.min(95, Math.max(0, alpha));
+            }
+          }
+        }
+      }
+      vCtx.putImageData(imgData, 0, 0);
+
+      // Draw Voronoi cell boundary lines
+      vCtx.globalAlpha = 0.12;
+      vCtx.strokeStyle = 'rgba(255,255,255,0.5)';
+      vCtx.lineWidth = 0.5;
+      vCtx.globalAlpha = 1;
+
+      // Approximate territory using a coarse grid
+      const step = 8;
+      let homePixels = 0, awayPixels = 0;
+      for (let px = 0; px < pitchW; px += step) {
+        for (let py = 0; py < pitchH; py += step) {
+          const sx = (px - pad) / (pitchW - pad * 2) * 120;
+          const sy = (py - 16) / (pitchH - 32) * 80;
+          let minDist = Infinity; let nearest = null;
+          players.forEach(p => { const dx = sx - p.x, dy = sy - p.y, dist = Math.sqrt(dx * dx + dy * dy); if (dist < minDist) { minDist = dist; nearest = p; } });
+          if (nearest) { if (nearest.t) homePixels++; else awayPixels++; }
+        }
+      }
+
+      const total = homePixels + awayPixels || 1;
+      const spaPct = Math.round(homePixels / total * 100);
+      const engPct = 100 - spaPct;
+      const homeCount = players.filter(p => p.t).length;
+      const awayCount = players.length - homeCount;
+
+      // Determine dominant team for label
+      const dominantLabel = spaPct > engPct + 4
+        ? '🇪🇸 <span style="color:#00d4ff;font-weight:900">SPANIA DOMINA</span>'
+        : engPct > spaPct + 4
+          ? '🏴󠁧󠁢󠁥󠁮󠁧󠁿 <span style="color:#ff1a4a;font-weight:900">ANGLIA DOMINA</span>'
+          : '⚖️ <span style="color:#ffcc00;font-weight:900">ECHILIBRAT</span>';
+
+      document.getElementById('voronoiStats').innerHTML =
+        `<div style="margin-bottom:8px;font-size:16px">${dominantLabel}</div>
+        <div style="display:flex;gap:4px;align-items:center;margin-bottom:8px">
+          <span style="font-size:14px;color:#00d4ff;font-weight:900;min-width:36px">SPA</span>
+          <div style="flex:1;background:rgba(0,0,0,.4);border-radius:5px;height:14px;overflow:hidden;position:relative">
+            <div style="width:${spaPct}%;height:100%;background:linear-gradient(90deg,#003acc,#00d4ff);transition:width .5s"></div>
+          </div>
+          <span style="font-size:14px;color:#ff1a4a;font-weight:900;min-width:36px;text-align:right">ENG</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:900;margin-bottom:6px">
+          <span style="color:#00d4ff">🇪🇸 ${spaPct}%</span>
+          <span style="color:rgba(150,180,255,.5);font-size:11px;align-self:center">teren</span>
+          <span style="color:#ff1a4a">${engPct}% 🏴󠁧󠁢󠁥󠁮󠁧󠁿</span>
+        </div>
+        <div style="font-size:11px;color:rgba(120,160,255,.6)">
+          ${players.length} jucători — 🔵 ${homeCount} SPA vs 🔴 ${awayCount} ENG
+        </div>`;
+    }
+
+    // ═══ MOMENTUM WAVE ═══
+    function computeMomentumData() {
+      const data = [];
+      for (let i = 0; i < FRAMES.length; i++) {
+        const f = FRAMES[i];
+        let val = 0;
+        if (f.type === 'Shot') {
+          val = f.isHome ? f.xg : -f.xg;
+          if (f.outcome === 'Goal') val *= 3;
+          else if (f.outcome === 'Saved') val *= 1.5;
+          else if (f.outcome === 'Blocked') val *= 0.8;
+        } else if (f.type === 'Pass') {
+          val = f.isHome ? 0.01 : -0.01;
+        }
+        const prev = data.length > 0 ? data[data.length - 1] : 0;
+        const decayed = prev * 0.7 + val;
+        data.push(Math.max(-1, Math.min(1, decayed)));
+      }
+      const smooth = [];
+      for (let i = 0; i < data.length; i++) {
+        let sum = 0, cnt = 0;
+        for (let j = Math.max(0, i - 2); j <= Math.min(data.length - 1, i + 2); j++) { sum += data[j]; cnt++; }
+        smooth.push(sum / cnt);
+      }
+      return smooth;
+    }
+
+    let momentumData = null;
+    function drawMomentum() {
+      if (!mCtx) return;
+      if (!momentumData) momentumData = computeMomentumData();
+      const tw = momCanvas.width, th = momCanvas.height;
+      mCtx.clearRect(0, 0, tw, th);
+
+      const bg = mCtx.createLinearGradient(0, 0, 0, th);
+      bg.addColorStop(0, 'rgba(0,20,60,.9)');
+      bg.addColorStop(0.5, 'rgba(0,8,24,.95)');
+      bg.addColorStop(1, 'rgba(10,0,30,.9)');
+      mCtx.fillStyle = bg; mCtx.fillRect(0, 0, tw, th);
+
+      mCtx.strokeStyle = 'rgba(255,255,255,.08)'; mCtx.lineWidth = 1;
+      mCtx.setLineDash([4, 4]);
+      mCtx.beginPath(); mCtx.moveTo(0, th / 2); mCtx.lineTo(tw, th / 2); mCtx.stroke();
+      mCtx.setLineDash([]);
+
+      const n = momentumData.length;
+      const midY = th / 2;
+      const amp = (th / 2 - 8);
+
+      mCtx.beginPath();
+      mCtx.moveTo(0, midY);
+      for (let i = 0; i < n; i++) {
+        const x = tw * i / (n - 1);
+        const y = midY - momentumData[i] * amp;
+        if (i === 0) mCtx.lineTo(x, y);
+        else {
+          const px = tw * (i - 1) / (n - 1);
+          const cpx = (px + x) / 2;
+          mCtx.bezierCurveTo(cpx, midY - momentumData[i - 1] * amp, cpx, y, x, y);
+        }
+      }
+      mCtx.lineTo(tw, midY); mCtx.closePath();
+      const spGrd = mCtx.createLinearGradient(0, 0, 0, th);
+      spGrd.addColorStop(0, 'rgba(0,150,255,.55)'); spGrd.addColorStop(1, 'rgba(0,100,200,.0)');
+      mCtx.fillStyle = spGrd; mCtx.fill();
+
+      mCtx.beginPath();
+      mCtx.moveTo(0, midY);
+      for (let i = 0; i < n; i++) {
+        const x = tw * i / (n - 1);
+        const y = midY - momentumData[i] * amp;
+        if (i === 0) mCtx.lineTo(x, y);
+        else {
+          const px = tw * (i - 1) / (n - 1);
+          const cpx = (px + x) / 2;
+          mCtx.bezierCurveTo(cpx, midY - momentumData[i - 1] * amp, cpx, y, x, y);
+        }
+      }
+      mCtx.lineTo(tw, midY); mCtx.closePath();
+      const engGrd = mCtx.createLinearGradient(0, 0, 0, th);
+      engGrd.addColorStop(0, 'rgba(200,0,50,.0)'); engGrd.addColorStop(1, 'rgba(200,0,50,.55)');
+      mCtx.fillStyle = engGrd; mCtx.fill();
+
+      mCtx.beginPath();
+      for (let i = 0; i < n; i++) {
+        const x = tw * i / (n - 1);
+        const y = midY - momentumData[i] * amp;
+        if (i === 0) mCtx.moveTo(x, y);
+        else {
+          const px = tw * (i - 1) / (n - 1);
+          const cpx = (px + x) / 2;
+          mCtx.bezierCurveTo(cpx, midY - momentumData[i - 1] * amp, cpx, y, x, y);
+        }
+      }
+      const lineGrd = mCtx.createLinearGradient(0, 0, tw, 0);
+      for (let i = 0; i < n; i++) {
+        const pct = i / (n - 1);
+        const v = momentumData[i];
+        if (v > 0) lineGrd.addColorStop(pct, `rgba(0,${Math.round(150 + v * 100)},255,0.9)`);
+        else lineGrd.addColorStop(pct, `rgba(255,${Math.round(30 + v * (-30))},${Math.round(60 + v * (-30))},0.9)`);
+      }
+      mCtx.strokeStyle = lineGrd; mCtx.lineWidth = 2.5;
+      mCtx.shadowColor = 'rgba(0,150,255,.5)'; mCtx.shadowBlur = 8;
+      mCtx.stroke(); mCtx.shadowBlur = 0;
+
+      FRAMES.forEach((f, i) => {
+        if (f.type === 'Shot') {
+          const x = tw * i / (n - 1);
+          const y = midY - momentumData[i] * amp;
+          const isGoal = f.outcome === 'Goal';
+          const col = isGoal ? (f.isHome ? '#00ffaa' : '#ff4466') : (f.isHome ? '#00aaff' : '#ff1a4a');
+          mCtx.fillStyle = col; mCtx.shadowColor = col; mCtx.shadowBlur = isGoal ? 16 : 6;
+          mCtx.beginPath(); mCtx.arc(x, y, isGoal ? 7 : 4, 0, Math.PI * 2); mCtx.fill();
+          mCtx.shadowBlur = 0;
+        }
+      });
+
+      const cx2 = tw * frameIdx / (n - 1);
+      const cy = midY - momentumData[frameIdx] * amp;
+      mCtx.fillStyle = '#ffffff'; mCtx.shadowColor = '#ffffff'; mCtx.shadowBlur = 20;
+      mCtx.beginPath(); mCtx.arc(cx2, cy, 5, 0, Math.PI * 2); mCtx.fill();
+      mCtx.shadowBlur = 0;
+      mCtx.strokeStyle = 'rgba(255,255,255,.25)'; mCtx.lineWidth = 1; mCtx.setLineDash([3, 3]);
+      mCtx.beginPath(); mCtx.moveTo(cx2, 0); mCtx.lineTo(cx2, th); mCtx.stroke();
+      mCtx.setLineDash([]);
+
+      FRAMES.forEach((f, i) => {
+        if (f.outcome === 'Goal') {
+          const x = tw * i / (n - 1);
+          mCtx.fillStyle = f.isHome ? 'rgba(0,255,170,.6)' : 'rgba(255,40,70,.6)';
+          mCtx.font = 'bold 8px "Barlow Condensed"'; mCtx.textAlign = 'center';
+          mCtx.fillText('⚽', x, f.isHome ? 8 : th - 2);
+        }
+      });
+
+      // ── Momentum detail panel — bigger text, correct team label ──
+      const curMom = momentumData[frameIdx];
+      const f = FRAMES[frameIdx];
+      const momCol = curMom > 0 ? '#00d4ff' : '#ff1a4a';
+      const momDomLabel = curMom > 0.1
+        ? '🇪🇸 <b style="color:#00d4ff">SPANIA DOMINA</b>'
+        : curMom < -0.1
+          ? '🏴󠁧󠁢󠁥󠁮󠁧󠁿 <b style="color:#ff1a4a">ANGLIA RIPOSTEAZĂ</b>'
+          : '⚖️ <b style="color:#ffcc00">ECHILIBRAT</b>';
+
+      document.getElementById('momentumStats').innerHTML =
+        `<div style="margin-bottom:8px;font-size:16px;font-weight:900">Min <b style="color:#fff">${f.min}'</b> — ${momDomLabel}</div>
+        <div style="display:flex;gap:6px;align-items:center;margin-bottom:10px">
+          <span style="color:#00d4ff;font-size:14px;font-weight:900;min-width:36px">SPA</span>
+          <div style="flex:1;background:rgba(0,0,0,.4);border-radius:6px;height:14px;overflow:hidden;position:relative">
+            <div style="position:absolute;left:50%;top:0;width:${curMom > 0 ? curMom * 50 : 0}%;height:100%;background:linear-gradient(90deg,#003acc,#00d4ff);transform-origin:left"></div>
+            <div style="position:absolute;right:${curMom < 0 ? 0 : 50}%;top:0;width:${curMom < 0 ? Math.abs(curMom) * 50 : 0}%;height:100%;background:linear-gradient(90deg,#ff1a4a,#cc0033)"></div>
+          </div>
+          <span style="color:#ff1a4a;font-size:14px;font-weight:900;min-width:36px;text-align:right">ENG</span>
+        </div>
+        <div style="font-size:15px;color:rgba(180,210,255,.9);font-weight:700">
+          xG: 🇪🇸 <b style="color:#00d4ff;font-size:16px">${(f.cumXgH || 0).toFixed(3)}</b>
+          &nbsp;vs&nbsp;
+          <b style="color:#ff1a4a;font-size:16px">${(f.cumXgA || 0).toFixed(3)}</b> 🏴󠁧󠁢󠁥󠁮󠁧󠁿
+        </div>`;
     }
 
     // ═══ DRAWING ═══
@@ -1759,18 +1971,8 @@
       const btn = document.getElementById('btnDrawMode');
       const toolbar = document.getElementById('drawToolbar');
       const dc = document.getElementById('drawCanvas');
-      if (drawMode) {
-        btn.classList.add('active');
-        toolbar.classList.add('visible');
-        dc.style.display = 'block';
-        playing = false;
-        document.getElementById('btnPlay').textContent = '▶ PLAY';
-        document.getElementById('btnPlay').className = 'btn btn-play paused';
-      } else {
-        btn.classList.remove('active');
-        toolbar.classList.remove('visible');
-        dc.style.display = 'none';
-      }
+      if (drawMode) { btn.classList.add('active'); toolbar.classList.add('visible'); dc.style.display = 'block'; playing = false; document.getElementById('btnPlay').textContent = '▶ PLAY'; document.getElementById('btnPlay').className = 'btn btn-play paused'; }
+      else { btn.classList.remove('active'); toolbar.classList.remove('visible'); dc.style.display = 'none'; }
     }
     function setDrawMode(m) {
       drawTool = m;
@@ -1778,202 +1980,120 @@
       document.getElementById('dt' + m.charAt(0).toUpperCase() + m.slice(1)).classList.add('active');
     }
     function clearDrawings() { drawings = []; redrawDrawings(); }
-    function onDrawStart(e) {
-      if (!drawMode) return;
-      const r = drawCv.getBoundingClientRect();
-      drawStart = { x: e.clientX - r.left, y: e.clientY - r.top };
-      isDrawing = true; currentDrawing = null;
-    }
-    function onDrawMove(e) {
-      if (!drawMode || !isDrawing || !drawStart) return;
-      const r = drawCv.getBoundingClientRect();
-      const end = { x: e.clientX - r.left, y: e.clientY - r.top };
-      currentDrawing = { tool: drawTool, start: drawStart, end };
-      redrawDrawings();
-    }
-    function onDrawEnd(e) {
-      if (!drawMode || !isDrawing || !drawStart) return;
-      if (currentDrawing) drawings.push(currentDrawing);
-      isDrawing = false; currentDrawing = null;
-      redrawDrawings();
-    }
+    function onDrawStart(e) { if (!drawMode) return; const r = drawCv.getBoundingClientRect(); drawStart = { x: e.clientX - r.left, y: e.clientY - r.top }; isDrawing = true; currentDrawing = null; }
+    function onDrawMove(e) { if (!drawMode || !isDrawing || !drawStart) return; const r = drawCv.getBoundingClientRect(); const end = { x: e.clientX - r.left, y: e.clientY - r.top }; currentDrawing = { tool: drawTool, start: drawStart, end }; redrawDrawings(); }
+    function onDrawEnd(e) { if (!drawMode || !isDrawing || !drawStart) return; if (currentDrawing) drawings.push(currentDrawing); isDrawing = false; currentDrawing = null; redrawDrawings(); }
     function redrawDrawings() {
       dCtx.clearRect(0, 0, drawCv.width, drawCv.height);
       const all = [...drawings, ...(currentDrawing ? [currentDrawing] : [])];
       all.forEach(d => {
-        dCtx.save();
-        dCtx.strokeStyle = 'rgba(255,200,0,0.9)';
-        dCtx.fillStyle = 'rgba(255,200,0,0.9)';
-        dCtx.lineWidth = 3;
-        dCtx.shadowColor = 'rgba(255,200,0,0.7)';
-        dCtx.shadowBlur = 8;
-        dCtx.lineCap = 'round';
+        dCtx.save(); dCtx.strokeStyle = 'rgba(255,200,0,0.9)'; dCtx.fillStyle = 'rgba(255,200,0,0.9)'; dCtx.lineWidth = 3; dCtx.shadowColor = 'rgba(255,200,0,0.7)'; dCtx.shadowBlur = 8; dCtx.lineCap = 'round';
         if (d.tool === 'arrow') {
           dCtx.beginPath(); dCtx.moveTo(d.start.x, d.start.y); dCtx.lineTo(d.end.x, d.end.y); dCtx.stroke();
           const angle = Math.atan2(d.end.y - d.start.y, d.end.x - d.start.x);
-          dCtx.beginPath();
-          dCtx.moveTo(d.end.x, d.end.y);
-          dCtx.lineTo(d.end.x - 18 * Math.cos(angle - 0.4), d.end.y - 18 * Math.sin(angle - 0.4));
-          dCtx.lineTo(d.end.x - 18 * Math.cos(angle + 0.4), d.end.y - 18 * Math.sin(angle + 0.4));
-          dCtx.closePath(); dCtx.fill();
-        } else if (d.tool === 'line') {
-          dCtx.beginPath(); dCtx.moveTo(d.start.x, d.start.y); dCtx.lineTo(d.end.x, d.end.y); dCtx.stroke();
-        } else if (d.tool === 'circle') {
-          const r = Math.hypot(d.end.x - d.start.x, d.end.y - d.start.y);
-          dCtx.beginPath(); dCtx.arc(d.start.x, d.start.y, r, 0, Math.PI * 2); dCtx.stroke();
-        }
+          dCtx.beginPath(); dCtx.moveTo(d.end.x, d.end.y); dCtx.lineTo(d.end.x - 18 * Math.cos(angle - .4), d.end.y - 18 * Math.sin(angle - .4)); dCtx.lineTo(d.end.x - 18 * Math.cos(angle + .4), d.end.y - 18 * Math.sin(angle + .4)); dCtx.closePath(); dCtx.fill();
+        } else if (d.tool === 'line') { dCtx.beginPath(); dCtx.moveTo(d.start.x, d.start.y); dCtx.lineTo(d.end.x, d.end.y); dCtx.stroke(); }
+        else if (d.tool === 'circle') { const r = Math.hypot(d.end.x - d.start.x, d.end.y - d.start.y); dCtx.beginPath(); dCtx.arc(d.start.x, d.start.y, r, 0, Math.PI * 2); dCtx.stroke(); }
         dCtx.restore();
       });
     }
-    window.setDrawMode = setDrawMode;
-    window.clearDrawings = clearDrawings;
-    window.toggleDrawMode = toggleDrawMode;
+    window.setDrawMode = setDrawMode; window.clearDrawings = clearDrawings; window.toggleDrawMode = toggleDrawMode;
 
     // ═══ COORDS ═══
-    function sb(sx, sy) {
-      const pad = 22;
-      const px = pad + (sx / 120) * (pitchW - pad * 2);
-      const py = 16 + (sy / 80) * (pitchH - 32);
-      return [px, py];
-    }
+    function sb(sx, sy) { const pad = 22; const px = pad + (sx / 120) * (pitchW - pad * 2); const py = 16 + (sy / 80) * (pitchH - 32); return [px, py]; }
     function lerp(a, b, t) { return a + (b - a) * t }
 
     // ═══ PITCH ═══
     function drawPitch() {
       const c = pCtx, w = pitchW, h = pitchH;
-      // Striped grass — vibrant transparent green
-      const stripes = 12;
-      const sw = w / stripes;
-      for (let i = 0; i < stripes; i++) {
-        c.fillStyle = i % 2 === 0 ? 'rgba(0, 255, 128, 0.2)' : 'rgba(0, 200, 100, 0.2)';
-        c.fillRect(i * sw, 0, sw + 1, h);
-      }
-      // Center glow
+      const stripes = 12; const sw = w / stripes;
+      for (let i = 0; i < stripes; i++) { c.fillStyle = i % 2 === 0 ? 'rgba(0,255,128,0.2)' : 'rgba(0,200,100,0.2)'; c.fillRect(i * sw, 0, sw + 1, h); }
       const grd = c.createRadialGradient(w * .5, h * .5, 0, w * .5, h * .5, w * .7);
-      grd.addColorStop(0, 'rgba(0,255,100,.3)');
-      grd.addColorStop(.5, 'rgba(0,200,80,.15)');
-      grd.addColorStop(1, 'rgba(0,100,40,.3)');
+      grd.addColorStop(0, 'rgba(0,255,100,.3)'); grd.addColorStop(.5, 'rgba(0,200,80,.15)'); grd.addColorStop(1, 'rgba(0,100,40,.3)');
       c.fillStyle = grd; c.fillRect(0, 0, w, h);
-
-      function ln(x1, y1, x2, y2, col, blur, lw) {
-        const [ax, ay] = sb(x1, y1), [bx, by] = sb(x2, y2);
-        c.save(); c.strokeStyle = col; c.lineWidth = lw || 1.5;
-        c.shadowColor = col; c.shadowBlur = blur || 6;
-        c.beginPath(); c.moveTo(ax, ay); c.lineTo(bx, by); c.stroke(); c.restore();
-      }
+      function ln(x1, y1, x2, y2, col, blur, lw) { const [ax, ay] = sb(x1, y1), [bx, by] = sb(x2, y2); c.save(); c.strokeStyle = col; c.lineWidth = lw || 1.5; c.shadowColor = col; c.shadowBlur = blur || 6; c.beginPath(); c.moveTo(ax, ay); c.lineTo(bx, by); c.stroke(); c.restore(); }
       const lineCol = 'rgba(120,255,120,.6)', lineBlur = 8;
-      // Boundary
-      c.save(); c.strokeStyle = lineCol; c.lineWidth = 2; c.shadowColor = lineCol; c.shadowBlur = lineBlur;
-      c.strokeRect(22, 16, w - 44, h - 32); c.restore();
-      // Halfway
+      c.save(); c.strokeStyle = lineCol; c.lineWidth = 2; c.shadowColor = lineCol; c.shadowBlur = lineBlur; c.strokeRect(22, 16, w - 44, h - 32); c.restore();
       ln(60, 0, 60, 80, lineCol, lineBlur, 1.5);
-      // Center circle
-      const [mx, my] = sb(60, 40);
-      const rcir = (10 / 120) * (w - 44);
-      c.save(); c.strokeStyle = lineCol; c.lineWidth = 1.5; c.shadowColor = lineCol; c.shadowBlur = lineBlur;
-      c.beginPath(); c.arc(mx, my, rcir, 0, Math.PI * 2); c.stroke(); c.restore();
-      // Center spot
-      const cSpot = c.createRadialGradient(mx, my, 0, mx, my, 9);
-      cSpot.addColorStop(0, 'rgba(120,255,120,.9)'); cSpot.addColorStop(1, 'rgba(120,255,120,0)');
-      c.fillStyle = cSpot; c.beginPath(); c.arc(mx, my, 9, 0, Math.PI * 2); c.fill();
+      const [mx, my] = sb(60, 40); const rcir = (10 / 120) * (w - 44);
+      c.save(); c.strokeStyle = lineCol; c.lineWidth = 1.5; c.shadowColor = lineCol; c.shadowBlur = lineBlur; c.beginPath(); c.arc(mx, my, rcir, 0, Math.PI * 2); c.stroke(); c.restore();
+      const cSpot = c.createRadialGradient(mx, my, 0, mx, my, 9); cSpot.addColorStop(0, 'rgba(120,255,120,.9)'); cSpot.addColorStop(1, 'rgba(120,255,120,0)'); c.fillStyle = cSpot; c.beginPath(); c.arc(mx, my, 9, 0, Math.PI * 2); c.fill();
       c.fillStyle = 'rgba(150,255,150,.95)'; c.beginPath(); c.arc(mx, my, 3, 0, Math.PI * 2); c.fill();
-      // Penalty boxes
       ln(0, 18, 18, 18, lineCol, 5); ln(18, 18, 18, 62, lineCol, 5); ln(18, 62, 0, 62, lineCol, 5);
       ln(0, 30, 6, 30, lineCol, 4); ln(6, 30, 6, 50, lineCol, 4); ln(6, 50, 0, 50, lineCol, 4);
       ln(120, 18, 102, 18, lineCol, 5); ln(102, 18, 102, 62, lineCol, 5); ln(102, 62, 120, 62, lineCol, 5);
       ln(120, 30, 114, 30, lineCol, 4); ln(114, 30, 114, 50, lineCol, 4); ln(114, 50, 120, 50, lineCol, 4);
-      // Penalty arcs
       const aR = (10 / 120) * (w - 44);
       const [ac1x, ac1y] = sb(12, 40);
       c.save(); c.strokeStyle = lineCol; c.lineWidth = 1.5; c.shadowColor = lineCol; c.shadowBlur = 5;
-      c.beginPath(); c.arc(ac1x, ac1y, aR, Math.PI * .65, Math.PI * 1.35); c.stroke();
+      c.beginPath(); c.arc(ac1x, ac1y, aR, -.295 * Math.PI, .295 * Math.PI); c.stroke();
       const [ac2x, ac2y] = sb(108, 40);
-      c.beginPath(); c.arc(ac2x, ac2y, aR, -Math.PI * .35, Math.PI * .35); c.stroke();
-      c.restore();
-      // Penalty spots
-      [[12, 40], [108, 40]].forEach(([x, y]) => {
-        const [px, py] = sb(x, y);
-        c.save(); c.fillStyle = 'rgba(150,255,150,.9)'; c.shadowColor = lineCol; c.shadowBlur = 6;
-        c.beginPath(); c.arc(px, py, 2.5, 0, Math.PI * 2); c.fill(); c.restore();
-      });
-      // Goals
+      c.beginPath(); c.arc(ac2x, ac2y, aR, .705 * Math.PI, 1.295 * Math.PI); c.stroke(); c.restore();
+      [[12, 40], [108, 40]].forEach(([x, y]) => { const [px, py] = sb(x, y); c.save(); c.fillStyle = 'rgba(150,255,150,.9)'; c.shadowColor = lineCol; c.shadowBlur = 6; c.beginPath(); c.arc(px, py, 2.5, 0, Math.PI * 2); c.fill(); c.restore(); });
       const gd = 10, gh = (8 / 80) * (h - 32);
       const [g1x, g1y] = sb(0, 36), [g2x, g2y] = sb(120, 36);
-      c.save(); c.strokeStyle = 'rgba(255,80,120,.7)'; c.lineWidth = 2.5; c.shadowColor = 'rgba(255,30,70,.5)'; c.shadowBlur = 18;
-      c.strokeRect(g1x - gd, g1y, gd, gh);
-      c.fillStyle = 'rgba(255,30,70,.05)'; c.fillRect(g1x - gd, g1y, gd, gh); c.restore();
-      c.save(); c.strokeStyle = 'rgba(0,180,255,.7)'; c.lineWidth = 2.5; c.shadowColor = 'rgba(0,150,255,.5)'; c.shadowBlur = 18;
-      c.strokeRect(g2x, g2y, gd, gh);
-      c.fillStyle = 'rgba(0,100,255,.05)'; c.fillRect(g2x, g2y, gd, gh); c.restore();
-      // Goal labels
+      c.save(); c.strokeStyle = 'rgba(255,80,120,.7)'; c.lineWidth = 2.5; c.shadowColor = 'rgba(255,30,70,.5)'; c.shadowBlur = 18; c.strokeRect(g1x - gd, g1y, gd, gh); c.fillStyle = 'rgba(255,30,70,.05)'; c.fillRect(g1x - gd, g1y, gd, gh); c.restore();
+      c.save(); c.strokeStyle = 'rgba(0,180,255,.7)'; c.lineWidth = 2.5; c.shadowColor = 'rgba(0,150,255,.5)'; c.shadowBlur = 18; c.strokeRect(g2x, g2y, gd, gh); c.fillStyle = 'rgba(0,100,255,.05)'; c.fillRect(g2x, g2y, gd, gh); c.restore();
       c.save(); c.font = 'bold 9px "Barlow Condensed",sans-serif'; c.textAlign = 'center'; c.textBaseline = 'bottom';
       c.fillStyle = 'rgba(255,80,120,.5)'; c.fillText('ENG GOAL', (g1x - gd / 2), g1y - 3);
       c.fillStyle = 'rgba(0,180,255,.5)'; c.fillText('SPA GOAL', (g2x + gd / 2), g2y - 3);
       c.restore();
     }
 
+    // ═══ JERSEY — size 16 (bigger) ═══
     function drawJersey(c, cx, cy, isHome, isActor, isKeeper) {
       const base = isKeeper ? '#6b4400' : isHome ? '#0c3d8a' : '#800020';
       const lit = isKeeper ? '#c49020' : isHome ? '#1a6ae0' : '#c0102e';
       const glowC = isKeeper ? '#ffaa00' : isHome ? '#00ccff' : '#ff1a4a';
-      const s = 10;
+      const s = 16; // Bigger jersey size
       if (isActor) {
-        const gr = c.createRadialGradient(cx, cy, 0, cx, cy, 36);
+        const gr = c.createRadialGradient(cx, cy, 0, cx, cy, 48);
         gr.addColorStop(0, glowC + '66'); gr.addColorStop(.5, glowC + '22'); gr.addColorStop(1, glowC + '00');
-        c.fillStyle = gr; c.beginPath(); c.arc(cx, cy, 36, 0, Math.PI * 2); c.fill();
-        c.strokeStyle = glowC; c.lineWidth = 2; c.setLineDash([5, 3]);
-        c.shadowColor = glowC; c.shadowBlur = 14;
-        c.beginPath(); c.arc(cx, cy, 25, 0, Math.PI * 2); c.stroke();
+        c.fillStyle = gr; c.beginPath(); c.arc(cx, cy, 48, 0, Math.PI * 2); c.fill();
+        c.strokeStyle = glowC; c.lineWidth = 2.5; c.setLineDash([5, 3]);
+        c.shadowColor = glowC; c.shadowBlur = 18;
+        c.beginPath(); c.arc(cx, cy, 34, 0, Math.PI * 2); c.stroke();
         c.setLineDash([]); c.shadowBlur = 0;
       }
       c.beginPath();
-      c.moveTo(cx - s - 4, cy - 2); c.lineTo(cx - s, cy - s + 2); c.lineTo(cx - s + 3, cy - s);
-      c.lineTo(cx, cy - s + 4); c.lineTo(cx + s - 3, cy - s); c.lineTo(cx + s, cy - s + 2);
-      c.lineTo(cx + s + 4, cy - 2); c.lineTo(cx + s, cy + s + 2); c.lineTo(cx - s, cy + s + 2); c.closePath();
+      c.moveTo(cx - s - 5, cy - 3); c.lineTo(cx - s, cy - s + 2); c.lineTo(cx - s + 4, cy - s);
+      c.lineTo(cx, cy - s + 5); c.lineTo(cx + s - 4, cy - s); c.lineTo(cx + s, cy - s + 2);
+      c.lineTo(cx + s + 5, cy - 3); c.lineTo(cx + s, cy + s + 3); c.lineTo(cx - s, cy + s + 3); c.closePath();
       const bg = c.createLinearGradient(cx, cy - s, cx, cy + s);
       bg.addColorStop(0, lit); bg.addColorStop(1, base);
       c.fillStyle = bg;
-      if (isActor) { c.shadowColor = glowC; c.shadowBlur = 18 }
-      else if (isKeeper) { c.shadowColor = glowC; c.shadowBlur = 8 }
+      if (isActor) { c.shadowColor = glowC; c.shadowBlur = 22; }
+      else if (isKeeper) { c.shadowColor = glowC; c.shadowBlur = 10; }
       c.fill(); c.shadowBlur = 0;
       c.strokeStyle = isActor ? glowC : isKeeper ? glowC + '88' : 'rgba(255,255,255,.18)';
-      c.lineWidth = isActor ? 2 : isKeeper ? 1.3 : .7; c.stroke();
+      c.lineWidth = isActor ? 2.5 : isKeeper ? 1.5 : .9; c.stroke();
       if (isKeeper) {
-        c.strokeStyle = 'rgba(255,255,255,.55)'; c.lineWidth = 1.2;
-        c.beginPath(); c.moveTo(cx - 3, cy); c.lineTo(cx + 3, cy); c.stroke();
-        c.beginPath(); c.moveTo(cx, cy - 3); c.lineTo(cx, cy + 3); c.stroke();
+        c.strokeStyle = 'rgba(255,255,255,.55)'; c.lineWidth = 1.5;
+        c.beginPath(); c.moveTo(cx - 4, cy); c.lineTo(cx + 4, cy); c.stroke();
+        c.beginPath(); c.moveTo(cx, cy - 4); c.lineTo(cx, cy + 4); c.stroke();
       }
     }
 
+    // ═══ PLAYER NAME — 13px, bold, readable ═══
     function drawPlayerName(c, cx, cy, name) {
       const last = name.split(' ').slice(-1)[0];
-      c.font = 'bold 8px "Barlow Condensed",sans-serif';
+      c.font = 'bold 13px "Barlow Condensed",sans-serif'; // Bigger name
       c.textAlign = 'center'; c.textBaseline = 'top';
-      c.strokeStyle = 'rgba(0,0,0,.9)'; c.lineWidth = 2.5; c.strokeText(last, cx, cy + 13);
-      c.fillStyle = 'rgba(255,255,255,.95)'; c.fillText(last, cx, cy + 13);
+      c.strokeStyle = 'rgba(0,0,0,.98)'; c.lineWidth = 4; c.strokeText(last, cx, cy + 20);
+      c.fillStyle = 'rgba(255,255,255,1)'; c.fillText(last, cx, cy + 20);
     }
 
     function drawBall(c, bx, by, t) {
       const [sx, sy] = sb(bx, by), r = 9;
-      const sh = c.createRadialGradient(sx + 3, sy + 5, 0, sx + 3, sy + 5, r * 2.2);
-      sh.addColorStop(0, 'rgba(0,0,0,.5)'); sh.addColorStop(1, 'rgba(0,0,0,0)');
-      c.fillStyle = sh; c.beginPath(); c.ellipse(sx + 3, sy + 5, r * 1.8, r * .75, 0, 0, Math.PI * 2); c.fill();
-      const trail = c.createRadialGradient(sx, sy, 0, sx, sy, r * 3);
-      trail.addColorStop(0, 'rgba(255,200,0,.18)'); trail.addColorStop(1, 'rgba(255,100,0,0)');
-      c.fillStyle = trail; c.beginPath(); c.arc(sx, sy, r * 3, 0, Math.PI * 2); c.fill();
+      const sh = c.createRadialGradient(sx + 3, sy + 5, 0, sx + 3, sy + 5, r * 2.2); sh.addColorStop(0, 'rgba(0,0,0,.5)'); sh.addColorStop(1, 'rgba(0,0,0,0)'); c.fillStyle = sh; c.beginPath(); c.ellipse(sx + 3, sy + 5, r * 1.8, r * .75, 0, 0, Math.PI * 2); c.fill();
+      const trail = c.createRadialGradient(sx, sy, 0, sx, sy, r * 3); trail.addColorStop(0, 'rgba(255,200,0,.18)'); trail.addColorStop(1, 'rgba(255,100,0,0)'); c.fillStyle = trail; c.beginPath(); c.arc(sx, sy, r * 3, 0, Math.PI * 2); c.fill();
       c.shadowColor = 'rgba(255,200,0,.95)'; c.shadowBlur = 24;
-      const bg = c.createRadialGradient(sx - 3, sy - 3, 0, sx, sy, r);
-      bg.addColorStop(0, '#fffde8'); bg.addColorStop(.35, '#ffe040');
-      bg.addColorStop(.75, '#dd8800'); bg.addColorStop(1, '#aa5500');
+      const bg = c.createRadialGradient(sx - 3, sy - 3, 0, sx, sy, r); bg.addColorStop(0, '#fffde8'); bg.addColorStop(.35, '#ffe040'); bg.addColorStop(.75, '#dd8800'); bg.addColorStop(1, '#aa5500');
       c.fillStyle = bg; c.beginPath(); c.arc(sx, sy, r, 0, Math.PI * 2); c.fill(); c.shadowBlur = 0;
-      c.strokeStyle = 'rgba(120,60,0,.5)'; c.lineWidth = 1;
-      c.beginPath(); c.arc(sx, sy, r, 0, Math.PI * 2); c.stroke();
+      c.strokeStyle = 'rgba(120,60,0,.5)'; c.lineWidth = 1; c.beginPath(); c.arc(sx, sy, r, 0, Math.PI * 2); c.stroke();
       const spin = t * 4;
       c.strokeStyle = 'rgba(40,15,0,.45)'; c.lineWidth = 1.2;
-      for (let i = 0; i < 3; i++) {
-        const a = i * Math.PI * 2 / 3 + spin;
-        c.beginPath(); c.arc(sx + Math.cos(a) * 4, sy + Math.sin(a) * 4, 2.5, 0, Math.PI * 2); c.stroke();
-      }
+      for (let i = 0; i < 3; i++) { const a = i * Math.PI * 2 / 3 + spin; c.beginPath(); c.arc(sx + Math.cos(a) * 4, sy + Math.sin(a) * 4, 2.5, 0, Math.PI * 2); c.stroke(); }
       c.fillStyle = 'rgba(255,255,255,.82)'; c.beginPath(); c.arc(sx - 3.5, sy - 3.5, 2.5, 0, Math.PI * 2); c.fill();
     }
 
@@ -1985,79 +2105,49 @@
       const c = pCtx;
       c.clearRect(0, 0, pitchW, pitchH);
       drawPitch();
+      if (showVoronoi) renderVoronoi();
 
-      // Trajectory arrow
       if (['Pass', 'Shot', 'Carry', 'Dribble'].includes(f.type)) {
         const [x1, y1] = sb(f.bx, f.by), [x2, y2] = sb(f.ex, f.ey);
         const dist = Math.hypot(x2 - x1, y2 - y1);
         if (dist > 5) {
           c.save();
           const lCol = f.isHome ? 'rgba(0,180,255,.55)' : 'rgba(255,30,80,.55)';
-          c.setLineDash([9, 5]); c.strokeStyle = lCol; c.lineWidth = 2;
-          c.shadowColor = lCol; c.shadowBlur = 8;
-          c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2, y2); c.stroke();
-          c.setLineDash([]); c.shadowBlur = 0;
-          const ang = Math.atan2(y2 - y1, x2 - x1);
-          const mx2 = (x1 + x2) / 2, my2 = (y1 + y2) / 2;
-          c.fillStyle = f.isHome ? 'rgba(0,200,255,.85)' : 'rgba(255,50,90,.85)';
-          c.shadowColor = c.fillStyle; c.shadowBlur = 6;
-          c.beginPath();
-          c.moveTo(mx2 + Math.cos(ang) * 12, my2 + Math.sin(ang) * 12);
-          c.lineTo(mx2 + Math.cos(ang + 2.5) * 7, my2 + Math.sin(ang + 2.5) * 7);
-          c.lineTo(mx2 + Math.cos(ang - 2.5) * 7, my2 + Math.sin(ang - 2.5) * 7);
-          c.closePath(); c.fill(); c.shadowBlur = 0;
-          c.restore();
+          c.setLineDash([9, 5]); c.strokeStyle = lCol; c.lineWidth = 2; c.shadowColor = lCol; c.shadowBlur = 8;
+          c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2, y2); c.stroke(); c.setLineDash([]); c.shadowBlur = 0;
+          const ang = Math.atan2(y2 - y1, x2 - x1); const mx2 = (x1 + x2) / 2, my2 = (y1 + y2) / 2;
+          c.fillStyle = f.isHome ? 'rgba(0,200,255,.85)' : 'rgba(255,50,90,.85)'; c.shadowColor = c.fillStyle; c.shadowBlur = 6;
+          c.beginPath(); c.moveTo(mx2 + Math.cos(ang) * 12, my2 + Math.sin(ang) * 12); c.lineTo(mx2 + Math.cos(ang + 2.5) * 7, my2 + Math.sin(ang + 2.5) * 7); c.lineTo(mx2 + Math.cos(ang - 2.5) * 7, my2 + Math.sin(ang - 2.5) * 7); c.closePath(); c.fill(); c.shadowBlur = 0; c.restore();
         }
       }
 
-      // Players
       if (f.players && f.players.length) {
         f.players.forEach(p => { if (!p.act) { const [sx, sy] = sb(p.x, p.y); drawJersey(c, sx, sy, !!p.t, false, !!p.k); if (p.name && p.name != '?') drawPlayerName(c, sx, sy, p.name); } });
         f.players.forEach(p => { if (p.act) { const [sx, sy] = sb(p.x, p.y); drawJersey(c, sx, sy, !!p.t, true, !!p.k); if (p.name && p.name != '?') drawPlayerName(c, sx, sy, p.name); } });
       }
 
-      // Ball
-      const bx = lerp(f.bx, f.ex, t);
-      const by = lerp(f.by, f.ey, t);
+      const bx = lerp(f.bx, f.ex, t); const by = lerp(f.by, f.ey, t);
       drawBall(c, bx, by, animT);
 
-      // Goal flash
       if (goalFlashTimer > 0) {
-        const alpha = Math.min(1, goalFlashTimer / .5) * .5 * (0.5 + 0.5 * Math.abs(Math.sin(animT * 6)));
+        const alpha = Math.min(1, goalFlashTimer / .5) * .5 * (.5 + .5 * Math.abs(Math.sin(animT * 6)));
         const isOur = (goalFlashType === 'our');
         const flashGrd = c.createRadialGradient(pitchW / 2, pitchH / 2, 0, pitchW / 2, pitchH / 2, pitchW * .9);
-        if (isOur) {
-          flashGrd.addColorStop(0, `rgba(0,180,255,${alpha * 1.1})`);
-          flashGrd.addColorStop(.5, `rgba(0,80,255,${alpha * .4})`);
-          flashGrd.addColorStop(1, `rgba(0,0,100,0)`);
-        } else {
-          flashGrd.addColorStop(0, `rgba(255,30,60,${alpha * 1.1})`);
-          flashGrd.addColorStop(.5, `rgba(200,0,30,${alpha * .4})`);
-          flashGrd.addColorStop(1, `rgba(100,0,0,0)`);
-        }
+        if (isOur) { flashGrd.addColorStop(0, `rgba(0,180,255,${alpha * 1.1})`); flashGrd.addColorStop(.5, `rgba(0,80,255,${alpha * .4})`); flashGrd.addColorStop(1, `rgba(0,0,100,0)`); }
+        else { flashGrd.addColorStop(0, `rgba(255,30,60,${alpha * 1.1})`); flashGrd.addColorStop(.5, `rgba(200,0,30,${alpha * .4})`); flashGrd.addColorStop(1, `rgba(100,0,0,0)`); }
         c.fillStyle = flashGrd; c.fillRect(0, 0, pitchW, pitchH);
-        if (Math.random() > .4) {
-          for (let i = 0; i < 10; i++) {
-            const px = Math.random() * pitchW, py = Math.random() * pitchH;
-            c.fillStyle = isOur ? '#00d4ff' : '#ff1a4a';
-            c.fillRect(px, py, Math.random() * 6 + 2, Math.random() * 10 + 3);
-          }
-        }
+        if (Math.random() > .4) { for (let i = 0; i < 10; i++) { const px = Math.random() * pitchW, py = Math.random() * pitchH; c.fillStyle = isOur ? '#00d4ff' : '#ff1a4a'; c.fillRect(px, py, Math.random() * 6 + 2, Math.random() * 10 + 3); } }
         const scl = 1 + Math.sin(animT * 5) * .06;
         c.save(); c.translate(pitchW / 2, pitchH / 2); c.scale(scl, scl);
-        c.font = `bold 70px 'Orbitron',monospace`;
-        c.textAlign = 'center'; c.textBaseline = 'middle';
+        c.font = `bold 70px 'Orbitron',monospace`; c.textAlign = 'center'; c.textBaseline = 'middle';
         c.strokeStyle = 'rgba(0,0,0,.9)'; c.lineWidth = 9;
-        const gt = isOur ? '⚽ GOOOL!' : '⚽ GOL SOS!';
-        c.strokeText(gt, 0, 0);
+        const gt = '⚽ GOOOL!'; c.strokeText(gt, 0, 0);
         const tGrd = c.createLinearGradient(-170, -35, 170, 35);
         if (isOur) { tGrd.addColorStop(0, '#00d4ff'); tGrd.addColorStop(.5, '#ffffff'); tGrd.addColorStop(1, '#00d4ff'); }
         else { tGrd.addColorStop(0, '#ff1a4a'); tGrd.addColorStop(.5, '#ffffff'); tGrd.addColorStop(1, '#ff1a4a'); }
-        c.fillStyle = tGrd; c.shadowColor = isOur ? '#00d4ff' : '#ff1a4a'; c.shadowBlur = 60;
-        c.fillText(gt, 0, 0); c.restore();
+        c.fillStyle = tGrd; c.shadowColor = isOur ? '#00d4ff' : '#ff1a4a'; c.shadowBlur = 60; c.fillText(gt, 0, 0); c.restore();
       }
 
-      // Score update
       document.getElementById('liveScore').textContent = `${f.scoreH} — ${f.scoreA}`;
       document.getElementById('ss-spain').textContent = f.scoreH;
       document.getElementById('ss-england').textContent = f.scoreA;
@@ -2067,43 +2157,20 @@
     // ═══ TIMELINE ═══
     function drawTimeline() {
       if (!tCtx) return;
-      const tw = tlCanvas.width, th = 34;
-      const bgG = tCtx.createLinearGradient(0, 0, tw, 0);
-      bgG.addColorStop(0, '#010814'); bgG.addColorStop(.5, '#011020'); bgG.addColorStop(1, '#010814');
+      const tw = tlCanvas.width, th = 22;
+      const bgG = tCtx.createLinearGradient(0, 0, tw, 0); bgG.addColorStop(0, '#010814'); bgG.addColorStop(.5, '#011020'); bgG.addColorStop(1, '#010814');
       tCtx.fillStyle = bgG; tCtx.fillRect(0, 0, tw, th);
       const pct = frameIdx / Math.max(1, FRAMES.length - 1);
-      const pgG = tCtx.createLinearGradient(0, 0, tw * pct, 0);
-      pgG.addColorStop(0, 'rgba(0,50,150,.4)'); pgG.addColorStop(1, 'rgba(0,150,255,.25)');
+      const pgG = tCtx.createLinearGradient(0, 0, tw * pct, 0); pgG.addColorStop(0, 'rgba(0,50,150,.4)'); pgG.addColorStop(1, 'rgba(0,150,255,.25)');
       tCtx.fillStyle = pgG; tCtx.fillRect(0, 0, tw * pct, th);
       FRAMES.forEach((f, i) => {
         const fx = tw * i / Math.max(1, FRAMES.length - 1);
-        if (f.type === 'Shot') {
-          const isGoal = f.outcome === 'Goal';
-          const col = isGoal ? (f.isHome ? '#00ffaa' : '#ff4466') : (f.isHome ? '#00aaff' : '#ff1a4a');
-          tCtx.fillStyle = col; tCtx.shadowColor = col; tCtx.shadowBlur = isGoal ? 18 : 7;
-          tCtx.beginPath(); tCtx.arc(fx, th / 2, isGoal ? 9 : 5, 0, Math.PI * 2); tCtx.fill(); tCtx.shadowBlur = 0;
-        } else if (f.type === 'Substitution') {
-          tCtx.fillStyle = 'rgba(255,200,0,.55)'; tCtx.shadowColor = 'rgba(255,200,0,.4)'; tCtx.shadowBlur = 4;
-          tCtx.fillRect(fx - 1.5, 4, 3, th - 8); tCtx.shadowBlur = 0;
-        }
-      });
-      PAUSES.forEach(p => {
-        const fx = tw * p.frameIdx / Math.max(1, FRAMES.length - 1);
-        tCtx.fillStyle = 'rgba(255,180,0,.55)'; tCtx.shadowColor = 'rgba(255,180,0,.3)'; tCtx.shadowBlur = 3;
-        tCtx.fillRect(fx - 1, 0, 2, th); tCtx.shadowBlur = 0;
-      });
-      tCtx.fillStyle = 'rgba(80,140,255,.4)'; tCtx.font = '8.5px "Barlow Condensed"';
-      tCtx.textAlign = 'center'; tCtx.textBaseline = 'top';
-      FRAMES.forEach((f, i) => {
-        if (f.type === 'Shot') {
-          const fx = tw * i / Math.max(1, FRAMES.length - 1);
-          tCtx.fillText(`${f.min}'`, fx, 2);
-        }
+        if (f.type === 'Shot') { const isGoal = f.outcome === 'Goal'; const col = isGoal ? (f.isHome ? '#00ffaa' : '#ff4466') : (f.isHome ? '#00aaff' : '#ff1a4a'); tCtx.fillStyle = col; tCtx.shadowColor = col; tCtx.shadowBlur = isGoal ? 14 : 5; tCtx.beginPath(); tCtx.arc(fx, th / 2, isGoal ? 6 : 3.5, 0, Math.PI * 2); tCtx.fill(); tCtx.shadowBlur = 0; }
+        else if (f.type === 'Substitution') { tCtx.fillStyle = 'rgba(255,200,0,.55)'; tCtx.shadowColor = 'rgba(255,200,0,.4)'; tCtx.shadowBlur = 4; tCtx.fillRect(fx - 1.5, 3, 3, th - 6); tCtx.shadowBlur = 0; }
       });
       const cx2 = tw * pct;
-      tCtx.fillStyle = '#0099ff'; tCtx.shadowColor = '#0099ff'; tCtx.shadowBlur = 16;
-      tCtx.beginPath(); tCtx.arc(cx2, th / 2, 8, 0, Math.PI * 2); tCtx.fill(); tCtx.shadowBlur = 0;
-      tCtx.fillStyle = '#ffffff'; tCtx.beginPath(); tCtx.arc(cx2, th / 2, 3, 0, Math.PI * 2); tCtx.fill();
+      tCtx.fillStyle = '#0099ff'; tCtx.shadowColor = '#0099ff'; tCtx.shadowBlur = 14; tCtx.beginPath(); tCtx.arc(cx2, th / 2, 6, 0, Math.PI * 2); tCtx.fill(); tCtx.shadowBlur = 0;
+      tCtx.fillStyle = '#ffffff'; tCtx.beginPath(); tCtx.arc(cx2, th / 2, 2.5, 0, Math.PI * 2); tCtx.fill();
     }
 
     // ═══ PANEL ═══
@@ -2118,28 +2185,20 @@
     function renderPanel() {
       const f = FRAMES[frameIdx];
       const ec = EVT_COLORS[f.type] || '#888';
-      document.getElementById('evtType').textContent = f.type || '—';
-      document.getElementById('evtType').style.color = ec;
+      document.getElementById('evtType').textContent = f.type || '—'; document.getElementById('evtType').style.color = ec;
       document.getElementById('evtPlayer').textContent = `${f.player} — ${f.team}`;
       let badges = '';
       badges += `<span style="padding:2px 8px;border-radius:9px;font-size:10px;font-weight:800;background:${f.isHome ? 'rgba(0,100,255,.18)' : 'rgba(200,0,50,.18)'};color:${f.isHome ? '#00ccff' : '#ff4470'};border:1px solid ${f.isHome ? 'rgba(0,180,255,.28)' : 'rgba(255,20,70,.28)'}">${f.team}</span>`;
       if (f.xg > 0) badges += `<span style="padding:2px 8px;border-radius:9px;font-size:10px;font-weight:800;background:rgba(255,180,0,.1);color:#ffd700;border:1px solid rgba(255,180,0,.22)">xG ${f.xg.toFixed(3)}</span>`;
       if (f.outcome) badges += `<span style="padding:2px 8px;border-radius:9px;font-size:10px;font-weight:800;background:rgba(255,255,255,.05);color:rgba(180,210,255,.65);border:1px solid rgba(255,255,255,.09)">${f.outcome}</span>`;
       document.getElementById('evtBadges').innerHTML = badges;
-      const xgHv = Math.min(100, (f.cumXgH || 0) * 60);
-      const xgAv = Math.min(100, (f.cumXgA || 0) * 60);
-      document.getElementById('xgH').style.width = xgHv + '%';
-      document.getElementById('xgA').style.width = xgAv + '%';
-      document.getElementById('xgHval').textContent = (f.cumXgH || 0).toFixed(3);
-      document.getElementById('xgAval').textContent = (f.cumXgA || 0).toFixed(3);
-      const dynTips = getDynTips(f);
-      const scenTips = SCEN_TIPS[scenario] || [];
+      const xgHv = Math.min(100, (f.cumXgH || 0) * 60); const xgAv = Math.min(100, (f.cumXgA || 0) * 60);
+      document.getElementById('xgH').style.width = xgHv + '%'; document.getElementById('xgA').style.width = xgAv + '%';
+      document.getElementById('xgHval').textContent = (f.cumXgH || 0).toFixed(3); document.getElementById('xgAval').textContent = (f.cumXgA || 0).toFixed(3);
+      const dynTips = getDynTips(f); const scenTips = SCEN_TIPS[scenario] || [];
       const allTips = [...dynTips, ...scenTips].slice(0, 5);
-      document.getElementById('tipList').innerHTML = allTips.map(([col, ic, txt]) =>
-        `<div class="tip-item tip-${col}"><span class="tip-icon">${ic}</span>${txt}</div>`
-      ).join('');
-      const h = (f.players || []).filter(p => p.t).length;
-      const a = (f.players || []).length - h;
+      document.getElementById('tipList').innerHTML = allTips.map(([col, ic, txt]) => `<div class="tip-item tip-${col}"><span class="tip-icon">${ic}</span>${txt}</div>`).join('');
+      const h = (f.players || []).filter(p => p.t).length; const a = (f.players || []).length - h;
       document.getElementById('playerCnt').textContent = `${(f.players || []).length} vizibili: ${h} Spania, ${a} Anglia`;
       document.getElementById('frameCnt').textContent = `Frame ${frameIdx + 1} / ${FRAMES.length}`;
     }
@@ -2148,95 +2207,52 @@
       const tips = [];
       const weAttack = (myTeam === 'Spain' && f.isHome) || (myTeam === 'England' && !f.isHome);
       if (f.type === 'Shot') {
-        if (weAttack) {
-          tips.push(['green', '⚡', `${f.player} suteaza! xG=${f.xg.toFixed(3)}`]);
-          if (f.outcome === 'Goal') tips.push(['green', '🏆', 'GOL AL NOSTRU! Reset rapid la centru!']);
-          else if (f.xg > .18) tips.push(['amber', '⚠️', 'Șansă mare! Urmărit respingerea imediat!']);
-        } else {
-          tips.push(['red', '🔴', `ATENȚIE! ${f.player} suteaza! xG=${f.xg.toFixed(3)}`]);
-          if (f.outcome === 'Goal') tips.push(['red', '💔', 'GOL PRIMIT! RESET — recuperați posesia urgent!']);
-          else if (f.xg > .15) tips.push(['red', '🚨', 'PERICOL MAXIM — blocat/salvat cu greu!']);
-          else tips.push(['blue', '🛡️', 'Sut blocat! Repoziționare bloc defensiv complet!']);
-        }
-      } else if (f.type === 'Pass') {
-        if (weAttack) tips.push(['green', '🟢', 'Pasă precisă — menține triunghiul, caută adâncimea!']);
-        else tips.push(['amber', '🟡', 'Adversarul construiește — pressing colectiv imediat!']);
-      } else if (f.type === 'Carry') {
-        if (weAttack) tips.push(['blue', '🔵', 'Avansare cu mingea — caută deschidere pe flanc!']);
-        else tips.push(['red', '🔴', 'Adversar avansează — tăiați culoarul, forțați exterior!']);
-      } else if (f.type === 'Substitution') {
-        tips.push(['amber', '🔄', `Schimbare: ${f.outcome}`]);
-        tips.push(['blue', '💡', 'Energie nouă! Exploatați oboseala adversarului în primele 5 minute!']);
-      }
+        if (weAttack) { tips.push(['green', '⚡', `${f.player} suteaza! xG=${f.xg.toFixed(3)}`]); if (f.outcome === 'Goal') tips.push(['green', '🏆', 'GOL AL NOSTRU! Reset rapid la centru!']); else if (f.xg > .18) tips.push(['amber', '⚠️', 'Șansă mare! Urmărit respingerea imediat!']); }
+        else { tips.push(['red', '🔴', `ATENȚIE! ${f.player} suteaza! xG=${f.xg.toFixed(3)}`]); if (f.outcome === 'Goal') tips.push(['red', '💔', 'GOL PRIMIT! RESET — recuperați posesia urgent!']); else if (f.xg > .15) tips.push(['red', '🚨', 'PERICOL MAXIM — blocat/salvat cu greu!']); else tips.push(['blue', '🛡️', 'Sut blocat! Repoziționare bloc defensiv complet!']); }
+      } else if (f.type === 'Pass') { if (weAttack) tips.push(['green', '🟢', 'Pasă precisă — menține triunghiul, caută adâncimea!']); else tips.push(['amber', '🟡', 'Adversarul construiește — pressing colectiv imediat!']); }
+      else if (f.type === 'Carry') { if (weAttack) tips.push(['blue', '🔵', 'Avansare cu mingea — caută deschidere pe flanc!']); else tips.push(['red', '🔴', 'Adversar avansează — tăiați culoarul, forțați exterior!']); }
+      else if (f.type === 'Substitution') { tips.push(['amber', '🔄', `Schimbare: ${f.outcome}`]); tips.push(['blue', '💡', 'Energie nouă! Exploatați oboseala adversarului în primele 5 minute!']); }
       return tips;
     }
 
     // ═══ OVERLAY ═══
     function showOverlay(p) {
       const f = FRAMES[frameIdx];
-      document.getElementById('mBadge').textContent = p.badgeText;
-      document.getElementById('mBadge').style.color = p.badgeColor;
-      document.getElementById('mBadge').style.borderColor = p.badgeColor;
-      document.getElementById('mBadge').style.background = p.badgeBg;
-      document.getElementById('mTitle').textContent = p.title;
-      document.getElementById('mTitle').style.color = p.titleColor;
+      document.getElementById('mBadge').textContent = p.badgeText; document.getElementById('mBadge').style.color = p.badgeColor; document.getElementById('mBadge').style.borderColor = p.badgeColor; document.getElementById('mBadge').style.background = p.badgeBg;
+      document.getElementById('mTitle').textContent = p.title; document.getElementById('mTitle').style.color = p.titleColor;
       document.getElementById('mBody').textContent = p.body;
-      // Defense tips
       const tips = p.defenseTips || [];
-      // Filter for the team we're playing as
-      document.getElementById('mDefenseTips').innerHTML = tips.map(t =>
-        `<div class="def-tip" style="background:rgba(0,0,0,.2);border-left-color:${t.color}">
-      <div class="def-tip-icon">🛡️</div>
-      <div><span style="color:${t.color};font-weight:900;font-size:10.5px;letter-spacing:1px">${t.label}: </span>${t.text}</div>
-    </div>`
-      ).join('');
-      document.getElementById('mAnalysis').textContent = p.analysis;
-      document.getElementById('mAnalysis').style.borderLeftColor = p.badgeColor;
-      document.getElementById('mAnalysis').style.background = p.badgeBg;
-      document.getElementById('mXgH').textContent = (f.cumXgH || 0).toFixed(3);
-      document.getElementById('mXgA').textContent = (f.cumXgA || 0).toFixed(3);
-      document.getElementById('mFrame').textContent = frameIdx + 1;
-      document.getElementById('overlay').style.display = 'flex';
-      overlayOpen = true; playing = false;
-      document.getElementById('btnPlay').textContent = '▶ PLAY';
-      document.getElementById('btnPlay').className = 'btn btn-play paused';
+      document.getElementById('mDefenseTips').innerHTML = tips.map(t => `<div class="def-tip" style="background:rgba(0,0,0,.2);border-left-color:${t.color}"><div class="def-tip-icon" style="margin-top:2px">🛡️</div><div><span style="color:${t.color};font-weight:700;font-size:15px;letter-spacing:1px;text-transform:uppercase">${t.label}: </span>${t.text}</div></div>`).join('');
+      document.getElementById('mAnalysis').textContent = p.analysis; document.getElementById('mAnalysis').style.borderLeftColor = p.badgeColor; document.getElementById('mAnalysis').style.background = p.badgeBg;
+      document.getElementById('mXgH').textContent = (f.cumXgH || 0).toFixed(3); document.getElementById('mXgA').textContent = (f.cumXgA || 0).toFixed(3); document.getElementById('mFrame').textContent = frameIdx + 1;
+      document.getElementById('overlay').style.display = 'flex'; overlayOpen = true; playing = false;
+      document.getElementById('btnPlay').textContent = '▶ PLAY'; document.getElementById('btnPlay').className = 'btn btn-play paused';
       pausedAt.add(frameIdx);
-      // Goal effects
-      if (p.title.includes('GOL') || p.title.includes('CAMPIONI') || p.title.includes('EGALARE')) {
-        const isOurGoal = (myTeam === 'Spain' && p.title.includes('CAMPIONI')) ||
-          (myTeam === 'Spain' && p.title.includes('N.WILLIAMS')) ||
-          (myTeam === 'England' && p.title.includes('PALMER'));
-        const isSOS = p.title.includes('SOS') || p.title.includes('EGALARE');
-        goalFlashType = isSOS ? 'their' : 'our';
-        goalFlashTimer = 4;
-        if (goalFlashType === 'our') spawnConfetti();
-        showGoalAnnounce(p, isSOS);
+
+      // Check if enemy goal (England scores against Spain when myTeam=Spain, or Spain scores vs England when myTeam=England)
+      const isEnemyGoal = p.title.includes('SOS') || p.title.includes('EGALARE') || (p.badgeText && p.badgeText.includes('GOL ANGLIA'));
+      const isOurGoal = (p.title.includes('GOL') || p.title.includes('CAMPIONI') || p.title.includes('MARCHEAZĂ')) && !isEnemyGoal;
+
+      if (isOurGoal) {
+        goalFlashType = 'our'; goalFlashTimer = 4;
+        spawnConfetti();
+        showGoalAnnounce(p, false);
+      } else if (isEnemyGoal) {
+        goalFlashType = 'their'; goalFlashTimer = 4;
+        startEnemyGoalFlash(); // 2-second pulsing red screen
+        showGoalAnnounce(p, true);
       }
     }
-
     function showGoalAnnounce(p, isSOS) {
-      const el = document.getElementById('goalAnnounce');
-      const txt = document.getElementById('goalAnnounceText');
-      const sub = document.getElementById('goalAnnounceSub');
-      const isOur = !isSOS;
-      txt.className = 'goal-announce-text ' + (isOur ? 'goal-our' : 'goal-their');
-      txt.textContent = isOur ? '⚽ G O O O L !' : '⚽ G O L   S O S !';
-      txt.style.fontSize = isOur ? '80px' : '72px';
-      sub.textContent = isOur ? `🏆 ${p.player || 'GOLGHETER'} MARCHEAZĂ!` : `❗ GOL PRIMIT! REZISTAȚI!`;
-      el.style.opacity = '1';
-      goalAnnounceTimer = 3;
+      const el = document.getElementById('goalAnnounce'); const txt = document.getElementById('goalAnnounceText'); const sub = document.getElementById('goalAnnounceSub');
+      const isOur = !isSOS; txt.className = 'goal-announce-text ' + (isOur ? 'goal-our' : 'goal-their');
+      txt.textContent = '⚽ G O O O L !'; txt.style.fontSize = '80px';
+      sub.textContent = isOur ? `🏆 ${p.player || 'GOLGHETER'} MARCHEAZĂ!` : `❗ ${p.player || 'ADVERSAR'} A MARCAT — ANALIZA URMEAZĂ`;
+      el.style.opacity = '1'; goalAnnounceTimer = 3;
     }
-
-    function closeOverlay() {
-      document.getElementById('overlay').style.display = 'none';
-      overlayOpen = false;
-    }
-    function closeOverlayAndDraw() {
-      closeOverlay();
-      if (!drawMode) toggleDrawMode();
-    }
-    window.closeOverlay = closeOverlay;
-    window.closeOverlayAndDraw = closeOverlayAndDraw;
+    function closeOverlay() { document.getElementById('overlay').style.display = 'none'; overlayOpen = false; }
+    function closeOverlayAndDraw() { closeOverlay(); if (!drawMode) toggleDrawMode(); }
+    window.closeOverlay = closeOverlay; window.closeOverlayAndDraw = closeOverlayAndDraw;
 
     // ═══ CONTROLS ═══
     function togglePlay() {
@@ -2246,49 +2262,31 @@
       if (playing) lastTs = null;
     }
     function step(d) {
-      playing = false;
-      document.getElementById('btnPlay').textContent = '▶ PLAY';
-      document.getElementById('btnPlay').className = 'btn btn-play paused';
+      playing = false; document.getElementById('btnPlay').textContent = '▶ PLAY'; document.getElementById('btnPlay').className = 'btn btn-play paused';
       frameIdx = Math.max(0, Math.min(FRAMES.length - 1, frameIdx + d));
-      accumT = 0; render(); drawTimeline(); renderPanel();
+      accumT = 0; render(); drawTimeline(); drawMomentum(); renderPanel();
     }
-    function cycleSpeed() {
-      speedIdx = (speedIdx + 1) % SPEEDS.length;
-      speed = SPEEDS[speedIdx];
-      document.getElementById('spdTxt').textContent = speed + '×';
-    }
+    function cycleSpeed() { speedIdx = (speedIdx + 1) % SPEEDS.length; speed = SPEEDS[speedIdx]; document.getElementById('spdTxt').textContent = speed + '×'; }
     function resetSim() {
       frameIdx = 0; accumT = 0; playing = false; pausedAt.clear(); goalFlashTimer = 0; goalAnnounceTimer = 0;
       drawings = []; if (dCtx) dCtx.clearRect(0, 0, drawCv.width, drawCv.height);
-      document.getElementById('btnPlay').textContent = '▶ PLAY';
-      document.getElementById('btnPlay').className = 'btn btn-play paused';
-      document.getElementById('overlay').style.display = 'none';
-      document.getElementById('goalAnnounce').style.opacity = '0';
-      overlayOpen = false;
-      render(); drawTimeline(); renderPanel();
+      document.getElementById('btnPlay').textContent = '▶ PLAY'; document.getElementById('btnPlay').className = 'btn btn-play paused';
+      document.getElementById('overlay').style.display = 'none'; document.getElementById('goalAnnounce').style.opacity = '0'; overlayOpen = false;
+      const ef = document.getElementById('enemyGoalFlashOverlay'); if (ef) ef.style.display = 'none';
+      render(); drawTimeline(); drawMomentum(); renderPanel();
     }
     function setScen(s, el) {
-      scenario = s;
-      document.querySelectorAll('.scen-btn').forEach(b => b.className = 'scen-btn');
-      el.className = `scen-btn active-${s.toLowerCase()}`;
-      document.getElementById('scenLabel').textContent = s.toUpperCase();
-      renderPanel();
+      scenario = s; document.querySelectorAll('.scen-btn').forEach(b => b.className = 'scen-btn');
+      el.className = `scen-btn active-${s.toLowerCase()}`; document.getElementById('scenLabel').textContent = s.toUpperCase(); renderPanel();
     }
-    window.togglePlay = togglePlay; window.step = step; window.cycleSpeed = cycleSpeed;
-    window.resetSim = resetSim; window.setScen = setScen;
+    window.togglePlay = togglePlay; window.step = step; window.cycleSpeed = cycleSpeed; window.resetSim = resetSim; window.setScen = setScen;
 
     // ═══ MAIN LOOP ═══
     function loop(ts) {
       if (!lastTs) lastTs = ts;
-      const dt = Math.min((ts - lastTs) / 1000, .05);
-      lastTs = ts; animT += dt;
-
+      const dt = Math.min((ts - lastTs) / 1000, .05); lastTs = ts; animT += dt;
       if (goalFlashTimer > 0) goalFlashTimer = Math.max(0, goalFlashTimer - dt);
-      if (goalAnnounceTimer > 0) {
-        goalAnnounceTimer = Math.max(0, goalAnnounceTimer - dt);
-        if (goalAnnounceTimer === 0) document.getElementById('goalAnnounce').style.opacity = '0';
-      }
-
+      if (goalAnnounceTimer > 0) { goalAnnounceTimer = Math.max(0, goalAnnounceTimer - dt); if (goalAnnounceTimer === 0) document.getElementById('goalAnnounce').style.opacity = '0'; }
       if (playing && !overlayOpen) {
         accumT += dt * speed;
         if (accumT >= frameInterval) {
@@ -2296,172 +2294,55 @@
           if (frameIdx < FRAMES.length - 1) {
             frameIdx++;
             const pause = PAUSES.find(p => p.frameIdx === frameIdx && !pausedAt.has(frameIdx));
-            if (pause) { render(); drawTimeline(); renderPanel(); showOverlay(pause); requestAnimationFrame(loop); return; }
+            if (pause) { render(); drawTimeline(); drawMomentum(); renderPanel(); showOverlay(pause); requestAnimationFrame(loop); return; }
             if (FRAMES[frameIdx].outcome === 'Goal') { goalFlashTimer = 4; }
           } else {
-            playing = false;
-            document.getElementById('btnPlay').textContent = '▶ PLAY';
-            document.getElementById('btnPlay').className = 'btn btn-play paused';
+            playing = false; document.getElementById('btnPlay').textContent = '▶ PLAY'; document.getElementById('btnPlay').className = 'btn btn-play paused';
           }
         }
       }
-      render(); drawTimeline(); renderPanel();
+      render(); drawTimeline(); drawMomentum(); renderPanel();
       requestAnimationFrame(loop);
     }
 
     window.addEventListener('load', init);
     window.addEventListener('keydown', e => {
       if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
-      else if (e.code === 'ArrowLeft') step(-1);
-      else if (e.code === 'ArrowRight') step(1);
-      else if (e.code === 'KeyR') resetSim();
-      else if (e.code === 'KeyD') toggleDrawMode();
+      else if (e.code === 'ArrowLeft') step(-1); else if (e.code === 'ArrowRight') step(1);
+      else if (e.code === 'KeyR') resetSim(); else if (e.code === 'KeyD') toggleDrawMode();
+      else if (e.code === 'KeyV') toggleVoronoi();
     });
-    window.addEventListener('resize', () => {
-      bgCv.width = window.innerWidth; bgCv.height = window.innerHeight;
-      confCv.width = window.innerWidth; confCv.height = window.innerHeight;
-    });
+    window.addEventListener('resize', () => { bgCv.width = window.innerWidth; bgCv.height = window.innerHeight; confCv.width = window.innerWidth; confCv.height = window.innerHeight; });
 
-    // ═══ HORIZONTAL DRAG RESIZER (pitch ↔ panel) ═══
+    // ═══ HORIZONTAL RESIZER ═══
     (function () {
-      const resizer = document.getElementById('mainResizer');
-      const panel = document.getElementById('mainPanel');
-      let isResizing = false, startX = 0, startW = 0;
-
-      resizer.addEventListener('mousedown', function (e) {
-        isResizing = true;
-        startX = e.clientX;
-        startW = panel.offsetWidth;
-        resizer.classList.add('dragging');
-        document.body.style.cursor = 'col-resize';
-        document.body.style.userSelect = 'none';
-        e.preventDefault();
-      });
-
-      document.addEventListener('mousemove', function (e) {
-        if (!isResizing) return;
-        const dx = startX - e.clientX;
-        const newW = Math.max(200, Math.min(700, startW + dx));
-        panel.style.width = newW + 'px';
-      });
-
-      document.addEventListener('mouseup', function () {
-        if (!isResizing) return;
-        isResizing = false;
-        resizer.classList.remove('dragging');
-        document.body.style.cursor = '';
-        document.body.style.userSelect = '';
-        resize(); render();
-      });
+      const resizer = document.getElementById('mainResizer'); const panel = document.getElementById('mainPanel'); let isResizing = false, startX = 0, startW = 0;
+      resizer.addEventListener('mousedown', function (e) { isResizing = true; startX = e.clientX; startW = panel.offsetWidth; resizer.classList.add('dragging'); document.body.style.cursor = 'col-resize'; document.body.style.userSelect = 'none'; e.preventDefault(); });
+      document.addEventListener('mousemove', function (e) { if (!isResizing) return; const dx = startX - e.clientX; const newW = Math.max(200, Math.min(700, startW + dx)); panel.style.width = newW + 'px'; });
+      document.addEventListener('mouseup', function () { if (!isResizing) return; isResizing = false; resizer.classList.remove('dragging'); document.body.style.cursor = ''; document.body.style.userSelect = ''; resize(); render(); });
     })();
 
-    // ═══ VERTICAL DRAG RESIZERS (between panel cards) ═══
+    // ═══ VERTICAL RESIZERS ═══
     (function () {
       let activeVR = null, startY = 0, startH = 0, targetCard = null;
-
       document.querySelectorAll('.v-resizer').forEach(function (vr) {
-        vr.addEventListener('mousedown', function (e) {
-          const cardId = vr.getAttribute('data-target');
-          targetCard = document.getElementById(cardId);
-          if (!targetCard) return;
-          activeVR = vr;
-          startY = e.clientY;
-          startH = targetCard.offsetHeight;
-          vr.classList.add('dragging');
-          document.body.style.cursor = 'ns-resize';
-          document.body.style.userSelect = 'none';
-          e.preventDefault();
-          e.stopPropagation();
-        });
+        vr.addEventListener('mousedown', function (e) { const cardId = vr.getAttribute('data-target'); targetCard = document.getElementById(cardId); if (!targetCard) return; activeVR = vr; startY = e.clientY; startH = targetCard.offsetHeight; vr.classList.add('dragging'); document.body.style.cursor = 'ns-resize'; document.body.style.userSelect = 'none'; e.preventDefault(); e.stopPropagation(); });
       });
-
-      document.addEventListener('mousemove', function (e) {
-        if (!activeVR || !targetCard) return;
-        const dy = e.clientY - startY;
-        const newH = Math.max(40, startH + dy);
-        targetCard.style.height = newH + 'px';
-        targetCard.style.minHeight = newH + 'px';
-        targetCard.style.flexShrink = '0';
-      });
-
-      document.addEventListener('mouseup', function () {
-        if (!activeVR) return;
-        activeVR.classList.remove('dragging');
-        document.body.style.cursor = '';
-        document.body.style.userSelect = '';
-        activeVR = null;
-        targetCard = null;
-      });
+      document.addEventListener('mousemove', function (e) { if (!activeVR || !targetCard) return; const dy = e.clientY - startY; const newH = Math.max(40, startH + dy); targetCard.style.height = newH + 'px'; targetCard.style.minHeight = newH + 'px'; targetCard.style.flexShrink = '0'; });
+      document.addEventListener('mouseup', function () { if (!activeVR) return; activeVR.classList.remove('dragging'); document.body.style.cursor = ''; document.body.style.userSelect = ''; activeVR = null; targetCard = null; });
     })();
 
     // ═══ FULLSCREEN ═══
     function toggleFullscreen() {
-      const btn = document.getElementById('btnFullscreen');
-      const el = document.documentElement;
-
-      // Detect if already fullscreen (cross-browser)
-      const isFS = !!(document.fullscreenElement ||
-        document.webkitFullscreenElement ||
-        document.mozFullScreenElement ||
-        document.msFullscreenElement);
-
-      if (!isFS) {
-        // Enter fullscreen (cross-browser)
-        const req = el.requestFullscreen ||
-          el.webkitRequestFullscreen ||
-          el.mozRequestFullScreen ||
-          el.msRequestFullscreen;
-        if (req) {
-          req.call(el).then(function () {
-            btn.textContent = '✕ IEȘI FULLSCREEN';
-            btn.style.borderColor = 'rgba(0,255,170,.5)';
-            btn.style.color = 'var(--green)';
-          }).catch(function (err) {
-            // fallback: try on body
-            try { document.body.webkitRequestFullscreen && document.body.webkitRequestFullscreen(); } catch (e) { }
-          });
-        }
-      } else {
-        // Exit fullscreen (cross-browser)
-        const ex = document.exitFullscreen ||
-          document.webkitExitFullscreen ||
-          document.mozCancelFullScreen ||
-          document.msExitFullscreen;
-        if (ex) {
-          ex.call(document).then(function () {
-            btn.textContent = '⛶ FULLSCREEN';
-            btn.style.borderColor = 'rgba(255,200,0,.35)';
-            btn.style.color = 'var(--gold)';
-          }).catch(function () { });
-        }
-      }
+      const btn = document.getElementById('btnFullscreen'); const el = document.documentElement;
+      const isFS = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
+      if (!isFS) { const req = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen; if (req) { req.call(el).then(function () { btn.textContent = '✕ IEȘI FULLSCREEN'; btn.style.borderColor = 'rgba(0,255,170,.5)'; btn.style.color = 'var(--green)'; }).catch(function () { }); } }
+      else { const ex = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen; if (ex) { ex.call(document).then(function () { btn.textContent = '⛶ FULLSCREEN'; btn.style.borderColor = 'rgba(255,200,0,.35)'; btn.style.color = 'var(--gold)'; }).catch(function () { }); } }
     }
     window.toggleFullscreen = toggleFullscreen;
-
-    // F key = fullscreen
-    document.addEventListener('keydown', function (e) {
-      if (e.code === 'KeyF' && !e.ctrlKey && !e.altKey && !e.shiftKey) toggleFullscreen();
-    });
-
-    // Update button when ESC exits fullscreen
+    document.addEventListener('keydown', function (e) { if (e.code === 'KeyF' && !e.ctrlKey && !e.altKey && !e.shiftKey) toggleFullscreen(); });
     ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange', 'MSFullscreenChange'].forEach(function (ev) {
-      document.addEventListener(ev, function () {
-        const btn = document.getElementById('btnFullscreen');
-        if (!btn) return;
-        const isFS = !!(document.fullscreenElement ||
-          document.webkitFullscreenElement ||
-          document.mozFullScreenElement ||
-          document.msFullscreenElement);
-        if (!isFS) {
-          btn.textContent = '⛶ FULLSCREEN';
-          btn.style.borderColor = 'rgba(255,200,0,.35)';
-          btn.style.color = 'var(--gold)';
-        } else {
-          btn.textContent = '✕ IEȘI FULLSCREEN';
-          btn.style.borderColor = 'rgba(0,255,170,.5)';
-          btn.style.color = 'var(--green)';
-        }
-      });
+      document.addEventListener(ev, function () { const btn = document.getElementById('btnFullscreen'); if (!btn) return; const isFS = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement); if (!isFS) { btn.textContent = '⛶ FULLSCREEN'; btn.style.borderColor = 'rgba(255,200,0,.35)'; btn.style.color = 'var(--gold)'; } else { btn.textContent = '✕ IEȘI FULLSCREEN'; btn.style.borderColor = 'rgba(0,255,170,.5)'; btn.style.color = 'var(--green)'; } });
     });
   </script>
 </body>
