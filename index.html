@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+    <meta charset="UTF-8">
+    <title>U CLUJ — TACTICAL HUB</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap');
+
+        :root {
+            --gold: #D4A843;
+            --cyan: #00FFFF;
+            --dark: #0A0A0A;
+        }
+
+        body {
+            background: var(--dark);
+            color: white;
+            font-family: 'Rajdhani', sans-serif;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+            background-image: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
+        }
+
+        .hub-container {
+            text-align: center;
+            max-width: 1000px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: var(--gold);
+            letter-spacing: 5px;
+            margin-bottom: 50px;
+            text-shadow: 0 0 20px rgba(212, 168, 67, 0.3);
+        }
+
+        .cards-wrapper {
+            display: flex;
+            gap: 40px;
+            perspective: 1000px;
+        }
+
+        .menu-card {
+            background: #111;
+            border: 1px solid #333;
+            padding: 40px;
+            width: 350px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-15px) scale(1.05);
+            border-color: var(--gold);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+        }
+
+        .card-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .card-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .card-desc {
+            color: #888;
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+
+        /* Stil specific pentru fiecare buton */
+        .btn-anim:hover {
+            border-color: var(--cyan);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.2);
+        }
+
+        .btn-anim .card-title {
+            color: var(--cyan);
+        }
+
+        .btn-data:hover {
+            border-color: var(--gold);
+            box-shadow: 0 0 30px rgba(212, 168, 67, 0.2);
+        }
+
+        .btn-data .card-title {
+            color: var(--gold);
+        }
+
+        .btn-risk:hover {
+            border-color: var(--red);
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.2);
+        }
+
+        .btn-risk .card-title {
+            color: var(--red);
+        }
+
+        .footer-logo {
+            margin-top: 60px;
+            opacity: 0.5;
+            font-weight: 600;
+            letter-spacing: 2px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="hub-container">
+        <h1>TACTICILE JUCĂTORILOR DE LA "U" CLUJ</h1>
+
+        <div class="cards-wrapper">
+            <div class="menu-card btn-anim" onclick="location.href='/simulator'">
+                <span class="card-icon">🏟️</span>
+                <span class="card-title">SIMULATOR 2D</span>
+                <p class="card-desc">Vizualizare tactică avansată a meciului bazată pe date StatsBomb.</p>
+            </div>
+
+            <div class="menu-card btn-data" onclick="location.href='/analytics'">
+                <span class="card-icon">📊</span>
+                <span class="card-title">DATA ANALYTICS</span>
+                <p class="card-desc">Baza de date a jucătorilor, grafice radar și analiză GPS.</p>
+            </div>
+
+            <div class="menu-card btn-risk" onclick="location.href='/turnover'">
+                <span class="card-icon">🚩</span>
+                <span class="card-title">TURNOVER RISK</span>
+                <p class="card-desc">Harta zonelor unde pierdem mingea și analiza riscului per jucător.</p>
+            </div>
+        </div>
+
+        <div class="footer-logo">POWERED BY ECHIPA MĂRĂȘTI</div>
+    </div>
+
+</body>
+
+</html>

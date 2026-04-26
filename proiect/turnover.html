@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Turnover Risk Map — Analiză Tactică</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap"
+    rel="stylesheet">
+  <style>
+    /* ── TOKENS ──────────────────────────────────────────── */
+    :root {
+      --bg: #080c10;
+      --bg2: #0d1218;
+      --bg3: #111820;
+      --surface: #141c26;
+      --surface2: #1a2535;
+      --border: rgba(255, 255, 255, 0.07);
+      --accent: #00e5ff;
+      --accent2: #ff3d00;
+      --accent3: #76ff03;
+      --gold: #ffd600;
+      --text: #e8edf3;
+      --text2: #8fa3b8;
+      --text3: #4a6070;
+      --danger: #ff1744;
+      --warning: #ff9100;
+      --safe: #00e676;
+      --pitch: #1a5c2a;
+      --pitch2: #1d6630;
+      --line: rgba(255, 255, 255, 0.15);
+    }
+
+    /* ── RESET ───────────────────────────────────────────── */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      font-size: 16px;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── SCROLLBAR ───────────────────────────────────────── */
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg2);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--accent);
+      border-radius: 2px;
+    }
+
+    /* ── HEADER ──────────────────────────────────────────── */
+    header {
+      padding: 24px 40px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      background: linear-gradient(135deg, var(--bg2) 0%, rgba(0, 229, 255, 0.04) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(90deg,
+          transparent,
+          transparent 60px,
+          rgba(0, 229, 255, 0.015) 60px,
+          rgba(0, 229, 255, 0.015) 61px);
+      pointer-events: none;
+    }
+
+    .logo-icon {
+      width: 52px;
+      height: 52px;
+      background: var(--accent);
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+      flex-shrink: 0;
+      animation: pulse-glow 3s ease-in-out infinite;
+    }
+
+    @keyframes pulse-glow {
+
+      0%,
+      100% {
+        box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
+      }
+
+      50% {
+        box-shadow: 0 0 40px rgba(0, 229, 255, 0.8), 0 0 80px rgba(0, 229, 255, 0.3);
+      }
+    }
+
+    .header-text h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.4rem;
+      letter-spacing: 4px;
+      color: var(--accent);
+      line-height: 1;
+      text-shadow: 0 0 30px rgba(0, 229, 255, 0.5);
+    }
+
+    .header-text p {
+      font-size: 0.7rem;
+      color: var(--text2);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    .header-badge {
+      margin-left: auto;
+      padding: 6px 14px;
+      background: rgba(0, 229, 255, 0.08);
+      border: 1px solid rgba(0, 229, 255, 0.3);
+      border-radius: 2px;
+      font-size: 0.65rem;
+      color: var(--accent);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* ── LAYOUT ──────────────────────────────────────────── */
+    .app {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      grid-template-rows: auto 1fr;
+      min-height: calc(100vh - 97px);
+    }
+
+    /* ── SIDEBAR ─────────────────────────────────────────── */
+    .sidebar {
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      padding: 24px 20px;
+      overflow-y: auto;
+      max-height: calc(100vh - 97px);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .section-label {
+      font-size: 0.6rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 8px;
+    }
+
+    /* ── SELECTORS ───────────────────────────────────────── */
+    .team-selector {
+      position: relative;
+    }
+
+    .team-selector select {
+      width: 100%;
+      appearance: none;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 12px 40px 12px 14px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      letter-spacing: 0.5px;
+    }
+
+    .team-selector select:focus {
+      outline: none;
+      border-color: var(--accent);
+      background: var(--surface2);
+    }
+
+    .team-selector::after {
+      content: '▾';
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--accent);
+      pointer-events: none;
+      font-size: 0.9rem;
+    }
+
+    /* ── ANALYZE BUTTON ──────────────────────────────────── */
+    .btn-analyze {
+      width: 100%;
+      min-height: 52px;
+      padding: 14px;
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.95rem;
+      line-height: 1;
+      letter-spacing: 4px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-analyze::before {
+      content: '';
+      position: absolute;
+      left: -100%;
+      top: 0;
+      bottom: 0;
+      right: 100%;
+      background: rgba(0, 229, 255, 0.12);
+      transition: all 0.3s;
+    }
+
+    .btn-analyze:hover::before {
+      left: 0;
+      right: 0;
+    }
+
+    .btn-analyze:hover {
+      background: rgba(0, 229, 255, 0.08);
+      box-shadow: 0 0 20px rgba(0, 229, 255, 0.2);
+    }
+
+    .btn-analyze:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* ── PLAYER LIST SIDEBAR ──────────────────────────────── */
+    .player-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .player-card-mini {
+      padding: 10px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--text3);
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .player-card-mini:hover {
+      border-left-color: var(--accent);
+      background: var(--surface2);
+    }
+
+    .player-card-mini.selected {
+      border-left-color: var(--accent);
+      background: rgba(0, 229, 255, 0.06);
+    }
+
+    .player-card-mini.high-risk {
+      border-left-color: var(--danger);
+    }
+
+    .player-card-mini.medium-risk {
+      border-left-color: var(--warning);
+    }
+
+    .player-card-mini.low-risk {
+      border-left-color: var(--safe);
+    }
+
+    .pcm-name {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .pcm-pos {
+      font-size: 0.6rem;
+      color: var(--text2);
+      letter-spacing: 1px;
+    }
+
+    .pcm-risk {
+      font-size: 0.7rem;
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 1px;
+      text-align: right;
+    }
+
+    .pcm-risk.high {
+      color: var(--danger);
+    }
+
+    .pcm-risk.medium {
+      color: var(--warning);
+    }
+
+    .pcm-risk.low {
+      color: var(--safe);
+    }
+
+    /* ── STATS BAR ───────────────────────────────────────── */
+    .stat-bar-wrap {
+      margin-top: 3px;
+    }
+
+    .stat-bar-bg {
+      height: 3px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .stat-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.6s cubic-bezier(.4, 0, .2, 1);
+    }
+
+    /* ── MAIN CONTENT ────────────────────────────────────── */
+    .main {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      overflow: hidden;
+    }
+
+    /* ── TABS ────────────────────────────────────────────── */
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg2);
+      padding: 0 32px;
+    }
+
+    .tab {
+      padding: 14px 24px 12px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.95rem;
+      letter-spacing: 3px;
+      color: var(--text3);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .tab:hover {
+      color: var(--text2);
+    }
+
+    .tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    /* ── PANELS ──────────────────────────────────────────── */
+    .panel {
+      display: none;
+      padding: 32px;
+      overflow-y: auto;
+      height: 100%;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    /* ── FIELD CONTAINER ──────────────────────────────────── */
+    .field-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .field-svg-container {
+      width: 100%;
+      aspect-ratio: 680/480;
+      position: relative;
+    }
+
+    /* ── FOOTBALL PITCH ──────────────────────────────────── */
+    #pitch-svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 0 40px rgba(0, 229, 255, 0.08));
+    }
+
+    /* ── HEATMAP OVERLAY ─────────────────────────────────── */
+    .heat-circle {
+      pointer-events: none;
+      transition: r 0.5s, opacity 0.5s;
+    }
+
+    /* ── PLAYER PIN ──────────────────────────────────────── */
+    .player-pin {
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .player-pin:hover {
+      opacity: 0.85;
+    }
+
+    .player-pin circle {
+      transition: all 0.2s;
+    }
+
+    /* ── TOOLTIP ─────────────────────────────────────────── */
+    #tooltip {
+      position: fixed;
+      background: var(--surface);
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+      padding: 14px 16px;
+      font-size: 0.72rem;
+      max-width: 240px;
+      pointer-events: none;
+      z-index: 1000;
+      display: none;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 229, 255, 0.15);
+    }
+
+    #tooltip.show {
+      display: block;
+    }
+
+    #tooltip h4 {
+      font-size: 0.85rem;
+      color: var(--accent);
+      margin-bottom: 6px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+    }
+
+    #tooltip .tt-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 3px 0;
+    }
+
+    #tooltip .tt-key {
+      color: var(--text2);
+    }
+
+    #tooltip .tt-val {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    /* ── FIELD LEGEND ────────────────────────────────────── */
+    .field-legend {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 16px;
+      padding: 12px 16px;
+      background: var(--surface);
+      border-radius: 4px;
+      border: 1px solid var(--border);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.65rem;
+      color: var(--text2);
+    }
+
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ── RISK PANEL ──────────────────────────────────────── */
+    .risk-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .risk-card {
+      padding: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .risk-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .risk-card.active-zone {
+      border-color: var(--danger);
+    }
+
+    .risk-card::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--text3);
+    }
+
+    .risk-card.danger::before {
+      background: var(--danger);
+    }
+
+    .risk-card.warning::before {
+      background: var(--warning);
+    }
+
+    .risk-card.safe::before {
+      background: var(--safe);
+    }
+
+    .risk-card-title {
+      font-size: 0.6rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text2);
+      margin-bottom: 8px;
+    }
+
+    .risk-card-value {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.8rem;
+      line-height: 1;
+    }
+
+    .risk-card.danger .risk-card-value {
+      color: var(--danger);
+    }
+
+    .risk-card.warning .risk-card-value {
+      color: var(--warning);
+    }
+
+    .risk-card.safe .risk-card-value {
+      color: var(--safe);
+    }
+
+    .risk-card-sub {
+      font-size: 0.6rem;
+      color: var(--text3);
+      margin-top: 4px;
+    }
+
+    /* ── TOP LOSERS TABLE ────────────────────────────────── */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.72rem;
+    }
+
+    .data-table th {
+      text-align: left;
+      padding: 10px 12px;
+      font-size: 0.58rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text3);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    .data-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      vertical-align: middle;
+    }
+
+    .data-table tr:hover td {
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    .rank-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.75rem;
+    }
+
+    .rank-1 {
+      background: var(--danger);
+      color: #000;
+    }
+
+    .rank-2 {
+      background: var(--warning);
+      color: #000;
+    }
+
+    .rank-3 {
+      background: var(--gold);
+      color: #000;
+    }
+
+    .rank-n {
+      background: var(--surface2);
+      color: var(--text2);
+    }
+
+    .pos-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 2px;
+      font-size: 0.6rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      background: var(--surface2);
+      color: var(--text2);
+    }
+
+    .role-FW {
+      background: rgba(255, 61, 0, 0.15);
+      color: #ff6e40;
+    }
+
+    .role-MF {
+      background: rgba(0, 229, 255, 0.12);
+      color: var(--accent);
+    }
+
+    .role-DF {
+      background: rgba(118, 255, 3, 0.1);
+      color: var(--accent3);
+    }
+
+    .role-GK {
+      background: rgba(255, 214, 0, 0.1);
+      color: var(--gold);
+    }
+
+    /* ── INTERPRETATIONS ──────────────────────────────────── */
+    .interp-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .interp-card {
+      padding: 16px 18px;
+      border-radius: 4px;
+      border-left: 4px solid var(--text3);
+      font-size: 0.75rem;
+      line-height: 1.6;
+      background: var(--surface);
+      animation: slide-in 0.4s ease forwards;
+      opacity: 0;
+      transform: translateX(-10px);
+    }
+
+    @keyframes slide-in {
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .interp-card.warning {
+      border-left-color: var(--warning);
+      background: rgba(255, 145, 0, 0.06);
+    }
+
+    .interp-card.danger {
+      border-left-color: var(--danger);
+      background: rgba(255, 23, 68, 0.06);
+    }
+
+    .interp-card.info {
+      border-left-color: var(--accent);
+      background: rgba(0, 229, 255, 0.05);
+    }
+
+    .interp-card.tactical {
+      border-left-color: var(--accent3);
+      background: rgba(118, 255, 3, 0.05);
+    }
+
+    /* ── FLANK METER ─────────────────────────────────────── */
+    .flank-meter {
+      padding: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+
+    .flank-meter-title {
+      font-size: 0.6rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text2);
+      margin-bottom: 12px;
+    }
+
+    .flank-bar {
+      height: 40px;
+      border-radius: 3px;
+      background: var(--bg3);
+      display: flex;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .flank-segment {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.85rem;
+      letter-spacing: 2px;
+      transition: flex 0.8s cubic-bezier(.4, 0, .2, 1);
+      min-width: 0;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .flank-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.6rem;
+      color: var(--text3);
+      letter-spacing: 1px;
+    }
+
+    /* ── MY TEAM PANEL ───────────────────────────────────── */
+    .my-player-card {
+      padding: 14px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: all 0.2s;
+    }
+
+    .my-player-card:hover {
+      border-color: var(--accent3);
+      background: rgba(118, 255, 3, 0.04);
+    }
+
+    .my-player-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--surface2);
+      display: grid;
+      place-items: center;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1rem;
+      color: var(--accent3);
+      flex-shrink: 0;
+      border: 1px solid rgba(118, 255, 3, 0.2);
+    }
+
+    .my-player-info h4 {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .my-player-info p {
+      font-size: 0.65rem;
+      color: var(--text2);
+      margin-top: 2px;
+    }
+
+    .attack-meter {
+      margin-top: 6px;
+    }
+
+    /* ── LOADING ─────────────────────────────────────────── */
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 40px;
+      color: var(--text2);
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+    }
+
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* ── EMPTY STATE ─────────────────────────────────────── */
+    .empty-state {
+      text-align: center;
+      padding: 60px 40px;
+      color: var(--text3);
+    }
+
+    .empty-state .big-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+      opacity: 0.4;
+    }
+
+    .empty-state h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      letter-spacing: 3px;
+      color: var(--text2);
+    }
+
+    .empty-state p {
+      font-size: 0.72rem;
+      margin-top: 8px;
+      line-height: 1.7;
+    }
+
+    /* ── GRID HELPERS ────────────────────────────────────── */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .mb-4 {
+      margin-bottom: 4px;
+    }
+
+    .mb-8 {
+      margin-bottom: 8px;
+    }
+
+    .mb-16 {
+      margin-bottom: 16px;
+    }
+
+    .mb-24 {
+      margin-bottom: 24px;
+    }
+
+    /* ── PITCH DIRECTION LABEL ───────────────────────────── */
+    .direction-label {
+      text-align: center;
+      font-size: 0.6rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text3);
+      padding: 6px 0;
+    }
+
+    /* ── STATUS DOT ──────────────────────────────────────── */
+    .status-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 6px;
+      background: var(--safe);
+      box-shadow: 0 0 6px var(--safe);
+      animation: blink 2s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.4;
+      }
+    }
+
+    /* ── RESPONSIVE ──────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        max-height: none;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .risk-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- TOOLTIP -->
+  <div id="tooltip">
+    <h4 id="tt-name"></h4>
+    <div class="tt-row"><span class="tt-key">Poziție</span><span class="tt-val" id="tt-pos"></span></div>
+    <div class="tt-row"><span class="tt-key">Rol</span><span class="tt-val" id="tt-role"></span></div>
+    <div class="tt-row"><span class="tt-key">Pierderi totale</span><span class="tt-val" id="tt-losses"></span></div>
+    <div class="tt-row"><span class="tt-key">Pierderi/meci</span><span class="tt-val" id="tt-avg"></span></div>
+    <div class="tt-row"><span class="tt-key">Scor risc</span><span class="tt-val" id="tt-risk"></span></div>
+    <div class="tt-row"><span class="tt-key">Acuratețe pase</span><span class="tt-val" id="tt-pass"></span></div>
+  </div>
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo-icon">⚡</div>
+    <div class="header-text">
+      <h1>Turnover Risk Map</h1>
+      <p><span class="status-dot"></span>Analiză Tactică · Superliga României</p>
+    </div>
+    <div class="header-badge">v1.0 · BETA</div>
+  </header>
+
+  <!-- APP -->
+  <div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+      <!-- Echipa adversă -->
+      <div>
+        <p class="section-label">Echipa adversă</p>
+        <div class="team-selector">
+          <select id="opp-team">
+            <option value="">— Selectează echipa —</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Echipa mea -->
+      <div>
+        <p class="section-label">Echipa mea (opțional)</p>
+        <div class="team-selector">
+          <select id="my-team">
+            <option value="">— Selectează echipa ta —</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Buton analiză -->
+      <button class="btn-analyze" id="btn-analyze" disabled>
+        ▶ ANALIZEAZĂ
+      </button>
+
+      <!-- Separator -->
+      <div style="height:1px; background: var(--border);"></div>
+
+      <!-- Jucători echipă adversă -->
+      <div id="sidebar-players">
+        <div class="empty-state" style="padding:20px 0;">
+          <div class="big-icon">📋</div>
+          <p>Selectează o echipă<br>pentru a vedea jucătorii</p>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+      <!-- TABS -->
+      <div class="tabs">
+        <div class="tab active" data-tab="map">🗺 Hartă Teren</div>
+        <div class="tab" data-tab="analysis">📊 Analiză Tactică</div>
+        <div class="tab" data-tab="squad">👥 Lot Advers</div>
+      </div>
+
+      <!-- PANEL: MAP -->
+      <div class="panel active" id="panel-map">
+
+        <div id="map-empty" class="empty-state">
+          <div class="big-icon">⚽</div>
+          <h3>Zonele de Risc</h3>
+          <p>Selectează o echipă adversă și apasă<br>"ANALIZEAZĂ" pentru a vedea<br>harta zonelor de pierdere a mingii.
+          </p>
+        </div>
+
+        <div id="map-content" style="display:none;">
+          <div class="direction-label">▲ POARTA LOR</div>
+
+          <div class="field-wrap">
+            <div class="field-svg-container">
+              <svg id="pitch-svg" viewBox="0 0 680 480" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <radialGradient id="heat-grad-high" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#ff1744" stop-opacity="0.7" />
+                    <stop offset="40%" stop-color="#ff6d00" stop-opacity="0.45" />
+                    <stop offset="100%" stop-color="#ff1744" stop-opacity="0" />
+                  </radialGradient>
+                  <radialGradient id="heat-grad-mid" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#ff9100" stop-opacity="0.55" />
+                    <stop offset="100%" stop-color="#ff9100" stop-opacity="0" />
+                  </radialGradient>
+                  <radialGradient id="heat-grad-low" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#ffd600" stop-opacity="0.35" />
+                    <stop offset="100%" stop-color="#ffd600" stop-opacity="0" />
+                  </radialGradient>
+                  <filter id="blur-heat">
+                    <feGaussianBlur stdDeviation="18" />
+                  </filter>
+                </defs>
+
+                <!-- PITCH BACKGROUND -->
+                <rect x="0" y="0" width="680" height="480" fill="#0f2d14" rx="0" />
+
+                <!-- GRASS STRIPES -->
+                <rect x="0" y="0" width="85" height="480" fill="#122e17" rx="0" />
+                <rect x="170" y="0" width="85" height="480" fill="#122e17" rx="0" />
+                <rect x="340" y="0" width="85" height="480" fill="#122e17" rx="0" />
+                <rect x="510" y="0" width="85" height="480" fill="#122e17" rx="0" />
+
+                <!-- PITCH OUTLINE -->
+                <rect x="20" y="20" width="640" height="440" fill="none" stroke="rgba(255,255,255,0.2)"
+                  stroke-width="2" />
+
+                <!-- HALFWAY LINE -->
+                <line x1="20" y1="240" x2="660" y2="240" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" />
+
+                <!-- CENTER CIRCLE -->
+                <circle cx="340" cy="240" r="70" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" />
+                <circle cx="340" cy="240" r="4" fill="rgba(255,255,255,0.4)" />
+
+                <!-- TOP PENALTY AREA (their goal) -->
+                <rect x="160" y="20" width="360" height="120" fill="none" stroke="rgba(255,255,255,0.18)"
+                  stroke-width="1.5" />
+                <!-- TOP GOAL AREA -->
+                <rect x="260" y="20" width="160" height="50" fill="none" stroke="rgba(255,255,255,0.18)"
+                  stroke-width="1.5" />
+                <!-- TOP GOAL -->
+                <rect x="290" y="10" width="100" height="16" fill="rgba(255,255,255,0.06)"
+                  stroke="rgba(255,255,255,0.25)" stroke-width="1.5" />
+                <!-- TOP PENALTY SPOT -->
+                <circle cx="340" cy="110" r="3" fill="rgba(255,255,255,0.4)" />
+                <!-- TOP PENALTY ARC -->
+                <path d="M 270 140 A 70 70 0 0 1 410 140" fill="none" stroke="rgba(255,255,255,0.18)"
+                  stroke-width="1.5" />
+
+                <!-- BOTTOM PENALTY AREA (our goal) -->
+                <rect x="160" y="340" width="360" height="120" fill="none" stroke="rgba(255,255,255,0.18)"
+                  stroke-width="1.5" />
+                <!-- BOTTOM GOAL AREA -->
+                <rect x="260" y="430" width="160" height="50" fill="none" stroke="rgba(255,255,255,0.18)"
+                  stroke-width="1.5" />
+                <!-- BOTTOM GOAL -->
+                <rect x="290" y="454" width="100" height="16" fill="rgba(255,255,255,0.06)"
+                  stroke="rgba(255,255,255,0.25)" stroke-width="1.5" />
+                <!-- BOTTOM PENALTY SPOT -->
+                <circle cx="340" cy="370" r="3" fill="rgba(255,255,255,0.4)" />
+                <!-- BOTTOM PENALTY ARC -->
+                <path d="M 270 340 A 70 70 0 0 0 410 340" fill="none" stroke="rgba(255,255,255,0.18)"
+                  stroke-width="1.5" />
+
+                <!-- CORNER ARCS -->
+                <path d="M 20 36 A 16 16 0 0 1 36 20" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" />
+                <path d="M 644 20 A 16 16 0 0 1 660 36" fill="none" stroke="rgba(255,255,255,0.18)"
+                  stroke-width="1.5" />
+                <path d="M 660 444 A 16 16 0 0 1 644 460" fill="none" stroke="rgba(255,255,255,0.18)"
+                  stroke-width="1.5" />
+                <path d="M 36 460 A 16 16 0 0 1 20 444" fill="none" stroke="rgba(255,255,255,0.18)"
+                  stroke-width="1.5" />
+
+                <!-- ZONE LABELS ON PITCH -->
+                <text x="340" y="78" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.12)"
+                  font-family="Space Mono" letter-spacing="2">TREIME OFENSIVĂ</text>
+                <text x="340" y="245" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.1)"
+                  font-family="Space Mono" letter-spacing="2">CENTRUL TERENULUI</text>
+                <text x="340" y="400" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.1)"
+                  font-family="Space Mono" letter-spacing="2">TREIME DEFENSIVĂ</text>
+
+                <!-- HEATMAP LAYER (filled by JS) -->
+                <g id="heatmap-layer" filter="url(#blur-heat)"></g>
+
+                <!-- PLAYER PINS LAYER (filled by JS) -->
+                <g id="pins-layer"></g>
+
+              </svg>
+            </div>
+          </div>
+
+          <div class="direction-label">▼ POARTA NOASTRĂ</div>
+
+          <!-- LEGEND -->
+          <div class="field-legend" style="margin-top:12px;">
+            <div class="legend-item">
+              <div class="legend-dot" style="background:#ff1744;opacity:0.8;"></div>
+              <span>Risc Maxim</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:#ff9100;opacity:0.7;"></div>
+              <span>Risc Ridicat</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:#ffd600;opacity:0.6;"></div>
+              <span>Risc Mediu</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:rgba(255,255,255,0.6);"></div>
+              <span>Zone estimate pe baza pozițiilor jucătorilor</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:#76ff03;"></div>
+              <span>Cel mai vulnerabil</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- PANEL: ANALYSIS -->
+      <div class="panel" id="panel-analysis">
+
+        <div id="analysis-empty" class="empty-state">
+          <div class="big-icon">📊</div>
+          <h3>Analiză Tactică</h3>
+          <p>Selectează echipele și apasă<br>"ANALIZEAZĂ" pentru interpretări tactice.</p>
+        </div>
+
+        <div id="analysis-content" style="display:none;">
+
+          <!-- FLANK METER -->
+          <div class="flank-meter mb-24">
+            <div class="flank-meter-title">Distribuția Riscului pe Sectoare</div>
+            <div class="flank-bar">
+              <div class="flank-segment" id="flank-left" style="background:rgba(255,23,68,0.7);color:#fff;"></div>
+              <div class="flank-segment" id="flank-center" style="background:rgba(255,145,0,0.6);color:#fff;"></div>
+              <div class="flank-segment" id="flank-right" style="background:rgba(255,214,0,0.6);color:#000;"></div>
+            </div>
+            <div class="flank-labels">
+              <span id="flank-left-label">STÂNGA</span>
+              <span>CENTRU</span>
+              <span id="flank-right-label">DREAPTA</span>
+            </div>
+          </div>
+
+          <!-- RISK CARDS -->
+          <div class="risk-grid mb-24" id="risk-cards"></div>
+
+          <!-- INTERPRETARI -->
+          <div class="mb-8">
+            <p class="section-label">Interpretări Tactice</p>
+          </div>
+          <div class="interp-list mb-24" id="interpretations"></div>
+
+          <!-- MY BEST ATTACKERS -->
+          <div id="my-players-section" style="display:none;">
+            <div class="mb-8">
+              <p class="section-label">Jucătorii tăi recomandați</p>
+            </div>
+            <div id="my-players-list" style="display:flex;flex-direction:column;gap:8px;" class="mb-24"></div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- PANEL: SQUAD -->
+      <div class="panel" id="panel-squad">
+
+        <div id="squad-empty" class="empty-state">
+          <div class="big-icon">👥</div>
+          <h3>Lot Echipă Adversă</h3>
+          <p>Selectează o echipă adversă și<br>apasă "ANALIZEAZĂ" pentru detalii.</p>
+        </div>
+
+        <div id="squad-content" style="display:none;">
+          <div class="mb-16">
+            <p class="section-label" id="squad-title">Clasament Pierderi Minge</p>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Jucător</th>
+                  <th>Poziție</th>
+                  <th>Rol</th>
+                  <th>Meciuri</th>
+                  <th>Total Pierderi</th>
+                  <th>Pierderi/Meci</th>
+                  <th>Proprie Jum.</th>
+                  <th>Periculoase</th>
+                  <th>Acuratețe Pase</th>
+                  <th>Scor Risc</th>
+                </tr>
+              </thead>
+              <tbody id="squad-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    // ── CONFIG ────────────────────────────────────────────────────────────────────
+    //const API = "http://localhost:5000/api";
+    const API = "/api";
+
+    // ── STATE ─────────────────────────────────────────────────────────────────────
+    let state = {
+      teams: [],
+      oppPlayers: [],
+      mapData: null,
+      analysisData: null,
+    };
+
+    // ── UTILS ─────────────────────────────────────────────────────────────────────
+    const $ = id => document.getElementById(id);
+    const qs = sel => document.querySelector(sel);
+
+    function riskClass(score) {
+      if (score >= 12) return "high";
+      if (score >= 6) return "medium";
+      return "low";
+    }
+
+    function roleCode(role) {
+      if (!role) return "";
+      const r = role.toLowerCase();
+      if (r.includes("forward")) return "FW";
+      if (r.includes("midfielder")) return "MF";
+      if (r.includes("defender")) return "DF";
+      if (r.includes("goalkeeper")) return "GK";
+      return "";
+    }
+
+    function clamp(v, min = 0, max = 1) { return Math.max(min, Math.min(max, v)); }
+
+    // ── TOOLTIP ───────────────────────────────────────────────────────────────────
+    const tooltip = $("tooltip");
+    function showTooltip(e, p) {
+      $("tt-name").textContent = p.name;
+      $("tt-pos").textContent = p.position_name || p.position_code;
+      $("tt-role").textContent = p.role || "—";
+      $("tt-losses").textContent = p.totalLosses;
+      $("tt-avg").textContent = p.avgLosses + "/meci";
+      $("tt-risk").textContent = p.riskScore.toFixed(2);
+      $("tt-pass").textContent = (p.passAccuracy || 0) + "%";
+      tooltip.classList.add("show");
+      moveTooltip(e);
+    }
+    function moveTooltip(e) {
+      const x = e.clientX + 14;
+      const y = e.clientY - 40;
+      tooltip.style.left = Math.min(x, window.innerWidth - 260) + "px";
+      tooltip.style.top = Math.max(y, 10) + "px";
+    }
+    function hideTooltip() { tooltip.classList.remove("show"); }
+    document.addEventListener("mousemove", moveTooltip);
+
+    // ── TABS ──────────────────────────────────────────────────────────────────────
+    document.querySelectorAll(".tab").forEach(tab => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+        document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+        tab.classList.add("active");
+        $("panel-" + tab.dataset.tab).classList.add("active");
+      });
+    });
+
+    // ── LOAD TEAMS ────────────────────────────────────────────────────────────────
+    async function loadTeams() {
+      try {
+        const res = await fetch(`${API}/teams`);
+        const teams = await res.json();
+        state.teams = teams;
+
+        const oppSel = $("opp-team");
+        const mySel = $("my-team");
+        teams.forEach(t => {
+          const opt1 = new Option(`${t.name} (${t.playerCount} jucători)`, t.name);
+          const opt2 = new Option(`${t.name}`, t.name);
+          oppSel.add(opt1);
+          mySel.add(opt2);
+        });
+      } catch (e) {
+        console.error("Nu pot accesa backend-ul:", e);
+        showBackendError();
+      }
+    }
+
+    function showBackendError() {
+      $("sidebar-players").innerHTML = `
+    <div style="padding:16px;background:rgba(255,23,68,0.08);border:1px solid rgba(255,23,68,0.3);border-radius:4px;font-size:0.7rem;color:#ff6e6e;line-height:1.6;">
+      ⚠️ <strong>Backend offline</strong><br>
+      Pornește serverul Python:<br>
+      <code style="background:rgba(0,0,0,0.3);padding:4px 8px;display:inline-block;margin-top:6px;border-radius:2px;">python backend.py</code>
+    </div>`;
+    }
+
+    // ── TEAM CHANGE ───────────────────────────────────────────────────────────────
+    $("opp-team").addEventListener("change", async () => {
+      const team = $("opp-team").value;
+      $("btn-analyze").disabled = !team;
+
+      if (!team) {
+        $("sidebar-players").innerHTML = `
+      <div class="empty-state" style="padding:20px 0;">
+        <div class="big-icon">📋</div>
+        <p>Selectează o echipă<br>pentru a vedea jucătorii</p>
+      </div>`;
+        return;
+      }
+
+      $("sidebar-players").innerHTML = `<div class="loading"><div class="spinner"></div>SE ÎNCARCĂ...</div>`;
+
+      try {
+        const res = await fetch(`${API}/team/${encodeURIComponent(team)}/players`);
+        const players = await res.json();
+        state.oppPlayers = players;
+        renderSidebarPlayers(players);
+      } catch (e) {
+        $("sidebar-players").innerHTML = `<p style="color:var(--danger);font-size:0.7rem;">Eroare la încărcare</p>`;
+      }
+    });
+
+    function renderSidebarPlayers(players) {
+      const maxRisk = Math.max(...players.map(p => p.riskScore), 1);
+      const html = players.slice(0, 20).map(p => {
+        const rc = riskClass(p.riskScore);
+        const pct = (p.riskScore / maxRisk * 100).toFixed(1);
+        const barColor = rc === "high" ? "var(--danger)" : rc === "medium" ? "var(--warning)" : "var(--safe)";
+        return `
+      <div class="player-card-mini ${rc}-risk" 
+           onmouseenter="showTooltip(event,${JSON.stringify(p).replace(/"/g, '&quot;')})" 
+           onmouseleave="hideTooltip()">
+        <div>
+          <div class="pcm-name">${p.name}</div>
+          <div class="pcm-pos">${p.position_name || p.position_code}</div>
+          <div class="stat-bar-wrap">
+            <div class="stat-bar-bg">
+              <div class="stat-bar-fill" style="width:${pct}%;background:${barColor};"></div>
+            </div>
+          </div>
+        </div>
+        <div class="pcm-risk ${rc}">${p.riskScore.toFixed(1)}</div>
+      </div>`;
+      }).join("");
+
+      $("sidebar-players").innerHTML = `
+    <p class="section-label">Top Jucători (${players.length} total)</p>
+    <div class="player-list">${html}</div>`;
+    }
+
+    // ── ANALYZE ───────────────────────────────────────────────────────────────────
+    $("btn-analyze").addEventListener("click", async () => {
+      const opp = $("opp-team").value;
+      const my = $("my-team").value;
+      if (!opp) return;
+
+      $("btn-analyze").disabled = true;
+      $("btn-analyze").textContent = "⏳ PROCESARE...";
+
+      try {
+        // Fetch map data
+        const [mapRes, analysisRes, squadRes] = await Promise.all([
+          fetch(`${API}/team/${encodeURIComponent(opp)}/turnover_map`),
+          fetch(`${API}/team/${encodeURIComponent(opp)}/analysis${my ? `?my_team=${encodeURIComponent(my)}` : ""}`),
+          fetch(`${API}/team/${encodeURIComponent(opp)}/players`)
+        ]);
+
+        const mapData = await mapRes.json();
+        const analysisData = await analysisRes.json();
+        const squadData = await squadRes.json();
+
+        state.mapData = mapData;
+        state.analysisData = analysisData;
+
+        renderMap(mapData, squadData);
+        renderAnalysis(analysisData);
+        renderSquad(squadData, opp);
+
+        // Switch to map tab
+        document.querySelector('[data-tab="map"]').click();
+
+      } catch (e) {
+        console.error(e);
+        alert("Eroare la analiză. Verifică că backend-ul rulează.");
+      }
+
+      $("btn-analyze").disabled = false;
+      $("btn-analyze").textContent = "▶ ANALIZEAZĂ";
+    });
+
+    // ── RENDER MAP ────────────────────────────────────────────────────────────────
+    function renderMap(mapData, players) {
+      $("map-empty").style.display = "none";
+      $("map-content").style.display = "block";
+
+      const heatLayer = $("heatmap-layer");
+      const pinsLayer = $("pins-layer");
+
+      heatLayer.innerHTML = "";
+      pinsLayer.innerHTML = ""; // NU mai folosim jucători
+
+      const pitchW = 640;
+      const pitchH = 440;
+      const offX = 20;
+      const offY = 20;
+
+      function opponentY(y) {
+        return 100 - y; // inversăm pentru adversar
+      }
+
+      mapData.zones.forEach(z => {
+        const y = opponentY(z.y);
+
+        const svgX = offX + (z.x / 100) * pitchW;
+        const svgY = offY + pitchH - (y / 100) * pitchH;
+
+        const intensity = z.intensity || 0;
+
+        let gradId = "heat-grad-low";
+        let radius = 70;
+
+        if (intensity >= 0.66) {
+          gradId = "heat-grad-high";
+          radius = 130;
+        } else if (intensity >= 0.33) {
+          gradId = "heat-grad-mid";
+          radius = 105;
+        } else {
+          gradId = "heat-grad-low";
+          radius = 85;
+        }
+
+        const heat = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
+        heat.setAttribute("cx", svgX);
+        heat.setAttribute("cy", svgY);
+        heat.setAttribute("rx", radius);
+        heat.setAttribute("ry", radius * 0.75);
+        heat.setAttribute("fill", `url(#${gradId})`);
+        heat.setAttribute("opacity", 0.45 + intensity * 0.45);
+
+        heatLayer.appendChild(heat);
+      });
+    }
+
+    // ── RENDER ANALYSIS ───────────────────────────────────────────────────────────
+    function renderAnalysis(data) {
+      $("analysis-empty").style.display = "none";
+      $("analysis-content").style.display = "block";
+
+      // Flank meter
+      const { left, center, right } = data.flankRisk;
+      const total = left + center + right || 1;
+      const lPct = (left / total * 100).toFixed(0);
+      const cPct = (center / total * 100).toFixed(0);
+      const rPct = (right / total * 100).toFixed(0);
+
+      $("flank-left").style.flex = lPct;
+      $("flank-center").style.flex = cPct;
+      $("flank-right").style.flex = rPct;
+      $("flank-left").textContent = lPct > 12 ? `STÂNGA ${lPct}%` : "";
+      $("flank-center").textContent = cPct > 12 ? `CENTRU ${cPct}%` : "";
+      $("flank-right").textContent = rPct > 12 ? `DREAPTA ${rPct}%` : "";
+      $("flank-left-label").textContent = `STÂNGA — ${left.toFixed(1)}`;
+      $("flank-right-label").textContent = `DREAPTA — ${right.toFixed(1)}`;
+
+      // Risk cards
+      const ma = data.matchAnalysis;
+      const top1 = data.topLosers[0] || {};
+      const riskCardsHtml = `
+    <div class="risk-card danger">
+      <div class="risk-card-title">Jucător Advers De Presat</div>
+      <div class="risk-card-value" style="font-size:1.4rem;margin:6px 0;">${top1.name || "—"}</div>
+      <div class="risk-card-sub">${top1.position_name || ""} · ${(top1.avgLosses || 0).toFixed(1)} prd/meci · țintă pentru pressing</div>
+    </div>
+    <div class="risk-card warning">
+      <div class="risk-card-title">Medie Pierderi Echipă</div>
+      <div class="risk-card-value">${ma.avgTeamLossRate}</div>
+      <div class="risk-card-sub">pierderi/meci/jucător</div>
+    </div>
+    <div class="risk-card safe">
+      <div class="risk-card-title">Jucători Analizați</div>
+      <div class="risk-card-value">${ma.totalPlayersAnalyzed}</div>
+      <div class="risk-card-sub">jucători cu date relevante</div>
+    </div>
+  `;
+      $("risk-cards").innerHTML = riskCardsHtml;
+
+      // Interpretations
+      const interpHtml = data.interpretations.map((it, i) => `
+    <div class="interp-card ${it.type}" style="animation-delay:${i * 0.08}s;">
+      ${it.message}
+    </div>`).join("");
+      $("interpretations").innerHTML = interpHtml || "<p style='color:var(--text3);font-size:0.72rem;'>Nu există suficiente date pentru interpretări.</p>";
+
+      // My players
+      if (data.myBestPlayers && data.myBestPlayers.length > 0) {
+        $("my-players-section").style.display = "block";
+        const myHtml = data.myBestPlayers.map(p => `
+      <div class="my-player-card">
+        <div class="my-player-avatar">${p.name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase()}</div>
+        <div class="my-player-info" style="flex:1;">
+          <h4>${p.name}</h4>
+          <p>${p.position_name || p.position_code} · ${p.role}</p>
+          <div class="attack-meter">
+            <div class="stat-bar-bg">
+              <div class="stat-bar-fill" style="width:${Math.min(p.attackScore * 80, 100)}%;background:var(--accent3);"></div>
+            </div>
+          </div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:'Bebas Neue';font-size:1.2rem;color:var(--accent3);">${p.goals}⚽ ${p.assists}🎯</div>
+          <div style="font-size:0.6rem;color:var(--text2);">Scor atac: ${p.attackScore.toFixed(2)}</div>
+        </div>
+      </div>`).join("");
+        $("my-players-list").innerHTML = myHtml;
+      } else {
+        $("my-players-section").style.display = "none";
+      }
+    }
+
+    // ── RENDER SQUAD ──────────────────────────────────────────────────────────────
+    function renderSquad(players, teamName) {
+      $("squad-empty").style.display = "none";
+      $("squad-content").style.display = "block";
+      $("squad-title").textContent = `${teamName} — Clasament Pierderi Minge (${players.length} jucători)`;
+
+      const rows = players.map((p, i) => {
+        const rc = roleCode(p.role);
+        const risk = p.riskScore;
+        const riskColor = risk >= 12 ? "var(--danger)" : risk >= 6 ? "var(--warning)" : "var(--safe)";
+        const rank = i < 3 ? `<span class="rank-badge rank-${i + 1}">${i + 1}</span>` : `<span class="rank-badge rank-n">${i + 1}</span>`;
+        return `
+      <tr>
+        <td>${rank}</td>
+        <td style="font-weight:700;white-space:nowrap;">${p.name}</td>
+        <td><span class="pos-badge">${p.position_code.toUpperCase()}</span></td>
+        <td><span class="pos-badge role-${rc}">${p.role || "—"}</span></td>
+        <td style="color:var(--text2);">${p.matchesPlayed}</td>
+        <td style="font-weight:700;">${p.totalLosses}</td>
+        <td style="font-weight:700;color:${riskColor};">${p.avgLosses}</td>
+        <td>${p.ownHalfLosses}</td>
+        <td style="color:${p.dangerousLosses > 10 ? "var(--danger)" : "var(--text)"};">${p.dangerousLosses}</td>
+        <td>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div class="stat-bar-bg" style="width:60px;">
+              <div class="stat-bar-fill" style="width:${p.passAccuracy}%;background:${p.passAccuracy > 80 ? 'var(--safe)' : p.passAccuracy > 65 ? 'var(--warning)' : 'var(--danger)'}"></div>
+            </div>
+            <span style="font-size:0.7rem;">${p.passAccuracy}%</span>
+          </div>
+        </td>
+        <td style="font-family:'Bebas Neue';font-size:1.1rem;color:${riskColor};">${risk.toFixed(1)}</td>
+      </tr>`;
+      }).join("");
+
+      $("squad-table-body").innerHTML = rows;
+    }
+
+    // ── INIT ──────────────────────────────────────────────────────────────────────
+    loadTeams();
+  </script>
+</body>
+
+</html>

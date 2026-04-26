@@ -11,7 +11,8 @@
             --gold: #D4A843;
             --dark: #0A0A0A;
             --dark2: #151515;
-            --white: #F0F0F0;
+            --white: #FFFFFF;
+            /* CULOARE ACTUALIZATĂ - Alb pur pentru text */
             --cyan: #00FFFF;
         }
 
@@ -75,51 +76,21 @@
             gap: 30px;
         }
 
-        .analysis-box,
-        .ai-box,
-        .strategy-box {
-            padding: 20px;
-            border-radius: 4px;
-            height: fit-content;
-        }
-
-        .analysis-box {
-            background: rgba(212, 168, 67, 0.05);
-            border: 1px solid var(--gold);
-        }
-
         .ai-box {
             background: rgba(0, 255, 255, 0.05);
             border: 1px solid var(--cyan);
-            margin-top: 20px;
+            padding: 20px;
+            border-radius: 4px;
+            height: 100%;
+            box-sizing: border-box;
         }
 
         .strategy-box {
-            background: rgba(212, 168, 67, 0.1);
-            border: 2px solid var(--gold);
+            border: 2px solid var(--cyan);
+            padding: 20px;
+            background: rgba(0, 255, 255, 0.05);
             margin-bottom: 20px;
             display: none;
-            /* Ascuns implicit */
-        }
-
-        .stat-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .ai-btn {
-            background: var(--gold);
-            color: black;
-            border: none;
-            padding: 10px 20px;
-            font-family: 'Rajdhani';
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 15px;
-            text-transform: uppercase;
         }
 
         #backToTeams {
@@ -130,8 +101,33 @@
             width: 100%;
             cursor: pointer;
             margin-bottom: 20px;
-            font-family: 'Rajdhani';
             font-weight: bold;
+            font-family: 'Rajdhani';
+        }
+
+        .chat-btn {
+            background: var(--cyan);
+            color: black;
+            border: none;
+            padding: 0 15px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: 'Rajdhani';
+        }
+
+        /* Stil nou pentru lista cu primul 11 */
+        .team-list-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .team-list-item {
+            background: rgba(0, 0, 0, 0.5);
+            border-left: 3px solid var(--cyan);
+            padding: 10px;
+            font-size: 0.9em;
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -140,187 +136,372 @@
 <body>
     <div class="container">
         <aside id="sidebar">
-            <h2 style="color: var(--gold); letter-spacing: 2px;">SCOUTING SYSTEM</h2>
-            <button id="backToTeams" style="display:none;">&laquo; ÎNAPOI LA ECHIPE</button>
+            <h2 style="color: var(--gold); letter-spacing: 2px;">Superliga AI</h2>
+            <button id="backToTeams" style="display:none;" onclick="renderTeams()">&laquo; ÎNAPOI LA ECHIPE</button>
+            <!-- <button class="chat-btn" onclick="openSimulator()"
+                style="width: 100%; margin-bottom: 15px; padding: 12px; border: 1px solid var(--gold); background: rgba(212,168,67,0.1); color: var(--gold);">
+                🏟️ SIMULATOR TACTIC (LIVE)
+            </button> -->
             <div id="team-selector"></div>
             <div id="player-list" style="display:none;"></div>
         </aside>
 
         <main>
-            <div id="victory-strategy-container" class="strategy-box">
-                <h3 style="color: var(--gold); margin:0;">🛡️ PLAN DE JOC VS <span id="opp-team-name">ADVERSAR</span>
-                </h3>
-                <div id="strategy-content" style="margin-top: 10px; font-style: italic;">Apasă butonul pentru a genera
-                    planul de luptă.</div>
-                <button id="strat-btn" class="ai-btn" style="background: var(--cyan);">GENEREAZĂ STRATEGIE
-                    VICTORIE</button>
+            <div id="strategy-container" class="strategy-box">
+                <h3 style="color: var(--cyan); margin:0;">🛡️ PLAN DE JOC: <span id="strat-mode"
+                        style="color: white;">Aștept datele...</span></h3>
+                <p id="strat-conclusion"
+                    style="margin-top: 15px; font-size: 1.1em; color: var(--white); font-style: italic; line-height: 1.5;">
+                </p>
+
+                <h4 style="color: var(--gold); margin-top: 20px;">⚡ PRIMUL 11 RECOMANDAT (Eficiență Tactică + GPS)</h4>
+                <div style="height: 250px; margin-top: 10px;">
+                    <canvas id="fitChart"></canvas>
+                </div>
+
+                <h4 style="color: var(--cyan); margin-top: 20px; border-bottom: 1px solid #333; padding-bottom: 5px;">📋
+                    LISTA JUCĂTORILOR</h4>
+                <div id="team-list-container" class="team-list-grid"></div>
+            </div>
+
+            <div id="simulator-container" class="strategy-box" style="display:none; border-color: var(--gold);">
+                <h3 style="color: var(--gold); margin-bottom: 15px;">🏟️ ANALIZĂ VIDEO TACTICĂ (STORY MODE)</h3>
+
+                <div style="display: grid; grid-template-columns: 1fr 300px; gap: 20px;">
+                    <div style="background: #000; border: 1px solid #333; position: relative;">
+                        <canvas id="tacticalPitch" width="800" height="533" style="width: 100%; height: auto;"></canvas>
+                        <div id="sim-controls"
+                            style="padding: 10px; display: flex; gap: 10px; background: rgba(0,0,0,0.8);">
+                            <button onclick="toggleSim()" class="chat-btn">PLAY / PAUSE</button>
+                            <input type="range" id="sim-timeline" style="flex: 1; accent-color: var(--gold);">
+                        </div>
+                    </div>
+
+                    <div class="ai-box" style="height: 580px; overflow-y: auto;">
+                        <h4 style="color: var(--cyan); margin-top:0;">📖 POVESTEA MECIULUI</h4>
+                        <div id="match-story-list" style="font-size: 0.9em; line-height: 1.6; color: #EEE;">
+                            Se încarcă evenimentele cheie...
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div id="stats-display" class="radar-box" style="display: none;">
                 <div>
                     <h2 id="p-name" style="color: var(--gold); margin:0;"></h2>
-                    <p id="p-role" style="color: #888; margin-bottom: 20px;"></p>
+                    <p id="p-role" style="color: #AAA; margin-bottom: 20px;"></p>
                     <canvas id="playerRadarChart"></canvas>
                 </div>
                 <div>
-                    <div class="analysis-box">
-                        <h4 style="color: var(--gold); margin-top:0;">📊 STATISTICAL OVERVIEW</h4>
-                        <div id="stat-items" class="stat-grid"></div>
-                    </div>
-
                     <div class="ai-box">
                         <h4 style="color: var(--cyan); margin-top:0;">💬 TACTICAL CHAT (GEMINI AI)</h4>
                         <div id="chat-window"
-                            style="height: 150px; overflow-y: auto; background: rgba(0,0,0,0.3); padding: 10px; margin-bottom: 10px; font-size: 0.9em; border: 1px solid #222;">
-                            <div style="color: #666;">Întreabă-mă orice despre acest jucător...</div>
+                            style="height: 280px; overflow-y: auto; background: rgba(0,0,0,0.4); padding: 10px; margin-bottom: 10px; font-size: 0.95em; border: 1px solid #333; line-height: 1.5;">
+                            <div style="color: #BBB;">Întreabă-mă orice... Răspunsurile trec printr-un filtru dublu de
+                                verificare a corectitudinii.</div>
                         </div>
                         <div style="display: flex; gap: 5px;">
-                            <input type="text" id="chat-input" placeholder="Ex: Cum îl blocăm?"
-                                style="flex: 1; background: #000; border: 1px solid var(--cyan); color: white; padding: 8px; font-family: 'Rajdhani';">
-                            <button onclick="sendChatMessage()"
-                                style="background: var(--cyan); color: black; border: none; padding: 0 15px; cursor: pointer; font-weight: bold;">TRIMITE</button>
+                            <input type="text" id="chat-input" placeholder="Ex: Câte dueluri aeriene câștigă?"
+                                style="flex: 1; background: #000; border: 1px solid var(--cyan); color: white; padding: 10px; font-family: 'Rajdhani';">
+                            <button onclick="sendChatMessage()" class="chat-btn">TRIMITE</button>
                         </div>
                     </div>
                 </div>
             </div>
-            <div id="welcome-msg" style="text-align: center; margin-top: 20%; color: #444;">
-                <h1>SELECTEAZĂ O ECHIPĂ ADVERSĂ ȘI UN JUCĂTOR</h1>
+
+            <div id="welcome-msg" style="text-align: center; margin-top: 20%; color: #888;">
+                <h1>SELECTEAZĂ O ECHIPĂ ADVERSĂ DIN LISTĂ</h1>
             </div>
         </main>
     </div>
 
     <script>
         const API_URL = "http://127.0.0.1:8000";
-        const TEAM_NAMES = {
-            60374: "U CLUJ", 11611: "CFR CLUJ", 11634: "BOTOȘANI", 23334: "FC ARGEȘ",
-            22731: "CSÍKSZEREDA", 11564: "RAPID", 61242: "PETROLUL", 11565: "FCSB",
-            55427: "SEPSI OSK", 11943: "POLI IAȘI", 11571: "UTA ARAD", 60390: "HERMANNSTADT",
-            11566: "DINAMO", 11663: "OȚELUL GALAȚI", 26233: "FARUL", 30817: "SLOBOZIA"
-        };
-        let allPlayersData = [], radarChart = null, currentPlayerId = null;
+        const TEAM_NAMES = { 60374: "U CLUJ", 11611: "CFR CLUJ", 11634: "BOTOȘANI", 23334: "FC ARGEȘ", 22731: "CSÍKSZEREDA", 11564: "RAPID", 61242: "PETROLUL", 11565: "FCSB", 55427: "SEPSI OSK", 11943: "POLI IAȘI", 11571: "UTA ARAD", 60390: "HERMANNSTADT", 11566: "DINAMO", 11663: "OȚELUL GALAȚI", 26233: "FARUL", 30817: "SLOBOZIA" };
+        let allPlayersData = [], radarChart = null, fitChart = null, currentPlayerId = null;
 
-        async function loadData() {
+        async function initData() {
             try {
                 const res = await fetch(`${API_URL}/players`);
                 allPlayersData = await res.json();
                 renderTeams();
-            } catch (e) {
-                console.error("Eroare la incarcare:", e);
-            }
+            } catch (e) { console.error("Eroare server:", e); }
         }
 
         function renderTeams() {
             document.getElementById('team-selector').style.display = 'block';
             document.getElementById('player-list').style.display = 'none';
             document.getElementById('backToTeams').style.display = 'none';
-            document.getElementById('victory-strategy-container').style.display = 'none';
+            document.getElementById('strategy-container').style.display = 'none';
+            document.getElementById('stats-display').style.display = 'none';
+            document.getElementById('welcome-msg').style.display = 'block';
 
             const ids = [...new Set(allPlayersData.map(p => Math.floor(p.teamId)))];
-            document.getElementById('team-selector').innerHTML = ids.map(id => `<div class="team-card" onclick="selectTeam(${id})"><strong>${TEAM_NAMES[id] || id}</strong></div>`).join('');
+            document.getElementById('team-selector').innerHTML = ids.map(id => `
+                <div class="team-card" onclick="selectTeam(${id})"><strong>${TEAM_NAMES[id] || id}</strong></div>
+            `).join('');
         }
 
         function selectTeam(id) {
             document.getElementById('team-selector').style.display = 'none';
             document.getElementById('player-list').style.display = 'block';
             document.getElementById('backToTeams').style.display = 'block';
+            document.getElementById('welcome-msg').style.display = 'none';
 
-            // Afisăm boxul de strategie doar daca nu e propria echipa (presupunand ca U Cluj e 60374)
             if (id !== 60374) {
-                document.getElementById('victory-strategy-container').style.display = 'block';
-                document.getElementById('opp-team-name').innerText = TEAM_NAMES[id] || id;
-                document.getElementById('strat-btn').onclick = () => getVictoryStrategy(id);
-                document.getElementById('strategy-content').innerText = "Datele adversarului sunt pregătite.";
+                document.getElementById('strategy-container').style.display = 'block';
+                document.getElementById('stats-display').style.display = 'none';
+                loadStrategy(id);
+            } else {
+                document.getElementById('strategy-container').style.display = 'none';
             }
 
             const filtered = allPlayersData.filter(p => Math.floor(p.teamId) == id);
-            document.getElementById('player-list').innerHTML = filtered.map(p => `<div class="player-card" onclick="showPlayerDetails(${p.playerId})"><strong>${p.shortName}</strong><br><small>${p.player_role}</small></div>`).join('');
+
+            document.getElementById('player-list').innerHTML = filtered.map(p => `
+                <div class="player-card" onclick="showPlayerDetails(${p.playerId})">
+                    <strong>${p.shortName}</strong><br>
+                    <small style="color: var(--cyan);">${p.position_name_ro || p.player_role || 'Jucător'}</small>
+                </div>
+            `).join('');
         }
 
-        async function getVictoryStrategy(teamId) {
-            const content = document.getElementById('strategy-content');
-            const btn = document.getElementById('strat-btn');
-            btn.innerText = "SE ANALIZEAZĂ...";
-            try {
-                const res = await fetch(`${API_URL}/tactics/victory-strategy/${teamId}`);
-                const data = await res.json();
-                content.innerHTML = `<p style="color: white; font-style: normal;">${data.strategy.replace(/\n/g, '<br>')}</p>`;
-                btn.innerText = "STRATEGIE GENERATĂ";
-            } catch (e) {
-                content.innerText = "Eroare la generarea strategiei. Verifică serverul.";
-                btn.innerText = "REÎNCEARCĂ";
-            }
+        async function loadStrategy(oppId) {
+            document.getElementById('strat-mode').innerText = "CALCULEAZĂ...";
+            document.getElementById('strat-conclusion').innerText = "AI-ul scanează slăbiciunile adversarului și generează raportul tactic...";
+            document.getElementById('team-list-container').innerHTML = ''; // Reset list
+
+            const res = await fetch(`${API_URL}/tactics/victory-strategy/${oppId}`);
+            const data = await res.json();
+
+            document.getElementById('strat-mode').innerText = data.mode;
+            document.getElementById('strat-conclusion').innerText = data.strategy; // Aici se pune Summary-ul de la Gemini
+
+            renderFitChart(data.best_fit);
+            renderTeamList(data.best_fit); // Render lista noii cerinte
+        }
+
+        function renderFitChart(picks) {
+            const ctx = document.getElementById('fitChart').getContext('2d');
+            if (fitChart) fitChart.destroy();
+
+            fitChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: picks.map(p => p.shortName),
+                    datasets: [{
+                        label: 'Eficiență Estimată',
+                        data: picks.map(p => Math.round(p.Fit_Score)),
+                        backgroundColor: 'rgba(0, 255, 255, 0.7)',
+                        borderColor: '#00FFFF',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true, max: 100,
+                            ticks: { color: '#fff', callback: function (value) { return value + "%"; } }
+                        },
+                        x: { ticks: { color: '#fff' } }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { callbacks: { label: function (context) { return context.raw + '% compatibilitate tactică'; } } }
+                    }
+                }
+            });
+        }
+
+        // FUNCȚIE NOUĂ: Desenează lista jucătorilor
+        function renderTeamList(picks) {
+            const container = document.getElementById('team-list-container');
+            container.innerHTML = picks.map(p => `
+                <div class="team-list-item">
+                    <strong style="color: var(--white);">${p.shortName}</strong><br>
+                    <span style="color: #AAA;">${p.player_role || p.position_name_ro || 'Jucător'}</span><br>
+                    <span style="color: var(--gold); font-size: 0.85em;">Score: ${Math.round(p.Fit_Score)}%</span>
+                </div>
+            `).join('');
         }
 
         async function showPlayerDetails(id) {
             currentPlayerId = id;
-            document.getElementById('welcome-msg').style.display = 'none';
+            document.getElementById('strategy-container').style.display = 'none';
             document.getElementById('stats-display').style.display = 'grid';
 
             const res = await fetch(`${API_URL}/player/${id}`);
             const data = await res.json();
 
-            document.getElementById('p-name').innerText = data.shortName;
-            document.getElementById('p-role').innerText = data.player_role;
-            document.getElementById('stat-items').innerHTML = `
-                <div class="stat-item">⚽ Goluri: ${data['average.goals'].toFixed(2)}</div>
-                <div class="stat-item">🛡️ Recuperări: ${data['average.ballRecoveries'].toFixed(2)}</div>
-                <div class="stat-item">🏃 Driblinguri: ${data['average.dribbles'].toFixed(2)}</div>
-                <div class="stat-item">⚠️ Pierderi: ${data['average.ballLosses'].toFixed(2)}</div>
-            `;
+            document.getElementById('p-name').innerText = data.shortName || (data.firstName + " " + data.lastName);
+            document.getElementById('p-role').innerText = data.position_name_ro || 'Jucător';
 
-            // Curățăm fereastra de chat la schimbarea jucătorului
-            document.getElementById('chat-window').innerHTML = '<div style="color: #666;">Întreabă-mă orice despre acest jucător...</div>';
+            document.getElementById('chat-window').innerHTML = `<div style="color: #BBB;">Aștept întrebarea... Datele sunt încărcate.</div>`;
 
             initRadar(data);
         }
 
         async function sendChatMessage() {
             const input = document.getElementById('chat-input');
-            const window = document.getElementById('chat-window');
+            const windowDiv = document.getElementById('chat-window');
             const msg = input.value;
             if (!msg || !currentPlayerId) return;
 
-            window.innerHTML += `<div style="margin-bottom: 5px; color: var(--gold);"><strong>Tu:</strong> ${msg}</div>`;
+            windowDiv.innerHTML += `<div style="margin-bottom: 5px; color: var(--gold);"><strong>Tu:</strong> ${msg}</div>`;
             input.value = "";
+            windowDiv.scrollTop = windowDiv.scrollHeight;
 
-            try {
-                const res = await fetch(`${API_URL}/player/${currentPlayerId}/chat?message=${encodeURIComponent(msg)}`);
-                const data = await res.json();
-                window.innerHTML += `<div style="margin-bottom: 10px; color: var(--cyan);"><strong>AI Scouter:</strong> ${data.response}</div>`;
-                window.scrollTop = window.scrollHeight;
-            } catch (e) {
-                window.innerHTML += `<div style="color: red;">Eroare conexiune AI.</div>`;
-            }
+            const res = await fetch(`${API_URL}/player/${currentPlayerId}/chat?message=${encodeURIComponent(msg)}`);
+            const data = await res.json();
+
+            // Textul este inserat ca HTML pentru a permite afișarea textului roșu (<span style="color: red;">)
+            windowDiv.innerHTML += `<div style="margin-bottom: 10px; color: var(--cyan); border-left: 2px solid var(--cyan); padding-left: 10px;"><strong>AI Scouter:</strong> ${data.response}</div>`;
+            windowDiv.scrollTop = windowDiv.scrollHeight;
         }
 
         function initRadar(data) {
             const ctx = document.getElementById('playerRadarChart').getContext('2d');
             if (radarChart) radarChart.destroy();
+
             const vals = [
-                data['percent.successfulPasses'],
-                data['percent.duelsWon'],
-                (data['average.interceptions'] / 8) * 100,
-                (data['average.shots'] / 4) * 100,
-                (data['average.dribbles'] / 6) * 100,
-                (data['average.ballRecoveries'] / 15) * 100
+                Number((data['pct_successfulPasses'] || 0).toFixed(1)),
+                Number((data['pct_duelsWon'] || 0).toFixed(1)),
+                Number(((data['avg_interceptions'] / 8) * 100 || 0).toFixed(1)),
+                Number(((data['avg_shots'] / 4) * 100 || 0).toFixed(1)),
+                Number((data['pct_successfulDribbles'] || 0).toFixed(1)),
+                Number(((data['avg_ballRecoveries'] / 15) * 100 || 0).toFixed(1))
             ];
+
             radarChart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['Pase', 'Dueluri', 'Int.', 'Șuturi', 'Drib.', 'Rec.'],
+                    labels: ['Pase Reușite %', 'Dueluri Câștigate %', 'Intercepții', 'Șuturi', 'Dribling Reușit %', 'Recuperări'],
                     datasets: [{ data: vals, backgroundColor: 'rgba(212,168,67,0.3)', borderColor: '#D4A843', borderWidth: 2 }]
                 },
-                options: {
-                    scales: {
-                        r: { min: 0, max: 100, ticks: { display: false }, grid: { color: '#333' } }
-                    },
-                    plugins: { legend: { display: false } }
-                }
+                options: { scales: { r: { min: 0, max: 100, ticks: { display: false }, grid: { color: '#444' } } }, plugins: { legend: { display: false } } }
             });
         }
 
-        document.getElementById('backToTeams').onclick = renderTeams;
-        window.onload = loadData;
+
+        let simData = null;
+        let isPlaying = false;
+        let currentFrameIdx = 0;
+        let animationId = null;
+
+        async function openSimulator() {
+            // Resetăm ecranele
+            document.getElementById('team-selector').style.display = 'none';
+            document.getElementById('player-list').style.display = 'none';
+            document.getElementById('strategy-container').style.display = 'none';
+            document.getElementById('stats-display').style.display = 'none';
+            document.getElementById('welcome-msg').style.display = 'none';
+
+            document.getElementById('backToTeams').style.display = 'block';
+            document.getElementById('simulator-container').style.display = 'block';
+
+            if (!simData) {
+                const res = await fetch(`${API_URL}/tactics/simulation-data`);
+                simData = await res.json();
+                generateMatchStory(simData.events);
+
+                const slider = document.getElementById('sim-timeline');
+                slider.max = simData.tracking.length - 1;
+                slider.value = 0;
+
+                drawFrame(0);
+            }
+        }
+
+        function drawFrame(idx) {
+            const canvas = document.getElementById('tacticalPitch');
+            const ctx = canvas.getContext('2d');
+            const frame = simData.tracking[idx];
+            if (!frame) return;
+
+            // 1. Fundal Teren
+            ctx.fillStyle = "#0A0A0A";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 2. Linii Teren (Cyber-Cyan)
+            ctx.strokeStyle = "rgba(0, 255, 255, 0.3)";
+            ctx.lineWidth = 2;
+            // Gazon exterior
+            ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
+            // Mijloc
+            ctx.beginPath();
+            ctx.moveTo(canvas.width / 2, 20); ctx.lineTo(canvas.width / 2, canvas.height - 20);
+            ctx.stroke();
+            // Cerc central
+            ctx.beginPath();
+            ctx.arc(canvas.width / 2, canvas.height / 2, 50, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // 3. Conversie Coordonate (StatsBomb are 120x80)
+            const scaleX = (x) => (x / 120) * (canvas.width - 40) + 20;
+            const scaleY = (y) => (y / 80) * (canvas.height - 40) + 20;
+
+            // 4. Desenăm Jucătorii din frame
+            frame.freeze_frame.forEach(player => {
+                const x = scaleX(player.location[0]);
+                const y = scaleY(player.location[1]);
+
+                ctx.beginPath();
+                ctx.arc(x, y, 7, 0, Math.PI * 2);
+
+                if (player.teammate) {
+                    ctx.fillStyle = "var(--gold)";
+                    ctx.shadowBlur = 15; ctx.shadowColor = "var(--gold)";
+                } else {
+                    ctx.fillStyle = "var(--cyan)";
+                    ctx.shadowBlur = 15; ctx.shadowColor = "var(--cyan)";
+                }
+                ctx.fill();
+
+                if (player.actor) { // Cel care are mingea
+                    ctx.strokeStyle = "#FFF";
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+                }
+                ctx.shadowBlur = 0;
+            });
+
+            document.getElementById('sim-timeline').value = idx;
+        }
+
+        function toggleSim() {
+            isPlaying = !isPlaying;
+            const btn = document.querySelector('#sim-controls button');
+            btn.innerText = isPlaying ? "⏸ PAUSE" : "▶️ PLAY";
+            if (isPlaying) animate();
+        }
+
+        function animate() {
+            if (!isPlaying) return;
+            currentFrameIdx++;
+            if (currentFrameIdx >= simData.tracking.length) {
+                currentFrameIdx = 0;
+                isPlaying = false;
+                document.querySelector('#sim-controls button').innerText = "▶️ PLAY";
+                return;
+            }
+            drawFrame(currentFrameIdx);
+            setTimeout(() => { requestAnimationFrame(animate); }, 100);
+        }
+
+        function jumpToEvent(eventId) {
+            const idx = simData.tracking.findIndex(f => f.event_uuid === eventId);
+            if (idx !== -1) {
+                currentFrameIdx = idx;
+                drawFrame(idx);
+            }
+        }
+
+        document.getElementById("chat-input").addEventListener("keypress", function (event) {
+            if (event.key === "Enter") { event.preventDefault(); sendChatMessage(); }
+        });
+
+        window.onload = initData;
     </script>
 </body>
 

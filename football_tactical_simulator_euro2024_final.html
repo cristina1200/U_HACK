@@ -1,0 +1,2449 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>⚽ EURO 2024 FINAL — Spain 2-1 England — Tactical Analyzer</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;0,700;0,900;1,700&display=swap"
+    rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Barlow Condensed', sans-serif
+    }
+
+    :root {
+      --gold: #ffd700;
+      --gold2: #ffaa00;
+      --gold3: #ff8c00;
+      --blue: #00d4ff;
+      --blue2: #0066ff;
+      --blue3: #003acc;
+      --red: #ff1a4a;
+      --red2: #cc0033;
+      --green: #00ffaa;
+      --green2: #00cc77;
+      --purple: #cc44ff;
+      --cyan: #00ffee;
+      --pink: #ff44cc;
+      --spa: #1a5fc0;
+      --eng: #aa0830;
+    }
+
+    /* ── BACKGROUND: pulsing black/white spots ── */
+    body {
+      background: linear-gradient(135deg, #000000 0%, #aaaaaa 50%, #ffffff 100%);
+      color: #fff;
+      overflow: hidden;
+    }
+
+    #bgCanvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none
+    }
+
+    /* ── PARTICLES ── */
+    #particles {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none
+    }
+
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      animation: floatUp linear infinite;
+      opacity: 0
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(100vh) scale(0) rotate(0deg);
+        opacity: 0
+      }
+
+      10% {
+        opacity: .8
+      }
+
+      90% {
+        opacity: .15
+      }
+
+      100% {
+        transform: translateY(-40px) scale(1.4) rotate(720deg);
+        opacity: 0
+      }
+    }
+
+    /* ── GOAL RAIN CONFETTI ── */
+    #confettiCanvas {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none
+    }
+
+    #app {
+      position: relative;
+      z-index: 3;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      height: 100vh
+    }
+
+    /* ── HEADER ── */
+    .hdr {
+      background: linear-gradient(135deg, #000818, #001530 40%, #000c24 70%, #000818);
+      border-bottom: 2px solid transparent;
+      border-image: linear-gradient(90deg, var(--blue3), var(--blue), var(--gold), var(--red), var(--gold), var(--blue), var(--blue3)) 1;
+      padding: 6px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 0 60px rgba(0, 80, 200, .3), 0 4px 20px rgba(0, 0, 0, .7);
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .hdr::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(0, 180, 255, .05) 30%, rgba(140, 0, 255, .04) 60%, transparent 100%);
+      animation: hdrScan 4s ease-in-out infinite
+    }
+
+    @keyframes hdrScan {
+
+      0%,
+      100% {
+        transform: translateX(-100%)
+      }
+
+      50% {
+        transform: translateX(100%)
+      }
+    }
+
+    .hdr-logo {
+      font-family: 'Orbitron', monospace;
+      font-size: 16px;
+      font-weight: 900;
+      background: linear-gradient(90deg, var(--gold), var(--cyan), var(--purple), var(--gold), var(--blue), var(--gold));
+      background-size: 500% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: logoShimmer 3s linear infinite;
+      letter-spacing: 2px;
+      filter: drop-shadow(0 0 10px rgba(255, 200, 0, .5))
+    }
+
+    @keyframes logoShimmer {
+      to {
+        background-position: 500% center
+      }
+    }
+
+    .match-badge {
+      background: rgba(255, 255, 255, .06);
+      border: 1px solid rgba(255, 255, 255, .14);
+      border-radius: 5px;
+      padding: 3px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: rgba(255, 255, 255, .75);
+      text-transform: uppercase
+    }
+
+    .teams-hdr {
+      display: flex;
+      flex-direction: column;
+      gap: 1px
+    }
+
+    .team-row {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 1px
+    }
+
+    .t-spain {
+      background: linear-gradient(90deg, var(--blue), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 4px rgba(0, 200, 255, .5))
+    }
+
+    .t-england {
+      background: linear-gradient(90deg, var(--red), #ff88aa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 4px rgba(255, 30, 80, .5))
+    }
+
+    .score-display {
+      font-family: 'Orbitron', monospace;
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--gold);
+      text-shadow: 0 0 20px var(--gold), 0 0 50px rgba(255, 180, 0, .5);
+      letter-spacing: 5px;
+      padding: 0 8px;
+      animation: scoreGlow 2s ease-in-out infinite
+    }
+
+    @keyframes scoreGlow {
+
+      0%,
+      100% {
+        text-shadow: 0 0 20px var(--gold), 0 0 50px rgba(255, 180, 0, .5)
+      }
+
+      50% {
+        text-shadow: 0 0 40px var(--gold), 0 0 80px rgba(255, 180, 0, .8), 0 0 120px rgba(255, 100, 0, .3)
+      }
+    }
+
+    .team-selector {
+      display: flex;
+      gap: 6px;
+      margin-left: 6px
+    }
+
+    .ts-btn {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+      border-radius: 7px;
+      padding: 5px 12px;
+      cursor: pointer;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      border: 1px solid rgba(255, 255, 255, .2);
+      background: rgba(255, 255, 255, .05);
+      color: rgba(200, 220, 255, .6);
+      transition: all .15s
+    }
+
+    .ts-btn.spa-active {
+      background: rgba(0, 100, 255, .22);
+      border-color: var(--blue);
+      color: var(--blue);
+      box-shadow: 0 0 18px rgba(0, 150, 255, .3)
+    }
+
+    .ts-btn.eng-active {
+      background: rgba(200, 0, 50, .22);
+      border-color: var(--red);
+      color: var(--red);
+      box-shadow: 0 0 18px rgba(255, 20, 70, .3)
+    }
+
+    .hdr-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .time-pill {
+      font-family: 'Orbitron', monospace;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--green);
+      background: rgba(0, 255, 170, .07);
+      border: 1px solid rgba(0, 255, 170, .28);
+      border-radius: 7px;
+      padding: 4px 12px;
+      box-shadow: 0 0 18px rgba(0, 255, 170, .12)
+    }
+
+    .live-badge {
+      background: linear-gradient(135deg, var(--red2), var(--red));
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2.5px;
+      color: #fff;
+      animation: livePulse 1.1s infinite;
+      box-shadow: 0 0 20px rgba(255, 20, 70, .6)
+    }
+
+    @keyframes livePulse {
+
+      0%,
+      100% {
+        box-shadow: 0 0 20px rgba(255, 20, 70, .6)
+      }
+
+      50% {
+        box-shadow: 0 0 45px rgba(255, 20, 70, 1)
+      }
+    }
+
+    .pdot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      background: currentColor;
+      border-radius: 50%;
+      animation: pdotA 1.1s infinite;
+      margin-right: 3px
+    }
+
+    @keyframes pdotA {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1)
+      }
+
+      50% {
+        opacity: .2;
+        transform: scale(.3)
+      }
+    }
+
+    /* ── MAIN LAYOUT ── */
+    .main {
+      display: flex;
+      overflow: hidden;
+      height: 100%
+    }
+
+    /* ── RESIZER ── */
+    .resizer {
+      width: 6px;
+      background: linear-gradient(180deg, transparent, rgba(0, 180, 255, .5), rgba(180, 0, 255, .5), transparent);
+      cursor: col-resize;
+      flex-shrink: 0;
+      position: relative;
+      transition: background .2s;
+    }
+
+    .resizer:hover,
+    .resizer.dragging {
+      background: linear-gradient(180deg, transparent, #00d4ff, #cc44ff, transparent);
+      box-shadow: 0 0 18px rgba(0, 180, 255, .7), 0 0 40px rgba(180, 0, 255, .4);
+    }
+
+    .resizer::after {
+      content: '⠿';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: rgba(0, 180, 255, .6);
+      font-size: 16px;
+      pointer-events: none;
+    }
+
+    /* ── PITCH SIDE ── */
+    .pitch-side {
+      flex: 1;
+      min-width: 200px;
+      display: flex;
+      flex-direction: column;
+      padding: 8px;
+      gap: 7px;
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(0, 100, 40, 0.2), rgba(0, 200, 80, 0.15) 50%, rgba(0, 80, 30, 0.2));
+    }
+
+    .pitch-wrap {
+      flex: 1;
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(0, 160, 255, .25);
+      box-shadow: 0 0 80px rgba(0, 80, 200, .2), 0 0 160px rgba(0, 0, 0, .6), inset 0 0 80px rgba(0, 30, 100, .1)
+    }
+
+    .corner-tr,
+    .corner-bl,
+    .corner-tl-c,
+    .corner-br-c {
+      position: absolute;
+      width: 26px;
+      height: 26px;
+      z-index: 10
+    }
+
+    .corner-tl-c {
+      top: 0;
+      left: 0;
+      border-top: 2px solid var(--gold);
+      border-left: 2px solid var(--gold);
+      box-shadow: 0 0 14px var(--gold);
+      border-radius: 2px 0 0 0
+    }
+
+    .corner-tr {
+      top: 0;
+      right: 0;
+      border-top: 2px solid var(--gold);
+      border-right: 2px solid var(--gold);
+      box-shadow: 0 0 14px var(--gold);
+      border-radius: 0 2px 0 0
+    }
+
+    .corner-bl {
+      bottom: 0;
+      left: 0;
+      border-bottom: 2px solid var(--gold);
+      border-left: 2px solid var(--gold);
+      box-shadow: 0 0 14px var(--gold);
+      border-radius: 0 0 0 2px
+    }
+
+    .corner-br-c {
+      bottom: 0;
+      right: 0;
+      border-bottom: 2px solid var(--gold);
+      border-right: 2px solid var(--gold);
+      box-shadow: 0 0 14px var(--gold);
+      border-radius: 0 0 2px 0
+    }
+
+    canvas#pitch {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: crosshair
+    }
+
+    /* ── DRAWING TOOLBAR ── */
+    .draw-toolbar {
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 5px;
+      z-index: 15;
+      opacity: 0;
+      transition: opacity .3s;
+      pointer-events: none
+    }
+
+    .draw-toolbar.visible {
+      opacity: 1;
+      pointer-events: all
+    }
+
+    .draw-btn {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      border: none;
+      font-family: 'Barlow Condensed', sans-serif;
+      letter-spacing: .5px;
+      transition: all .12s
+    }
+
+    .draw-btn.active {
+      box-shadow: 0 0 16px currentColor
+    }
+
+    /* ── GOAL FLASH ── */
+    #goalFlashOverlay {
+      position: absolute;
+      inset: 0;
+      z-index: 12;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .3s
+    }
+
+    /* ── TIMELINE ── */
+    canvas#timeline {
+      width: 100%;
+      height: 34px;
+      display: block;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 1px solid rgba(0, 150, 255, .18)
+    }
+
+    /* ── CONTROLS ── */
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-wrap: wrap
+    }
+
+    .btn {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px;
+      font-weight: 800;
+      border: none;
+      border-radius: 7px;
+      padding: 6px 13px;
+      cursor: pointer;
+      letter-spacing: .8px;
+      transition: all .12s;
+      position: relative;
+      overflow: hidden;
+      text-transform: uppercase
+    }
+
+    .btn:active {
+      transform: scale(.96)
+    }
+
+    .btn-play {
+      background: linear-gradient(135deg, var(--green2), #00ffaa);
+      color: #000;
+      font-weight: 900;
+      box-shadow: 0 0 20px rgba(0, 255, 170, .35)
+    }
+
+    .btn-play.paused {
+      background: linear-gradient(135deg, var(--blue3), var(--blue2));
+      box-shadow: 0 0 20px rgba(0, 100, 255, .35);
+      color: #fff
+    }
+
+    .btn-nav {
+      background: rgba(0, 100, 200, .14);
+      color: var(--blue);
+      border: 1px solid rgba(0, 180, 255, .22)
+    }
+
+    .btn-spd {
+      background: rgba(180, 40, 255, .1);
+      color: var(--purple);
+      border: 1px solid rgba(180, 40, 255, .22);
+      font-size: 11px
+    }
+
+    .btn-reset {
+      background: rgba(255, 30, 60, .1);
+      color: var(--red);
+      border: 1px solid rgba(255, 30, 60, .2)
+    }
+
+    .btn-draw {
+      background: rgba(255, 200, 0, .1);
+      color: var(--gold);
+      border: 1px solid rgba(255, 200, 0, .22)
+    }
+
+    .btn-draw.active {
+      background: rgba(255, 200, 0, .25);
+      box-shadow: 0 0 14px rgba(255, 200, 0, .4)
+    }
+
+    .spd-badge {
+      font-family: 'Orbitron', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--purple);
+      background: rgba(180, 40, 255, .08);
+      border: 1px solid rgba(180, 40, 255, .2);
+      border-radius: 6px;
+      padding: 4px 10px
+    }
+
+    .frame-badge {
+      font-size: 10px;
+      color: rgba(120, 180, 255, .45);
+      font-weight: 700;
+      margin-left: auto;
+      letter-spacing: .5px
+    }
+
+    /* ── PANEL ── */
+    .panel {
+      background: rgba(1, 8, 24, .97);
+      border-left: 2px solid rgba(0, 200, 255, .3);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 10px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      background-image: linear-gradient(180deg, rgba(0, 30, 100, .15), transparent 40%);
+      width: 320px;
+      min-width: 200px;
+      max-width: 650px;
+      flex-shrink: 0;
+    }
+
+    /* ── PANEL scrollbar ── */
+    .panel::-webkit-scrollbar {
+      width: 5px
+    }
+
+    .panel::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #00d4ff, #cc44ff);
+      border-radius: 3px;
+      box-shadow: 0 0 6px rgba(0, 200, 255, .5);
+    }
+
+    /* ── FULLSCREEN BTN ── */
+    #btnFullscreen {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+      border-radius: 7px;
+      padding: 5px 12px;
+      cursor: pointer;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      border: 1px solid rgba(255, 200, 0, .35);
+      background: rgba(255, 200, 0, .08);
+      color: var(--gold);
+      transition: all .15s;
+    }
+
+    #btnFullscreen:hover {
+      background: rgba(255, 200, 0, .22);
+      box-shadow: 0 0 18px rgba(255, 200, 0, .5);
+    }
+
+    /* ── VERTICAL RESIZER between cards ── */
+    .v-resizer {
+      height: 5px;
+      background: linear-gradient(90deg, transparent, rgba(0, 180, 255, .3), rgba(180, 0, 255, .3), transparent);
+      cursor: ns-resize;
+      border-radius: 3px;
+      flex-shrink: 0;
+      transition: background .2s, box-shadow .2s;
+      margin: -2px 0;
+      position: relative;
+      z-index: 5;
+    }
+
+    .v-resizer:hover,
+    .v-resizer.dragging {
+      background: linear-gradient(90deg, transparent, #00d4ff, #cc44ff, transparent);
+      box-shadow: 0 0 12px rgba(0, 180, 255, .6);
+    }
+
+    /* ── RESIZABLE CARDS ── */
+    .p-card {
+      background: rgba(255, 255, 255, .025);
+      border-radius: 10px;
+      padding: 9px 11px;
+      border: 1px solid rgba(0, 200, 255, .15);
+      position: relative;
+      overflow: hidden;
+      transition: border-color .3s;
+      min-height: 40px;
+      overflow-y: auto;
+    }
+
+    .p-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--blue), var(--purple), transparent);
+      opacity: .4
+    }
+
+    .p-card-hero {
+      background: linear-gradient(135deg, rgba(0, 15, 50, .97), rgba(0, 30, 80, .97));
+      border: 1px solid rgba(0, 160, 255, .28)
+    }
+
+    .p-label {
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 7px;
+      color: #6ecfff;
+    }
+
+    .evt-type {
+      font-family: 'Orbitron', monospace;
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      color: #ffcc44;
+    }
+
+    .evt-player {
+      font-size: 17px;
+      color: #e0f0ff;
+      font-weight: 800;
+      margin-top: 5px;
+    }
+
+    .xg-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px
+    }
+
+    .xg-lbl {
+      font-size: 13px;
+      font-weight: 900;
+      min-width: 32px
+    }
+
+    .xg-track {
+      flex: 1;
+      height: 9px;
+      background: rgba(255, 255, 255, .1);
+      border-radius: 4px;
+      overflow: hidden
+    }
+
+    .xg-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width .9s cubic-bezier(.4, 0, .2, 1)
+    }
+
+    .xg-val {
+      font-family: 'Orbitron', monospace;
+      font-size: 14px;
+      font-weight: 900;
+      min-width: 48px;
+      text-align: right;
+      color: #ffffff;
+    }
+
+    .score-summary {
+      display: flex;
+      gap: 5px
+    }
+
+    .ss-item {
+      flex: 1;
+      background: rgba(255, 255, 255, .05);
+      border-radius: 8px;
+      padding: 8px 7px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, .15)
+    }
+
+    .ss-num {
+      font-family: 'Orbitron', monospace;
+      font-size: 36px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .ss-lbl {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: #b0d0f0;
+      margin-top: 5px;
+      text-transform: uppercase;
+    }
+
+    .tip-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      padding: 9px 12px;
+      border-radius: 8px;
+      margin-bottom: 5px;
+      border-left: 4px solid transparent;
+      font-size: 14px;
+      font-weight: 900;
+      line-height: 1.5;
+      transition: box-shadow .3s;
+    }
+
+    .tip-green {
+      box-shadow: inset 0 0 30px rgba(0, 255, 170, .06), 0 0 10px rgba(0, 255, 170, .05);
+    }
+
+    .tip-red {
+      box-shadow: inset 0 0 30px rgba(255, 30, 70, .08), 0 0 10px rgba(255, 30, 70, .05);
+    }
+
+    .tip-blue {
+      box-shadow: inset 0 0 30px rgba(0, 200, 255, .06), 0 0 10px rgba(0, 200, 255, .05);
+    }
+
+    .tip-amber {
+      box-shadow: inset 0 0 30px rgba(255, 180, 0, .06), 0 0 10px rgba(255, 180, 0, .05);
+    }
+
+    .tip-green {
+      background: rgba(0, 255, 170, .04);
+      border-color: var(--green);
+      color: rgba(130, 255, 200, .9)
+    }
+
+    .tip-red {
+      background: rgba(255, 20, 70, .05);
+      border-color: var(--red);
+      color: rgba(255, 130, 160, .9)
+    }
+
+    .tip-blue {
+      background: rgba(0, 180, 255, .05);
+      border-color: var(--blue);
+      color: rgba(130, 210, 255, .9)
+    }
+
+    .tip-amber {
+      background: rgba(255, 170, 0, .05);
+      border-color: var(--gold2);
+      color: rgba(255, 210, 130, .9)
+    }
+
+    .tip-icon {
+      font-size: 12px;
+      flex-shrink: 0
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px
+    }
+
+    .leg {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 13px;
+      font-weight: 900;
+      color: rgba(200, 230, 255, .95)
+    }
+
+    .leg-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0
+    }
+
+    /* ── SCEN BUTTONS ── */
+    .scen-row {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap
+    }
+
+    .scen-btn {
+      flex: 1;
+      min-width: 52px;
+      padding: 7px 4px;
+      border-radius: 7px;
+      border: 1px solid rgba(255, 255, 255, .2);
+      background: rgba(255, 255, 255, .06);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px;
+      font-weight: 900;
+      cursor: pointer;
+      color: rgba(220, 240, 255, .9);
+      transition: all .12s;
+      text-align: center;
+      letter-spacing: 1px;
+      text-transform: uppercase
+    }
+
+    .scen-btn:hover {
+      background: rgba(255, 255, 255, .07)
+    }
+
+    .scen-btn.active-normal {
+      background: rgba(0, 200, 100, .18);
+      border-color: var(--green);
+      color: var(--green)
+    }
+
+    .scen-btn.active-pressing {
+      background: rgba(230, 20, 70, .18);
+      border-color: var(--red);
+      color: var(--red)
+    }
+
+    .scen-btn.active-counter {
+      background: rgba(0, 120, 255, .18);
+      border-color: var(--blue);
+      color: var(--blue)
+    }
+
+    .scen-btn.active-corner {
+      background: rgba(200, 160, 0, .18);
+      border-color: var(--gold);
+      color: var(--gold)
+    }
+
+    /* ── OVERLAY ── */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      background: rgba(0, 3, 15, .93);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(12px)
+    }
+
+    .modal {
+      background: linear-gradient(145deg, #020c28, #03112e, #020c28);
+      border-radius: 18px;
+      padding: 30px 34px;
+      max-width: 680px;
+      width: 96%;
+      max-height: 90vh;
+      overflow-y: auto;
+      border: 1px solid rgba(0, 160, 255, .28);
+      box-shadow: 0 0 80px rgba(0, 80, 200, .25), 0 0 160px rgba(0, 0, 0, .6), inset 0 0 50px rgba(0, 40, 150, .08);
+      animation: modalIn .38s cubic-bezier(.34, 1.56, .64, 1);
+      position: relative;
+    }
+
+    .modal::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--blue3), var(--gold), var(--red), var(--purple), var(--gold), var(--blue3));
+      background-size: 300%;
+      animation: logoShimmer 2s linear infinite
+    }
+
+    @keyframes modalIn {
+      from {
+        transform: scale(.82) translateY(35px);
+        opacity: 0
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1
+      }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      background: rgba(255, 255, 255, .08);
+      border: 1px solid rgba(255, 255, 255, .15);
+      color: rgba(200, 220, 255, .7);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .15s;
+      font-family: monospace;
+      line-height: 1
+    }
+
+    .modal-close:hover {
+      background: rgba(255, 30, 60, .25);
+      border-color: var(--red);
+      color: var(--red)
+    }
+
+    .modal-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      border: 1px solid currentColor
+    }
+
+    .modal-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 26px;
+      font-weight: 900;
+      margin-bottom: 10px;
+      line-height: 1.2
+    }
+
+    .modal-body {
+      font-size: 16px;
+      color: rgba(200, 225, 255, .95);
+      font-weight: 700;
+      line-height: 1.65;
+      margin-bottom: 14px
+    }
+
+    .modal-stats {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 11px
+    }
+
+    .mstat {
+      flex: 1;
+      background: rgba(255, 255, 255, .035);
+      border-radius: 9px;
+      padding: 7px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, .07)
+    }
+
+    .mstat-num {
+      font-family: 'Orbitron', monospace;
+      font-size: 26px;
+      font-weight: 900;
+      line-height: 1
+    }
+
+    .mstat-lbl {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: rgba(160, 195, 240, .8);
+      margin-top: 4px
+    }
+
+    .modal-analysis {
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      font-size: 15px;
+      font-weight: 800;
+      line-height: 1.6;
+      border-left: 4px solid;
+      color: rgba(210, 230, 255, .95)
+    }
+
+    /* Defense tips in modal */
+    .defense-tips {
+      margin-bottom: 14px
+    }
+
+    .def-tip {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 14px;
+      margin-bottom: 7px;
+      border-radius: 9px;
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1.5;
+      border-left: 4px solid
+    }
+
+    .def-tip-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+      margin-top: 1px
+    }
+
+    .modal-btns {
+      display: flex;
+      gap: 8px
+    }
+
+    .modal-btn {
+      flex: 1;
+      background: linear-gradient(135deg, var(--green2), var(--blue2));
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-family: 'Orbitron', monospace;
+      font-size: 15px;
+      font-weight: 900;
+      padding: 16px;
+      cursor: pointer;
+      letter-spacing: 1.5px;
+      box-shadow: 0 0 30px rgba(0, 180, 120, .3);
+      transition: all .2s;
+      text-transform: uppercase
+    }
+
+    .modal-btn:hover {
+      transform: scale(1.02);
+      box-shadow: 0 0 50px rgba(0, 220, 160, .5)
+    }
+
+    .modal-btn-draw {
+      background: linear-gradient(135deg, #aa6600, var(--gold));
+      box-shadow: 0 0 30px rgba(255, 180, 0, .25)
+    }
+
+    .modal-btn-draw:hover {
+      box-shadow: 0 0 50px rgba(255, 200, 0, .5)
+    }
+
+    /* ── GOAL ANNOUNCEMENT ── */
+    #goalAnnounce {
+      position: fixed;
+      inset: 0;
+      z-index: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .3s
+    }
+
+    .goal-announce-inner {
+      text-align: center
+    }
+
+    .goal-announce-text {
+      font-family: 'Orbitron', monospace;
+      font-weight: 900;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      line-height: 1;
+      animation: goalPulse .5s ease-in-out infinite
+    }
+
+    .goal-announce-sub {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      margin-top: 8px;
+      opacity: .9
+    }
+
+    @keyframes goalPulse {
+
+      0%,
+      100% {
+        transform: scale(1) rotate(-0.5deg)
+      }
+
+      50% {
+        transform: scale(1.06) rotate(0.5deg)
+      }
+    }
+
+    .goal-our {
+      color: var(--blue);
+      text-shadow: 0 0 60px var(--blue), 0 0 120px rgba(0, 180, 255, .6)
+    }
+
+    .goal-their {
+      color: var(--red);
+      text-shadow: 0 0 60px var(--red), 0 0 120px rgba(255, 20, 70, .6)
+    }
+
+    /* Drawing canvas overlay */
+    #drawCanvas {
+      position: absolute;
+      inset: 0;
+      z-index: 11;
+      cursor: crosshair;
+      display: none
+    }
+
+    neon-gold {
+      color: var(--gold);
+      text-shadow: 0 0 15px rgba(255, 200, 0, .5)
+    }
+
+    .neon-blue {
+      color: var(--blue);
+      text-shadow: 0 0 15px rgba(0, 200, 255, .5)
+    }
+
+    .neon-green {
+      color: var(--green);
+      text-shadow: 0 0 15px rgba(0, 255, 170, .5)
+    }
+
+    .neon-red {
+      color: var(--red);
+      text-shadow: 0 0 15px rgba(255, 20, 70, .5)
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="bgCanvas"></canvas>
+  <div id="particles"></div>
+  <canvas id="confettiCanvas"></canvas>
+
+  <div id="app">
+    <div class="hdr">
+      <div class="hdr-logo">⚽ EURO 2024 TACTICAL ANALYZER</div>
+      <div class="match-badge">UEFA EURO 2024 — FINALĂ</div>
+      <div class="teams-hdr">
+        <div class="team-row"><span>🇪🇸</span><span class="t-spain">SPANIA</span></div>
+        <div class="team-row"><span>🏴󠁧󠁢󠁥󠁮󠁧󠁿</span><span class="t-england">ANGLIA</span></div>
+      </div>
+      <div class="score-display" id="liveScore">0 — 0</div>
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <div
+          style="font-size:8px;font-weight:800;letter-spacing:2px;color:rgba(120,170,255,.5);text-transform:uppercase">
+          Echipa ta</div>
+        <div class="team-selector">
+          <button class="ts-btn spa-active" id="btnSpa" onclick="selectTeam('Spain')">🇪🇸 Spania</button>
+          <button class="ts-btn" id="btnEng" onclick="selectTeam('England')">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Anglia</button>
+        </div>
+      </div>
+      <div class="hdr-right">
+        <div class="time-pill" id="timePill">0'00"</div>
+        <div class="live-badge"><span class="pdot"></span>LIVE</div>
+        <button id="btnFullscreen" onclick="toggleFullscreen()" title="Fullscreen">⛶ FULLSCREEN</button>
+      </div>
+    </div>
+
+    <div class="main" id="mainLayout">
+      <div class="pitch-side">
+        <div class="pitch-wrap" id="pitchWrap">
+          <div class="corner-tl-c"></div>
+          <div class="corner-tr"></div>
+          <div class="corner-bl"></div>
+          <div class="corner-br-c"></div>
+          <canvas id="pitch"></canvas>
+          <canvas id="drawCanvas"></canvas>
+          <div id="goalFlashOverlay"></div>
+          <!-- Drawing toolbar -->
+          <div class="draw-toolbar" id="drawToolbar">
+            <button class="draw-btn active" id="dtArrow" onclick="setDrawMode('arrow')"
+              style="background:rgba(255,200,0,.2);color:var(--gold);border:1px solid var(--gold)">→ Săgeată</button>
+            <button class="draw-btn" id="dtLine" onclick="setDrawMode('line')"
+              style="background:rgba(0,180,255,.15);color:var(--blue);border:1px solid var(--blue)">— Linie</button>
+            <button class="draw-btn" id="dtCircle" onclick="setDrawMode('circle')"
+              style="background:rgba(0,255,170,.15);color:var(--green);border:1px solid var(--green)">◯ Cerc</button>
+            <button class="draw-btn" id="dtClear" onclick="clearDrawings()"
+              style="background:rgba(255,30,60,.15);color:var(--red);border:1px solid var(--red)">✕ Șterge</button>
+          </div>
+        </div>
+        <canvas id="timeline"></canvas>
+        <div class="controls">
+          <button class="btn btn-play paused" id="btnPlay" onclick="togglePlay()">▶ PLAY</button>
+          <button class="btn btn-nav" onclick="step(-1)">◀ PREV</button>
+          <button class="btn btn-nav" onclick="step(1)">NEXT ▶</button>
+          <button class="btn btn-spd" onclick="cycleSpeed()">VIT: <span id="spdTxt">1×</span></button>
+          <div class="spd-badge" id="scenLabel">NORMAL</div>
+          <button class="btn btn-draw" id="btnDrawMode" onclick="toggleDrawMode()">✏️ DESENEAZĂ</button>
+          <button class="btn btn-reset" onclick="resetSim()">↺ RESET</button>
+          <div class="frame-badge" id="frameCnt">Frame 1 / 54</div>
+        </div>
+      </div>
+
+      <div class="resizer" id="mainResizer"></div>
+
+      <div class="panel" id="mainPanel">
+        <div class="p-card p-card-hero" id="card-evt">
+          <div class="p-label">Eveniment curent</div>
+          <div class="evt-type" id="evtType">—</div>
+          <div class="evt-player" id="evtPlayer">—</div>
+          <div id="evtBadges" style="margin-top:6px;display:flex;gap:4px;flex-wrap:wrap"></div>
+          <div style="margin-top:8px">
+            <div class="xg-row">
+              <div class="xg-lbl" style="color:var(--blue)">SPA</div>
+              <div class="xg-track">
+                <div class="xg-fill" id="xgH"
+                  style="background:linear-gradient(90deg,var(--blue3),var(--blue));width:0%"></div>
+              </div>
+              <div class="xg-val" id="xgHval" style="color:var(--blue)">0.000</div>
+            </div>
+            <div class="xg-row">
+              <div class="xg-lbl" style="color:var(--red)">ENG</div>
+              <div class="xg-track">
+                <div class="xg-fill" id="xgA" style="background:linear-gradient(90deg,var(--red2),var(--red));width:0%">
+                </div>
+              </div>
+              <div class="xg-val" id="xgAval" style="color:var(--red)">0.000</div>
+            </div>
+            <div style="font-size:9px;color:rgba(80,140,255,.35);font-weight:700;margin-top:2px">xG cumulat StatsBomb —
+              Euro 2024 Final</div>
+          </div>
+        </div>
+
+        <div class="v-resizer" data-target="card-score"></div>
+
+        <div class="p-card" id="card-score">
+          <div class="p-label">Scor Live</div>
+          <div class="score-summary">
+            <div class="ss-item">
+              <div class="ss-num neon-blue" id="ss-spain">0</div>
+              <div class="ss-lbl">🇪🇸 Spania</div>
+            </div>
+            <div class="ss-item"
+              style="font-family:Orbitron;font-size:18px;font-weight:900;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.3)">
+              —</div>
+            <div class="ss-item">
+              <div class="ss-num neon-red" id="ss-england">0</div>
+              <div class="ss-lbl">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Anglia</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="v-resizer" data-target="card-scen"></div>
+
+        <div class="p-card" id="card-scen">
+          <div class="p-label">Scenariu tactic</div>
+          <div class="scen-row">
+            <button class="scen-btn active-normal" id="scen-Normal" onclick="setScen('Normal',this)">Normal</button>
+            <button class="scen-btn" id="scen-Pressing" onclick="setScen('Pressing',this)">Pressing</button>
+            <button class="scen-btn" id="scen-Counter" onclick="setScen('Counter',this)">Counter</button>
+            <button class="scen-btn" id="scen-Corner" onclick="setScen('Corner',this)">Corner</button>
+          </div>
+        </div>
+
+        <div class="v-resizer" data-target="card-tips"></div>
+
+        <div class="p-card" id="card-tips">
+          <div class="p-label">Analiză tactică live</div>
+          <div id="tipList"></div>
+        </div>
+
+        <div class="v-resizer" data-target="card-players"></div>
+
+        <div class="p-card" id="card-players">
+          <div class="p-label">Jucători vizibili</div>
+          <div style="font-size:14px;color:rgba(160,210,255,.9);font-weight:900" id="playerCnt">—</div>
+        </div>
+
+        <div class="v-resizer" data-target="card-legend"></div>
+
+        <div class="p-card" id="card-legend">
+          <div class="p-label">Legendă</div>
+          <div class="legend">
+            <div class="leg">
+              <div class="leg-dot" style="background:#1a5fc0"></div>Spania
+            </div>
+            <div class="leg">
+              <div class="leg-dot" style="background:#aa0830"></div>Anglia
+            </div>
+            <div class="leg">
+              <div class="leg-dot" style="background:var(--gold)"></div>Minge
+            </div>
+            <div class="leg">
+              <div class="leg-dot" style="background:var(--green);border-radius:3px"></div>Activ
+            </div>
+            <div class="leg">
+              <div class="leg-dot" style="background:#cc8800"></div>Portar
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TACTICAL STOP OVERLAY -->
+  <div class="overlay" id="overlay" style="display:none">
+    <div class="modal">
+      <button class="modal-close" onclick="closeOverlay()">✕</button>
+      <div class="modal-badge" id="mBadge">—</div>
+      <div class="modal-title" id="mTitle">—</div>
+      <div class="modal-body" id="mBody">—</div>
+      <div class="modal-stats">
+        <div class="mstat">
+          <div class="mstat-num neon-blue" id="mXgH">0.000</div>
+          <div class="mstat-lbl">xG Spania</div>
+        </div>
+        <div class="mstat">
+          <div class="mstat-num neon-red" id="mXgA">0.000</div>
+          <div class="mstat-lbl">xG Anglia</div>
+        </div>
+        <div class="mstat">
+          <div class="mstat-num" style="color:var(--gold)" id="mFrame">1</div>
+          <div class="mstat-lbl">Frame</div>
+        </div>
+      </div>
+      <div class="defense-tips" id="mDefenseTips"></div>
+      <div class="modal-analysis" id="mAnalysis">—</div>
+      <div class="modal-btns">
+        <button class="modal-btn" onclick="closeOverlay()">▶ CONTINUĂ</button>
+        <button class="modal-btn modal-btn-draw" onclick="closeOverlayAndDraw()">✏️ DESENEAZĂ APĂRAREA</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GOAL ANNOUNCEMENT -->
+  <div id="goalAnnounce">
+    <div class="goal-announce-inner">
+      <div class="goal-announce-text" id="goalAnnounceText" style="font-size:80px">⚽ GOOOL!</div>
+      <div class="goal-announce-sub" id="goalAnnounceSub">—</div>
+    </div>
+  </div>
+
+  <script>
+    // ═══════════════════════════════════════════════════════════
+    // STATSBOMB EURO 2024 FINAL DATA — Spain 2-1 England
+    // ═══════════════════════════════════════════════════════════
+    const FRAMES = [{ "min": 0, "sec": 4, "type": "Pass", "team": "England", "player": "Pickford", "isHome": false, "xg": 0, "bx": 91.3, "by": 48.4, "ex": 0.0, "ey": 12.3, "outcome": "Out", "players": [{ "x": 91.3, "y": 48.4, "t": false, "act": true, "k": true, "name": "Pickford" }, { "x": 74.255, "y": 40.669, "t": false, "act": false, "k": false, "name": "Walker" }, { "x": 72.355, "y": 43.016, "t": false, "act": false, "k": false, "name": "Stones" }, { "x": 71.342, "y": 42.653, "t": true, "act": false, "k": false, "name": "Carvajal" }, { "x": 63.675, "y": 56.005, "t": false, "act": false, "k": false, "name": "Shaw" }, { "x": 60.318, "y": 24.102, "t": false, "act": false, "k": false, "name": "Saka" }, { "x": 58.298, "y": 43.558, "t": true, "act": false, "k": false, "name": "Yamal" }, { "x": 56.844, "y": 59.373, "t": true, "act": false, "k": false, "name": "N.Williams" }, { "x": 51.853, "y": 36.638, "t": false, "act": false, "k": false, "name": "Rice" }, { "x": 48.067, "y": 35.63, "t": false, "act": false, "k": false, "name": "Mainoo" }, { "x": 47.24, "y": 50.176, "t": false, "act": false, "k": false, "name": "Bellingham" }, { "x": 43.468, "y": 22.844, "t": true, "act": false, "k": false, "name": "Dani Olmo" }], "cumXgH": 0, "cumXgA": 0, "scoreH": 0, "scoreA": 0 },
+    { "min": 4, "sec": 9, "type": "Pass", "team": "Spain", "player": "Dani Olmo", "isHome": true, "xg": 0, "bx": 91.4, "by": 68.5, "ex": 111.6, "ey": 39.3, "outcome": "Incomplete", "players": [{ "x": 76.724, "y": 25.325, "t": true, "act": false, "k": false, "name": "Cucurella" }, { "x": 76.809, "y": 48.736, "t": false, "act": false, "k": false, "name": "Kane" }, { "x": 77.109, "y": 48.75, "t": true, "act": false, "k": false, "name": "Laporte" }, { "x": 78.922, "y": 63.498, "t": false, "act": false, "k": false, "name": "Shaw" }, { "x": 82.572, "y": 52.056, "t": false, "act": false, "k": false, "name": "Bellingham" }, { "x": 87.844, "y": 37.571, "t": true, "act": false, "k": false, "name": "Le Normand" }, { "x": 88.089, "y": 30.162, "t": false, "act": false, "k": false, "name": "Walker" }, { "x": 91.4, "y": 68.5, "t": true, "act": true, "k": false, "name": "Dani Olmo" }, { "x": 92.298, "y": 44.827, "t": false, "act": false, "k": false, "name": "Mainoo" }, { "x": 93.78, "y": 64.402, "t": false, "act": false, "k": false, "name": "Foden" }, { "x": 94.364, "y": 77.205, "t": true, "act": false, "k": false, "name": "N.Williams" }, { "x": 97.48, "y": 40.003, "t": true, "act": false, "k": false, "name": "Morata" }, { "x": 98.352, "y": 32.905, "t": false, "act": false, "k": false, "name": "Saka" }, { "x": 118.0, "y": 40.0, "t": false, "act": false, "k": true, "name": "Pickford" }, { "x": 2.0, "y": 40.0, "t": true, "act": false, "k": true, "name": "Simón" }], "cumXgH": 0, "cumXgA": 0, "scoreH": 0, "scoreA": 0 },
+    { "min": 11, "sec": 13, "type": "Shot", "team": "Spain", "player": "N.Williams", "isHome": true, "xg": 0.068, "bx": 115.6, "by": 28.4, "ex": 116.0, "ey": 29.3, "outcome": "Blocked", "players": [{ "x": 115.6, "y": 28.4, "t": true, "act": true, "k": false, "name": "N.Williams" }, { "x": 118.3, "y": 36.0, "t": false, "act": false, "k": true, "name": "Pickford" }, { "x": 100.4, "y": 32.4, "t": true, "act": false, "k": false, "name": "Dani Olmo" }, { "x": 99.9, "y": 22.6, "t": true, "act": false, "k": false, "name": "Fabián" }, { "x": 111.4, "y": 43.2, "t": true, "act": false, "k": false, "name": "Yamal" }, { "x": 111.5, "y": 34.4, "t": true, "act": false, "k": false, "name": "Morata" }, { "x": 98.2, "y": 25.1, "t": false, "act": false, "k": false, "name": "Saka" }, { "x": 107.1, "y": 38.1, "t": false, "act": false, "k": false, "name": "Rice" }, { "x": 114.2, "y": 42.6, "t": false, "act": false, "k": false, "name": "Shaw" }, { "x": 110.1, "y": 34.4, "t": false, "act": false, "k": false, "name": "Mainoo" }, { "x": 114.2, "y": 33.3, "t": false, "act": false, "k": false, "name": "Güehi" }, { "x": 115.3, "y": 29.5, "t": false, "act": false, "k": false, "name": "Stones" }, { "x": 2.0, "y": 40.0, "t": true, "act": false, "k": true, "name": "Simón" }], "cumXgH": 0.068, "cumXgA": 0, "scoreH": 0, "scoreA": 0 },
+    { "min": 12, "sec": 21, "type": "Shot", "team": "Spain", "player": "Le Normand", "isHome": true, "xg": 0.1175, "bx": 112.9, "by": 36.2, "ex": 120.0, "ey": 29.8, "outcome": "Off T", "players": [{ "x": 112.9, "y": 36.2, "t": true, "act": true, "k": false, "name": "Le Normand" }, { "x": 116.0, "y": 40.4, "t": false, "act": false, "k": false, "name": "Stones" }, { "x": 116.5, "y": 38.3, "t": false, "act": false, "k": false, "name": "Walker" }, { "x": 119.3, "y": 38.6, "t": false, "act": false, "k": false, "name": "Kane" }, { "x": 99.4, "y": 37.0, "t": true, "act": false, "k": false, "name": "Dani Olmo" }, { "x": 108.8, "y": 48.1, "t": true, "act": false, "k": false, "name": "Carvajal" }, { "x": 113.1, "y": 48.7, "t": true, "act": false, "k": false, "name": "Rodri" }, { "x": 116.8, "y": 37.2, "t": true, "act": false, "k": false, "name": "Morata" }, { "x": 119.0, "y": 42.5, "t": false, "act": false, "k": true, "name": "Pickford" }, { "x": 2.0, "y": 40.0, "t": true, "act": false, "k": true, "name": "Simón" }], "cumXgH": 0.1855, "cumXgA": 0, "scoreH": 0, "scoreA": 0 },
+    { "min": 16, "sec": 20, "type": "Shot", "team": "England", "player": "Rice", "isHome": false, "xg": 0.049, "bx": 23.8, "by": 39.2, "ex": 21.5, "ey": 39.2, "outcome": "Blocked", "players": [{ "x": 23.8, "y": 39.2, "t": false, "act": true, "k": false, "name": "Rice" }, { "x": 16.4, "y": 23.5, "t": true, "act": false, "k": false, "name": "N.Williams" }, { "x": 15.0, "y": 37.0, "t": false, "act": false, "k": false, "name": "Foden" }, { "x": 12.3, "y": 46.1, "t": false, "act": false, "k": false, "name": "Kane" }, { "x": 21.0, "y": 43.9, "t": false, "act": false, "k": false, "name": "Bellingham" }, { "x": 15.7, "y": 26.1, "t": true, "act": false, "k": false, "name": "Cucurella" }, { "x": 13.0, "y": 36.3, "t": true, "act": false, "k": false, "name": "Laporte" }, { "x": 16.3, "y": 33.3, "t": true, "act": false, "k": false, "name": "Fabián" }, { "x": 15.3, "y": 38.6, "t": true, "act": false, "k": false, "name": "Le Normand" }, { "x": 21.9, "y": 23.9, "t": true, "act": false, "k": false, "name": "Dani Olmo" }, { "x": 13.1, "y": 44.3, "t": true, "act": false, "k": false, "name": "Carvajal" }, { "x": 2.4, "y": 39.5, "t": true, "act": false, "k": true, "name": "Simón" }, { "x": 118.0, "y": 40.0, "t": false, "act": false, "k": true, "name": "Pickford" }], "cumXgH": 0.1855, "cumXgA": 0.049, "scoreH": 0, "scoreA": 0 },
+    { "min": 27, "sec": 27, "type": "Shot", "team": "Spain", "player": "Fabián", "isHome": true, "xg": 0.0481, "bx": 101.2, "by": 49.8, "ex": 117.9, "ey": 42.7, "outcome": "Saved", "players": [{ "x": 101.2, "y": 49.8, "t": true, "act": true, "k": false, "name": "Fabián" }, { "x": 104.7, "y": 58.0, "t": true, "act": false, "k": false, "name": "Dani Olmo" }, { "x": 117.9, "y": 42.6, "t": false, "act": false, "k": true, "name": "Pickford" }, { "x": 92.2, "y": 55.0, "t": false, "act": false, "k": false, "name": "Foden" }, { "x": 84.8, "y": 28.7, "t": true, "act": false, "k": false, "name": "Cucurella" }, { "x": 99.1, "y": 69.0, "t": true, "act": false, "k": false, "name": "Yamal" }, { "x": 101.4, "y": 27.9, "t": true, "act": false, "k": false, "name": "N.Williams" }, { "x": 106.4, "y": 37.1, "t": true, "act": false, "k": false, "name": "Morata" }, { "x": 2.0, "y": 40.0, "t": true, "act": false, "k": true, "name": "Simón" }], "cumXgH": 0.2336, "cumXgA": 0.049, "scoreH": 0, "scoreA": 0 },
+    { "min": 34, "sec": 58, "type": "Shot", "team": "Spain", "player": "Dani Olmo", "isHome": true, "xg": 0.0265, "bx": 95.0, "by": 31.2, "ex": 110.3, "ey": 34.7, "outcome": "Blocked", "players": [{ "x": 95.0, "y": 31.2, "t": true, "act": true, "k": false, "name": "Dani Olmo" }, { "x": 109.7, "y": 48.1, "t": true, "act": false, "k": false, "name": "Le Normand" }, { "x": 118.6, "y": 39.2, "t": false, "act": false, "k": true, "name": "Pickford" }, { "x": 107.3, "y": 53.7, "t": true, "act": false, "k": false, "name": "Rodri" }, { "x": 111.0, "y": 41.4, "t": true, "act": false, "k": false, "name": "Laporte" }, { "x": 115.8, "y": 16.3, "t": true, "act": false, "k": false, "name": "Yamal" }, { "x": 110.1, "y": 43.4, "t": true, "act": false, "k": false, "name": "Fabián" }, { "x": 108.8, "y": 40.0, "t": true, "act": false, "k": false, "name": "Carvajal" }, { "x": 111.9, "y": 44.0, "t": false, "act": false, "k": false, "name": "Shaw" }, { "x": 111.1, "y": 47.3, "t": false, "act": false, "k": false, "name": "Güehi" }, { "x": 110.5, "y": 35.3, "t": false, "act": false, "k": false, "name": "Kane" }, { "x": 2.0, "y": 40.0, "t": true, "act": false, "k": true, "name": "Simón" }], "cumXgH": 0.2602, "cumXgA": 0.049, "scoreH": 0, "scoreA": 0 },
+    { "min": 42, "sec": 24, "type": "Shot", "team": "Spain", "player": "Morata", "isHome": true, "xg": 0.0784, "bx": 113.9, "by": 30.2, "ex": 114.3, "ey": 30.9, "outcome": "Blocked", "players": [{ "x": 113.9, "y": 30.2, "t": true, "act": true, "k": false, "name": "Morata" }, { "x": 93.9, "y": 16.7, "t": true, "act": false, "k": false, "name": "N.Williams" }, { "x": 102.0, "y": 41.6, "t": false, "act": false, "k": false, "name": "Rice" }, { "x": 108.0, "y": 43.7, "t": false, "act": false, "k": false, "name": "Shaw" }, { "x": 98.4, "y": 14.7, "t": false, "act": false, "k": false, "name": "Saka" }, { "x": 100.7, "y": 20.8, "t": false, "act": false, "k": false, "name": "Walker" }, { "x": 115.5, "y": 32.8, "t": false, "act": false, "k": true, "name": "Pickford" }, { "x": 114.3, "y": 31.4, "t": false, "act": false, "k": false, "name": "Stones" }, { "x": 112.9, "y": 29.8, "t": false, "act": false, "k": false, "name": "Güehi" }, { "x": 2.0, "y": 40.0, "t": true, "act": false, "k": true, "name": "Simón" }], "cumXgH": 0.3385, "cumXgA": 0.049, "scoreH": 0, "scoreA": 0 },
+    { "min": 44, "sec": 5, "type": "Shot", "team": "England", "player": "Kane", "isHome": false, "xg": 0.0484, "bx": 17.4, "by": 43.3, "ex": 15.6, "ey": 43.1, "outcome": "Blocked", "players": [{ "x": 17.4, "y": 43.3, "t": false, "act": true, "k": false, "name": "Kane" }, { "x": 32.9, "y": 40.1, "t": false, "act": false, "k": false, "name": "Mainoo" }, { "x": 2.4, "y": 40.5, "t": true, "act": false, "k": true, "name": "Simón" }, { "x": 12.7, "y": 43.6, "t": false, "act": false, "k": false, "name": "Foden" }, { "x": 17.1, "y": 33.8, "t": false, "act": false, "k": false, "name": "Saka" }, { "x": 12.2, "y": 61.9, "t": false, "act": false, "k": false, "name": "Bellingham" }, { "x": 16.3, "y": 33.2, "t": true, "act": false, "k": false, "name": "Cucurella" }, { "x": 15.2, "y": 41.1, "t": true, "act": false, "k": false, "name": "Laporte" }, { "x": 15.3, "y": 43.3, "t": true, "act": false, "k": false, "name": "Rodri" }, { "x": 12.5, "y": 53.8, "t": true, "act": false, "k": false, "name": "Le Normand" }, { "x": 118.0, "y": 40.0, "t": false, "act": false, "k": true, "name": "Pickford" }], "cumXgH": 0.3385, "cumXgA": 0.0974, "scoreH": 0, "scoreA": 0 },
+    { "min": 45, "sec": 0, "type": "Substitution", "team": "Spain", "player": "Rodri", "isHome": true, "xg": 0, "bx": 60, "by": 40, "ex": 60, "ey": 40, "outcome": "→ Zubimendi", "players": [{ "x": 60, "y": 40, "t": true, "act": true, "k": false, "name": "Rodri" }, { "x": 118.0, "y": 40.0, "t": false, "act": false, "k": true, "name": "Pickford" }, { "x": 2.0, "y": 40.0, "t": true, "act": false, "k": true, "name": "Simón" }], "cumXgH": 0.3385, "cumXgA": 0.0974, "scoreH": 0, "scoreA": 0 },
+    { "min": 45, "sec": 41, "type": "Shot", "team": "England", "player": "Foden", "isHome": false, "xg": 0.1797, "bx": 5.6, "by": 50.1, "ex": 1.1, "ey": 43.2, "outcome": "Saved", "players": [{ "x": 5.6, "y": 50.1, "t": false, "act": true, "k": false, "name": "Foden" }, { "x": 5.9, "y": 45.0, "t": false, "act": false, "k": false, "name": "Güehi" }, { "x": 6.2, "y": 42.2, "t": true, "act": false, "k": false, "name": "Rodri" }, { "x": 1.1, "y": 41.3, "t": true, "act": false, "k": true, "name": "Simón" }, { "x": 7.4, "y": 34.8, "t": true, "act": false, "k": false, "name": "Cucurella" }, { "x": 6.7, "y": 44.0, "t": true, "act": false, "k": false, "name": "Le Normand" }, { "x": 5.7, "y": 47.0, "t": true, "act": false, "k": false, "name": "Carvajal" }, { "x": 6.5, "y": 43.1, "t": false, "act": false, "k": false, "name": "Kane" }, { "x": 10.8, "y": 35.7, "t": false, "act": false, "k": false, "name": "Saka" }, { "x": 118.0, "y": 40.0, "t": false, "act": false, "k": true, "name": "Pickford" }], "cumXgH": 0.3385, "cumXgA": 0.2771, "scoreH": 0, "scoreA": 0 },
+    { "min": 46, "sec": 9, "type": "Shot", "team": "Spain", "player": "N.Williams", "isHome": true, "xg": 0.1125, "bx": 109.9, "by": 28.0, "ex": 120.0, "ey": 42.4, "outcome": "Goal", "players": [{ "x": 109.9, "y": 28.0, "t": true, "act": true, "k": false, "name": "N.Williams" }, { "x": 107.8, "y": 43.3, "t": false, "act": false, "k": false, "name": "Güehi" }, { "x": 108.2, "y": 41.9, "t": true, "act": false, "k": false, "name": "Dani Olmo" }, { "x": 107.0, "y": 44.3, "t": true, "act": false, "k": false, "name": "Yamal" }, { "x": 111.0, "y": 40.7, "t": false, "act": false, "k": false, "name": "Stones" }, { "x": 112.6, "y": 32.8, "t": false, "act": false, "k": false, "name": "Walker" }, { "x": 117.4, "y": 37.1, "t": false, "act": false, "k": true, "name": "Pickford" }, { "x": 112.6, "y": 47.6, "t": true, "act": false, "k": false, "name": "Morata" }, { "x": 2.0, "y": 40.0, "t": true, "act": false, "k": true, "name": "Simón" }], "cumXgH": 0.451, "cumXgA": 0.2771, "scoreH": 1, "scoreA": 0 },
+    { "min": 48, "sec": 19, "type": "Shot", "team": "Spain", "player": "Dani Olmo", "isHome": true, "xg": 0.2456, "bx": 108.8, "by": 32.1, "ex": 120.0, "ey": 49.3, "outcome": "Off T", "players": [{ "x": 108.8, "y": 32.1, "t": true, "act": true, "k": false, "name": "Dani Olmo" }, { "x": 93.5, "y": 59.0, "t": true, "act": false, "k": false, "name": "Yamal" }, { "x": 95.2, "y": 42.9, "t": true, "act": false, "k": false, "name": "Carvajal" }, { "x": 98.3, "y": 29.8, "t": true, "act": false, "k": false, "name": "N.Williams" }, { "x": 117.6, "y": 38.4, "t": false, "act": false, "k": true, "name": "Pickford" }, { "x": 110.8, "y": 38.8, "t": false, "act": false, "k": false, "name": "Güehi" }, { "x": 107.2, "y": 41.9, "t": false, "act": false, "k": false, "name": "Shaw" }, { "x": 109.4, "y": 35.1, "t": false, "act": false, "k": false, "name": "Stones" }, { "x": 2.0, "y": 40.0, "t": true, "act": false, "k": true, "name": "Simón" }], "cumXgH": 0.6966, "cumXgA": 0.2771, "scoreH": 1, "scoreA": 0 },
+    { "min": 54, "sec": 58, "type": "Shot", "team": "Spain", "player": "Morata", "isHome": true, "xg": 0.2431, "bx": 110.9, "by": 51.0, "ex": 115.5, "ey": 40.2, "outcome": "Wayward", "players": [{ "x": 110.9, "y": 51.0, "t": true, "act": true, "k": false, "name": "Morata" }, { "x": 112.6, "y": 49.7, "t": false, "act": false, "k": true, "name": "Pickford" }, { "x": 96.3, "y": 68.2, "t": true, "act": false, "k": false, "name": "Carvajal" }, { "x": 109.9, "y": 39.9, "t": false, "act": false, "k": false, "name": "Stones" }, { "x": 103.6, "y": 37.1, "t": false, "act": false, "k": false, "name": "Walker" }, { "x": 103.0, "y": 40.9, "t": true, "act": false, "k": false, "name": "Dani Olmo" }, { "x": 2.0, "y": 40.0, "t": true, "act": false, "k": true, "name": "Simón" }], "cumXgH": 0.965, "cumXgA": 0.2771, "scoreH": 1, "scoreA": 0 },
+    { "min": 60, "sec": 0, "type": "Substitution", "team": "England", "player": "Kane", "isHome": false, "xg": 0, "bx": 60, "by": 40, "ex": 60, "ey": 40, "outcome": "→ Watkins", "players": [{ "x": 60, "y": 40, "t": false, "act": true, "k": false, "name": "Kane" }, { "x": 118.0, "y": 40.0, "t": false, "act": false, "k": true, "name": "Pickford" }, { "x": 2.0, "y": 40.0, "t": true, "act": false, "k": true, "name": "Simón" }], "cumXgH": 0.965, "cumXgA": 0.2771, "scoreH": 1, "scoreA": 0 },
+    { "min": 63, "sec": 12, "type": "Shot", "team": "England", "player": "Bellingham", "isHome": false, "xg": 0.0563, "bx": 21.0, "by": 42.8, "ex": 0.0, "ey": 45.0, "outcome": "Off T", "players": [{ "x": 21.0, "y": 42.8, "t": false, "act": true, "k": false, "name": "Bellingham" }, { "x": 33.3, "y": 45.5, "t": true, "act": false, "k": false, "name": "Yamal" }, { "x": 22.7, "y": 31.5, "t": true, "act": false, "k": false, "name": "Dani Olmo" }, { "x": 23.8, "y": 29.5, "t": true, "act": false, "k": false, "name": "Fabián" }, { "x": 24.8, "y": 34.4, "t": true, "act": false, "k": false, "name": "Carvajal" }, { "x": 18.8, "y": 14.9, "t": true, "act": false, "k": false, "name": "Morata" }, { "x": 17.9, "y": 29.1, "t": true, "act": false, "k": false, "name": "Cucurella" }, { "x": 20.1, "y": 41.6, "t": true, "act": false, "k": false, "name": "Zubimendi" }, { "x": 18.3, "y": 41.7, "t": true, "act": false, "k": false, "name": "Laporte" }, { "x": 16.3, "y": 47.3, "t": true, "act": false, "k": false, "name": "Le Normand" }, { "x": 2.7, "y": 40.4, "t": true, "act": false, "k": true, "name": "Simón" }, { "x": 11.2, "y": 12.4, "t": false, "act": false, "k": false, "name": "Foden" }, { "x": 118.0, "y": 40.0, "t": false, "act": false, "k": true, "name": "Pickford" }], "cumXgH": 1.0141, "cumXgA": 0.3333, "scoreH": 1, "scoreA": 0 },
+    { "min": 65, "sec": 45, "type": "Shot", "team": "Spain", "player": "Yamal", "isHome": true, "xg": 0.1621, "bx": 103.5, "by": 49.7, "ex": 113.3, "ey": 43.1, "outcome": "Saved", "players": [{ "x": 103.5, "y": 49.7, "t": true, "act": true, "k": false, "name": "Yamal" }, { "x": 101.0, "y": 37.2, "t": true, "act": false, "k": false, "name": "Morata" }, { "x": 105.5, "y": 49.8, "t": false, "act": false, "k": false, "name": "Shaw" }, { "x": 103.8, "y": 46.9, "t": false, "act": false, "k": false, "name": "Güehi" }, { "x": 105.4, "y": 36.2, "t": false, "act": false, "k": false, "name": "Stones" }, { "x": 113.8, "y": 43.0, "t": false, "act": false, "k": true, "name": "Pickford" }, { "x": 2.0, "y": 40.0, "t": true, "act": false, "k": true, "name": "Simón" }], "cumXgH": 1.1762, "cumXgA": 0.3333, "scoreH": 1, "scoreA": 0 },
+    { "min": 67, "sec": 19, "type": "Substitution", "team": "Spain", "player": "Morata", "isHome": true, "xg": 0, "bx": 60, "by": 40, "ex": 60, "ey": 40, "outcome": "→ Oyarzabal", "players": [{ "x": 60, "y": 40, "t": true, "act": true, "k": false, "name": "Morata" }, { "x": 118.0, "y": 40.0, "t": false, "act": false, "k": true, "name": "Pickford" }, { "x": 2.0, "y": 40.0, "t": true, "act": false, "k": true, "name": "Simón" }], "cumXgH": 1.2742, "cumXgA": 0.3333, "scoreH": 1, "scoreA": 0 },
+    { "min": 69, "sec": 0, "type": "Substitution", "team": "England", "player": "Mainoo", "isHome": false, "xg": 0, "bx": 60, "by": 40, "ex": 60, "ey": 40, "outcome": "→ Palmer", "players": [{ "x": 60, "y": 40, "t": false, "act": true, "k": false, "name": "Mainoo" }, { "x": 118.0, "y": 40.0, "t": false, "act": false, "k": true, "name": "Pickford" }, { "x": 2.0, "y": 40.0, "t": true, "act": false, "k": true, "name": "Simón" }], "cumXgH": 1.2742, "cumXgA": 0.3333, "scoreH": 1, "scoreA": 0 },
+    { "min": 69, "sec": 59, "type": "Shot", "team": "England", "player": "Watkins", "isHome": false, "xg": 0.0747, "bx": 29.0, "by": 39.9, "ex": 27.8, "ey": 40.0, "outcome": "Blocked", "players": [{ "x": 29.0, "y": 39.9, "t": false, "act": true, "k": false, "name": "Watkins" }, { "x": 38.4, "y": 19.3, "t": false, "act": false, "k": false, "name": "Saka" }, { "x": 38.4, "y": 48.4, "t": false, "act": false, "k": false, "name": "Foden" }, { "x": 38.7, "y": 20.7, "t": true, "act": false, "k": false, "name": "Cucurella" }, { "x": 38.7, "y": 46.3, "t": true, "act": false, "k": false, "name": "Le Normand" }, { "x": 29.0, "y": 35.0, "t": true, "act": false, "k": false, "name": "Laporte" }, { "x": 27.6, "y": 40.6, "t": true, "act": false, "k": false, "name": "Carvajal" }, { "x": 13.3, "y": 40.8, "t": true, "act": false, "k": true, "name": "Simón" }, { "x": 118.0, "y": 40.0, "t": false, "act": false, "k": true, "name": "Pickford" }], "cumXgH": 1.3067, "cumXgA": 0.4081, "scoreH": 1, "scoreA": 0 },
+    { "min": 71, "sec": 50, "type": "Shot", "team": "Spain", "player": "Oyarzabal", "isHome": true, "xg": 0.0377, "bx": 112.0, "by": 24.9, "ex": 118.3, "ey": 36.7, "outcome": "Saved", "players": [{ "x": 112.0, "y": 24.9, "t": true, "act": true, "k": false, "name": "Oyarzabal" }, { "x": 103.0, "y": 35.4, "t": false, "act": false, "k": false, "name": "Rice" }, { "x": 118.4, "y": 36.8, "t": false, "act": false, "k": true, "name": "Pickford" }, { "x": 112.5, "y": 27.9, "t": false, "act": false, "k": false, "name": "Stones" }, { "x": 111.4, "y": 25.9, "t": false, "act": false, "k": false, "name": "Walker" }, { "x": 100.5, "y": 36.7, "t": true, "act": false, "k": false, "name": "Zubimendi" }, { "x": 2.0, "y": 40.0, "t": true, "act": false, "k": true, "name": "Simón" }], "cumXgH": 1.3445, "cumXgA": 0.4081, "scoreH": 1, "scoreA": 0 },
+    { "min": 72, "sec": 8, "type": "Shot", "team": "England", "player": "Palmer", "isHome": false, "xg": 0.0379, "bx": 21.6, "by": 31.0, "ex": 0.0, "ey": 42.9, "outcome": "Goal", "players": [{ "x": 21.6, "y": 31.0, "t": false, "act": true, "k": false, "name": "Palmer" }, { "x": 9.6, "y": 40.5, "t": true, "act": false, "k": false, "name": "Carvajal" }, { "x": 1.8, "y": 39.3, "t": true, "act": false, "k": true, "name": "Simón" }, { "x": 12.0, "y": 21.7, "t": true, "act": false, "k": false, "name": "Fabián" }, { "x": 12.5, "y": 26.9, "t": true, "act": false, "k": false, "name": "Laporte" }, { "x": 10.9, "y": 34.5, "t": true, "act": false, "k": false, "name": "Cucurella" }, { "x": 13.6, "y": 34.0, "t": true, "act": false, "k": false, "name": "Zubimendi" }, { "x": 17.9, "y": 42.9, "t": true, "act": false, "k": false, "name": "Yamal" }, { "x": 13.2, "y": 35.6, "t": true, "act": false, "k": false, "name": "Le Normand" }, { "x": 11.5, "y": 33.0, "t": false, "act": false, "k": false, "name": "Bellingham" }, { "x": 13.0, "y": 25.9, "t": false, "act": false, "k": false, "name": "Saka" }, { "x": 11.3, "y": 41.4, "t": false, "act": false, "k": false, "name": "Watkins" }, { "x": 118.0, "y": 40.0, "t": false, "act": false, "k": true, "name": "Pickford" }], "cumXgH": 1.3445, "cumXgA": 0.446, "scoreH": 1, "scoreA": 1 },
+    { "min": 81, "sec": 13, "type": "Shot", "team": "Spain", "player": "Yamal", "isHome": true, "xg": 0.1639, "bx": 107.2, "by": 50.2, "ex": 116.9, "ey": 42.3, "outcome": "Saved", "players": [{ "x": 107.2, "y": 50.2, "t": true, "act": true, "k": false, "name": "Yamal" }, { "x": 102.1, "y": 41.5, "t": false, "act": false, "k": false, "name": "Güehi" }, { "x": 98.5, "y": 49.5, "t": false, "act": false, "k": false, "name": "Foden" }, { "x": 117.2, "y": 42.8, "t": false, "act": false, "k": true, "name": "Pickford" }, { "x": 106.7, "y": 46.9, "t": true, "act": false, "k": false, "name": "Dani Olmo" }, { "x": 104.5, "y": 38.3, "t": true, "act": false, "k": false, "name": "N.Williams" }, { "x": 106.4, "y": 25.3, "t": true, "act": false, "k": false, "name": "Oyarzabal" }, { "x": 2.0, "y": 40.0, "t": true, "act": false, "k": true, "name": "Simón" }], "cumXgH": 1.5084, "cumXgA": 0.446, "scoreH": 1, "scoreA": 1 },
+    { "min": 82, "sec": 0, "type": "Substitution", "team": "Spain", "player": "Le Normand", "isHome": true, "xg": 0, "bx": 60, "by": 40, "ex": 60, "ey": 40, "outcome": "→ Nacho", "players": [{ "x": 60, "y": 40, "t": true, "act": true, "k": false, "name": "Le Normand" }, { "x": 118.0, "y": 40.0, "t": false, "act": false, "k": true, "name": "Pickford" }, { "x": 2.0, "y": 40.0, "t": true, "act": false, "k": true, "name": "Simón" }], "cumXgH": 1.5084, "cumXgA": 0.446, "scoreH": 1, "scoreA": 1 },
+    { "min": 85, "sec": 56, "type": "Shot", "team": "Spain", "player": "Oyarzabal", "isHome": true, "xg": 0.2833, "bx": 111.2, "by": 36.3, "ex": 120.0, "ey": 38.4, "outcome": "Goal", "players": [{ "x": 111.2, "y": 36.3, "t": true, "act": true, "k": false, "name": "Oyarzabal" }, { "x": 93.2, "y": 38.4, "t": false, "act": false, "k": false, "name": "Bellingham" }, { "x": 98.5, "y": 48.6, "t": true, "act": false, "k": false, "name": "N.Williams" }, { "x": 104.3, "y": 17.5, "t": true, "act": false, "k": false, "name": "Cucurella" }, { "x": 111.0, "y": 37.6, "t": false, "act": false, "k": false, "name": "Güehi" }, { "x": 104.2, "y": 48.3, "t": false, "act": false, "k": false, "name": "Shaw" }, { "x": 107.3, "y": 33.3, "t": false, "act": false, "k": false, "name": "Stones" }, { "x": 115.4, "y": 37.9, "t": false, "act": false, "k": true, "name": "Pickford" }, { "x": 96.6, "y": 60.9, "t": true, "act": false, "k": false, "name": "Yamal" }, { "x": 2.0, "y": 40.0, "t": true, "act": false, "k": true, "name": "Simón" }], "cumXgH": 1.7917, "cumXgA": 0.446, "scoreH": 2, "scoreA": 1 },
+    { "min": 88, "sec": 0, "type": "Substitution", "team": "Spain", "player": "Yamal", "isHome": true, "xg": 0, "bx": 60, "by": 40, "ex": 60, "ey": 40, "outcome": "→ Merino", "players": [{ "x": 60, "y": 40, "t": true, "act": true, "k": false, "name": "Yamal" }, { "x": 118.0, "y": 40.0, "t": false, "act": false, "k": true, "name": "Pickford" }, { "x": 2.0, "y": 40.0, "t": true, "act": false, "k": true, "name": "Simón" }], "cumXgH": 1.7917, "cumXgA": 0.446, "scoreH": 2, "scoreA": 1 },
+    { "min": 89, "sec": 14, "type": "Shot", "team": "England", "player": "Rice", "isHome": false, "xg": 0.0574, "bx": 10.5, "by": 35.9, "ex": 1.4, "ey": 39.6, "outcome": "Saved", "players": [{ "x": 10.5, "y": 35.9, "t": false, "act": true, "k": false, "name": "Rice" }, { "x": 1.3, "y": 39.5, "t": true, "act": false, "k": true, "name": "Simón" }, { "x": 10.4, "y": 34.6, "t": true, "act": false, "k": false, "name": "Laporte" }, { "x": 10.1, "y": 38.0, "t": true, "act": false, "k": false, "name": "Zubimendi" }, { "x": 9.1, "y": 39.9, "t": true, "act": false, "k": false, "name": "Nacho" }, { "x": 12.7, "y": 49.9, "t": true, "act": false, "k": false, "name": "N.Williams" }, { "x": 5.2, "y": 43.6, "t": true, "act": false, "k": false, "name": "Carvajal" }, { "x": 118.0, "y": 40.0, "t": false, "act": false, "k": true, "name": "Pickford" }], "cumXgH": 1.7917, "cumXgA": 0.5034, "scoreH": 2, "scoreA": 1 },
+    { "min": 89, "sec": 15, "type": "Shot", "team": "England", "player": "Güehi", "isHome": false, "xg": 0.1172, "bx": 5.2, "by": 44.5, "ex": 0.5, "ey": 42.0, "outcome": "Blocked", "players": [{ "x": 5.2, "y": 44.5, "t": false, "act": true, "k": false, "name": "Güehi" }, { "x": 1.8, "y": 39.6, "t": true, "act": false, "k": true, "name": "Simón" }, { "x": 4.2, "y": 39.3, "t": true, "act": false, "k": false, "name": "Cucurella" }, { "x": 4.5, "y": 44.7, "t": true, "act": false, "k": false, "name": "Carvajal" }, { "x": 7.9, "y": 44.7, "t": false, "act": false, "k": false, "name": "Stones" }, { "x": 118.0, "y": 40.0, "t": false, "act": false, "k": true, "name": "Pickford" }], "cumXgH": 1.7917, "cumXgA": 0.6206, "scoreH": 2, "scoreA": 1 },
+    { "min": 89, "sec": 17, "type": "Shot", "team": "England", "player": "Rice", "isHome": false, "xg": 0.1058, "bx": 6.9, "by": 38.6, "ex": 0.0, "ey": 43.6, "outcome": "Off T", "players": [{ "x": 6.9, "y": 38.6, "t": false, "act": true, "k": false, "name": "Rice" }, { "x": 7.1, "y": 33.6, "t": false, "act": false, "k": false, "name": "Watkins" }, { "x": 6.9, "y": 40.5, "t": false, "act": false, "k": false, "name": "Saka" }, { "x": 1.1, "y": 40.1, "t": true, "act": false, "k": true, "name": "Simón" }, { "x": 13.3, "y": 37.1, "t": true, "act": false, "k": false, "name": "Laporte" }, { "x": 9.3, "y": 36.5, "t": true, "act": false, "k": false, "name": "Zubimendi" }, { "x": 7.8, "y": 41.0, "t": true, "act": false, "k": false, "name": "Nacho" }, { "x": 118.0, "y": 40.0, "t": false, "act": false, "k": true, "name": "Pickford" }], "cumXgH": 1.7917, "cumXgA": 0.7264, "scoreH": 2, "scoreA": 1 },
+    { "min": 90, "sec": 0, "type": "Pass", "team": "Spain", "player": "Simón", "isHome": true, "xg": 0, "bx": 22.9, "by": 5.5, "ex": 98.1, "ey": 23.4, "outcome": "Unknown", "players": [{ "x": 22.9, "y": 5.5, "t": true, "act": true, "k": true, "name": "Simón" }, { "x": 60, "y": 30, "t": true, "act": false, "k": false, "name": "Merino" }, { "x": 65, "y": 40, "t": false, "act": false, "k": false, "name": "Bellingham" }, { "x": 118.0, "y": 40.0, "t": false, "act": false, "k": true, "name": "Pickford" }], "cumXgH": 1.7917, "cumXgA": 0.7264, "scoreH": 2, "scoreA": 1 }];
+
+    // ═══ TACTICAL PAUSE EVENTS ═══
+    const PAUSES = [
+      {
+        frameIdx: 2, badgeText: "⚠️ SUT SPANIA!", badgeColor: "#00aaff", badgeBg: "rgba(0,100,200,.12)",
+        title: "N.WILLIAMS SUTEAZA 11'", titleColor: "#00aaff",
+        body: "Nicholas Williams suteaza din poziție bună! xG=0.068 — blocat de Stones!",
+        analysis: "🔵 Spania atacă pe flancul drept. Minge adusă prin combinație rapidă în careu.",
+        defenseTips: [
+          { color: "#ff4466", label: "URGENȚĂ", text: "Stones trebuia să nu lase Williams să se întoarcă — rămâi cu fața la minge!" },
+          { color: "#00d4ff", label: "POZIȚIE", text: "Güehi să ocupe linia goală dintre Walker și Stones — există spațiu periculos!" },
+          { color: "#ffaa00", label: "TACTIC", text: "Fullback-ul drept (Walker) să nu urce atât de mult — N.Williams exploatează culoarul!" },
+          { color: "#00ffaa", label: "APĂRARE", text: "Forțează N.Williams spre exterior — unghiul e mai mic la centrul cadrului!" }
+        ]
+      },
+      {
+        frameIdx: 4, badgeText: "⚠️ SUT ANGLIA!", badgeColor: "#ff4466", badgeBg: "rgba(200,20,60,.12)",
+        title: "RICE SUTEAZA 16'", titleColor: "#ff4466",
+        body: "Declan Rice suteaza de la distanță! xG=0.049 — blocat de apărare!",
+        analysis: "🔴 Anglia atacă prin centru. Rice liber la 16m — spațiu acordat prea ușor!",
+        defenseTips: [
+          { color: "#ff4466", label: "CRITIC", text: "Fabián și Le Normand nu au presat suficient pe Rice în zona centrală!" },
+          { color: "#00d4ff", label: "POZIȚIE", text: "Rodri trebuia să ocupe spațiul din fața apărării — Rice s-a infiltrat neacoperit!" },
+          { color: "#ffaa00", label: "TACTIC", text: "Linia de 4 defensivă să se compacteze — nu lăsați spații între linii la 16m!" },
+          { color: "#00ffaa", label: "SOLUȚIE", text: "Pressing colectiv imediat după pierderea mingii — nu lăsați echipa adversă să se organizeze!" }
+        ]
+      },
+      {
+        frameIdx: 10, badgeText: "⚠️ PERICOL! FODEN!", badgeColor: "#ffcc00", badgeBg: "rgba(200,150,0,.12)",
+        title: "FODEN SUTEAZA 45+1'!", titleColor: "#ffcc00",
+        body: "Phil Foden șutează cu xG=0.180! Simón apără spectaculos! Cel mai periculos moment al primei reprize!",
+        analysis: "🟡 ALERTĂ DEFENSIVĂ! Foden ajunge singur în fața lui Simón — apărare depășită!",
+        defenseTips: [
+          { color: "#ff1a4a", label: "FATAL", text: "Carvajal a urcat și nu s-a întors la timp — Foden a exploatat spațiul lăsat!" },
+          { color: "#ff4466", label: "CRITIC", text: "Le Normand și Cucurella nu au comunicat — Foden a primit mingea liber în careu!" },
+          { color: "#00d4ff", label: "SOLUȚIE", text: "Rodri/Zubimendi să rămână în fața apărării și să intercepteze mingile între linii!" },
+          { color: "#ffaa00", label: "TACTIC", text: "La cornere și faze fixe: marcaj strict om-la-om în interiorul careului — nu lăsați jucători liberi!" },
+          { color: "#00ffaa", label: "APĂRARE", text: "Simón trebuie felicitat — salvare excepțională! Dar poziționarea defensivei trebuie corectată urgent!" }
+        ]
+      },
+      {
+        frameIdx: 11, badgeText: "🏆 GOL! SPANIA 1-0!", badgeColor: "#00ff88", badgeBg: "rgba(0,200,100,.12)",
+        title: "N.WILLIAMS MARCHEAZĂ 46'!", titleColor: "#00ff88",
+        body: "Nicholas Williams înscrie primul gol! xG=0.113 — Pickford nu are șanse! Spania conduce!",
+        analysis: "🟢 SPANIA 1-0! Contraatac rapid după pauză. Williams exploatează flancul drept!",
+        defenseTips: [
+          { color: "#ff4466", label: "ANALIZĂ GOL", text: "Pickford a ieșit prea devreme — Williams a înscris în colțul opus unde portarul nu putea ajunge!" },
+          { color: "#ff1a4a", label: "GREȘEALĂ", text: "Shaw și Güehi nu au tăiat pasa de pregătire a lui Dani Olmo — trebuia întreruptă înainte!" },
+          { color: "#00d4ff", label: "LECȚIE", text: "Anglia trebuie să preseze mai sus după gol — blocați construcția jocului spaniol din prima treime!" },
+          { color: "#ffaa00", label: "RECUPERARE", text: "Kane trebuie să rămână avansat — creați adâncime și forțați apărarea spaniolă să gândească defensiv!" },
+          { color: "#00ffaa", label: "MENTAL", text: "Nu intrați în panică! xG-ul Angliei era decent — șansele există, trebuie valorificate!" }
+        ]
+      },
+      {
+        frameIdx: 12, badgeText: "⚡ ȘANSĂ SPANIA!", badgeColor: "#00aaff", badgeBg: "rgba(0,100,200,.12)",
+        title: "DANI OLMO 48'!", titleColor: "#00aaff",
+        body: "Dani Olmo șutează imediat după gol! xG=0.246! Off T — aproape 2-0!",
+        analysis: "🔵 Spania atacă cu presiune maximă după gol! Anglia complet dezorganizată!",
+        defenseTips: [
+          { color: "#ff1a4a", label: "URGENT", text: "Anglia trebuie să reseteze imediat — toți jucătorii înapoi, formați blocul defensiv!" },
+          { color: "#ff4466", label: "CRITIC", text: "Güehi și Stones au lăsat Dani Olmo să intre în careu — nu l-au urmărit suficient!" },
+          { color: "#00d4ff", label: "SOLUȚIE", text: "Rice să coborâre în fața apărării și să blocheze pasele de preparare ale Spaniei!" },
+          { color: "#ffaa00", label: "TACTIC", text: "Folosiți schimbările tactice acum — intreduceți energie proaspătă pentru pressing!" }
+        ]
+      },
+      {
+        frameIdx: 20, badgeText: "⚡ PERICOL ANGLIA!", badgeColor: "#ff4466", badgeBg: "rgba(200,20,60,.12)",
+        title: "BELLINGHAM 63'! PERICULOS!", titleColor: "#ff4466",
+        body: "Bellingham șutează din careu! xG=0.056! Off T — Simón salvat!",
+        analysis: "🔴 Anglia atacă cu tot mai multă disperare! Bellingham e liber în careu — alarmant!",
+        defenseTips: [
+          { color: "#ff1a4a", label: "FATAL", text: "Bellingham a primit mingea nemarcrat în careu — Fabián și Carvajal nu au comunicat!" },
+          { color: "#00d4ff", label: "SOLUȚIE", text: "Zubimendi să urmărească Bellingham permanent — cel mai periculos jucător englez din careu!" },
+          { color: "#ffaa00", label: "TACTIC", text: "Compactați spațiul central — nu lăsați Bellingham să se infiltreze între Laporte și Le Normand!" },
+          { color: "#00ffaa", label: "APĂRARE", text: "Mențineți distanța de 4-5m între linii — nu lăsați spații de exploatat în profunzime!" }
+        ]
+      },
+      {
+        frameIdx: 21, badgeText: "⚡ ȘANSĂ SPANIA!", badgeColor: "#00aaff", badgeBg: "rgba(0,100,200,.12)",
+        title: "YAMAL 65'! SALVAT!", titleColor: "#00aaff",
+        body: "Yamal șutează cu xG=0.162! Pickford face o apărare fenomenală!",
+        analysis: "🔵 Yamal — cel mai tânăr jucător din istoria Euro Final — creează șansă uriașă!",
+        defenseTips: [
+          { color: "#ff4466", label: "ANALIZA", text: "Pickford a ghicit colțul corect — dar Yamal trebuia presat mai devreme înainte de șut!" },
+          { color: "#00d4ff", label: "LECȚIE", text: "Güehi și Stones să reducă unghiul lui Yamal — nu-l lăsați să se întoarcă și să șuteze!" },
+          { color: "#ffaa00", label: "TACTIC", text: "Shaw trebuia să fie mai aproape — Yamal a primit mingea cu prea mult spațiu pe dreapta!" }
+        ]
+      },
+      {
+        frameIdx: 25, badgeText: "🔴 EGALARE ANGLIA! SOS!", badgeColor: "#ff1a4a", badgeBg: "rgba(200,20,60,.15)",
+        title: "COLE PALMER 72'! 1-1! SOS!", titleColor: "#ff2244",
+        body: "Cole Palmer (intrat rezervă) înscrie! xG=0.038 dar golul devastator! Meci egalat la 72'! SOS! SOS!",
+        analysis: "🔴 RESET MENTAL! 1-1 la 72' — acesta este golul care putea decide totul împotriva noastră!",
+        defenseTips: [
+          { color: "#ff0022", label: "FATAL", text: "Zubimendi a pierdut marcajul lui Palmer complet! Palmer era liber la 20m — inacceptabil!" },
+          { color: "#ff1a4a", label: "GREȘEALĂ GRAVĂ", text: "Cucurella s-a deplasat greșit — a lăsat spațiul din fața careului neacoperit!" },
+          { color: "#ff4466", label: "ANALIZA GOL", text: "Simón a stat prea pe linia goalului — trebuia să avanseze și să reducă unghiul lui Palmer!" },
+          { color: "#ffaa00", label: "LECȚIE CRITICĂ", text: "Niciodată nu lăsați un jucător proaspăt (rezervă) nemarcart la 16m — energie și determinare crescute!" },
+          { color: "#00ffaa", label: "RECUPERARE", text: "Reveniți la posesie! Oyarzabal să caute spații în spatele defensivei. Nu intrați în panică — xG total e în favoarea noastră!" },
+          { color: "#00d4ff", label: "STRATEGIE", text: "Apăsați mai sus — forțați Anglia să construiască din propria jumătate sub presiune!" }
+        ]
+      },
+      {
+        frameIdx: 27, badgeText: "⚡ ȘANSĂ SPANIA!", badgeColor: "#00aaff", badgeBg: "rgba(0,100,200,.12)",
+        title: "YAMAL 81'! PICKFORD SALVEAZĂ!", titleColor: "#00aaff",
+        body: "Yamal șutează cu xG=0.164! Pickford face a doua apărare mare! Meciul e 1-1!",
+        analysis: "🔵 Spania domină dar nu poate marca — Pickford în formă extraterrestră!",
+        defenseTips: [
+          { color: "#ff4466", label: "PENTRU ANGLIA", text: "Pickford e eroul dar apărarea trebuie să preseze mai devreme pe Yamal!" },
+          { color: "#00d4ff", label: "SOLUȚIE", text: "Rice și Stones să avanseze și să preseze înaltă pe Yamal când primește mingea!" },
+          { color: "#ffaa00", label: "TACTIC", text: "Anglia trebuie să atace mai agresiv — nu vă bazați pe apărare, transformați presiunea!" }
+        ]
+      },
+      {
+        frameIdx: 28, badgeText: "🏆 CAMPIONI! 2-1! VIVA ESPAÑA!", badgeColor: "#ffd700", badgeBg: "rgba(200,160,0,.15)",
+        title: "OYARZABAL 85'! CAMPIONI EURO 2024!", titleColor: "#ffd700",
+        body: "MIKEL OYARZABAL înscrie golul decisiv! Assist Cucurella! xG=0.283 — SPANIA CAMPIOANA EURO 2024!",
+        analysis: "🏆 PROTEJAȚI TITLUL! 5 minute de rezistență maximă! Bloc adânc, toți în propria jumătate!",
+        defenseTips: [
+          { color: "#ffd700", label: "GOLUL TITLULUI", text: "Oyarzabal a exploatat perfect spațiul lăsat de Shaw — centrul lui Cucurella de pe stânga a fost decisiv!" },
+          { color: "#ff4466", label: "PENTRU ANGLIA", text: "Shaw a ieșit prea mult la Cucurella — Oyarzabal a rămas complet liber în careu!" },
+          { color: "#00d4ff", label: "LECȚIE", text: "Güehi trebuia să urmărească Oyarzabal în loc să iasă la minge — fundașul centru nu trebuie să abandoneze careul!" },
+          { color: "#00ffaa", label: "VIVA ESPAÑA", text: "Spania a meritat! xG final: 1.79 vs 0.73 — dominanță clară! 4 titluri Euro — Cel mai de succes!" }
+        ]
+      }
+    ];
+
+    // ═══════════════════════════════════════════════════════════
+    // STATE
+    // ═══════════════════════════════════════════════════════════
+    let frameIdx = 0, playing = false, speed = 1, animT = 0;
+    let lastTs = null, accumT = 0, frameInterval = 2.4;
+    let pausedAt = new Set(), overlayOpen = false, scenario = 'Normal';
+    let pitchW = 0, pitchH = 0, drawMode = false, drawTool = 'arrow';
+    let myTeam = 'Spain';
+    let goalFlashTimer = 0, goalFlashType = 'our';
+    let goalAnnounceTimer = 0;
+    const SPEEDS = [0.25, 0.5, 1, 1.5, 2, 3];
+    let speedIdx = 2;
+    let drawings = [], isDrawing = false, drawStart = null;
+    let currentDrawing = null;
+
+    // ═══ BACKGROUND ═══
+    const bgCv = document.getElementById('bgCanvas');
+    const bgCtx = bgCv.getContext('2d');
+    let spots = [];
+    function initBg() {
+      bgCv.width = window.innerWidth; bgCv.height = window.innerHeight;
+      spots = [];
+      const n = 28;
+      for (let i = 0; i < n; i++) {
+        spots.push({
+          x: Math.random() * window.innerWidth,
+          y: Math.random() * window.innerHeight,
+          r: 30 + Math.random() * 120,
+          vx: (Math.random() - .5) * 0.3,
+          vy: (Math.random() - .5) * 0.3,
+          phase: Math.random() * Math.PI * 2,
+          speed: 0.3 + Math.random() * 0.8,
+          isWhite: Math.random() > 0.5
+        });
+      }
+    }
+    function animBg() {
+      bgCv.width = bgCv.width;
+      const bGrd = bgCtx.createLinearGradient(0, 0, bgCv.width, bgCv.height);
+      bGrd.addColorStop(0, '#000000');
+      bGrd.addColorStop(0.5, '#444444');
+      bGrd.addColorStop(1, '#ffffff');
+      bgCtx.fillStyle = bGrd;
+      bgCtx.fillRect(0, 0, bgCv.width, bgCv.height);
+      spots.forEach(s => {
+        s.x += s.vx; s.y += s.vy; s.phase += 0.008 * s.speed;
+        if (s.x < -s.r) s.x = bgCv.width + s.r;
+        if (s.x > bgCv.width + s.r) s.x = -s.r;
+        if (s.y < -s.r) s.y = bgCv.height + s.r;
+        if (s.y > bgCv.height + s.r) s.y = -s.r;
+        const alpha = (0.04 + 0.06 * Math.abs(Math.sin(s.phase)));
+        const g = bgCtx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.r);
+        if (s.isWhite) {
+          g.addColorStop(0, `rgba(255,255,255,${alpha * 2})`);
+          g.addColorStop(0.4, `rgba(200,220,255,${alpha})`);
+          g.addColorStop(1, 'rgba(0,0,0,0)');
+        } else {
+          g.addColorStop(0, `rgba(0,50,20,${alpha * 1.5})`);
+          g.addColorStop(0.4, `rgba(0,30,10,${alpha})`);
+          g.addColorStop(1, 'rgba(0,0,0,0)');
+        }
+        bgCtx.fillStyle = g;
+        bgCtx.beginPath(); bgCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2); bgCtx.fill();
+      });
+      requestAnimationFrame(animBg);
+    }
+
+    // ═══ PARTICLES ═══
+    (function () {
+      const c = document.getElementById('particles');
+      const cols = ['#00d4ff', '#ffd700', '#ff1a4a', '#00ffaa', '#cc44ff', '#00ffee', '#ff44cc', '#ffffff'];
+      for (let i = 0; i < 40; i++) {
+        const p = document.createElement('div'); p.className = 'particle';
+        const sz = Math.random() * 4 + 0.8;
+        p.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random() * 100}%;
+    background:${cols[Math.floor(Math.random() * cols.length)]};
+    animation-duration:${12 + Math.random() * 20}s;animation-delay:${Math.random() * 14}s;
+    filter:blur(${Math.random() * .6}px);box-shadow:0 0 ${sz * 3}px currentColor`;
+        c.appendChild(p);
+      }
+    })();
+
+    // ═══ CONFETTI CANVAS ═══
+    const confCv = document.getElementById('confettiCanvas');
+    const confCtx = confCv.getContext('2d');
+    let confetti = [];
+    let confettiActive = false;
+    function spawnConfetti() {
+      confetti = []; confettiActive = true;
+      const cols = ['#ffd700', '#ff1a4a', '#00ffaa', '#00d4ff', '#cc44ff', '#ffffff', '#ff88cc'];
+      for (let i = 0; i < 200; i++) {
+        confetti.push({
+          x: Math.random() * window.innerWidth,
+          y: -20 - Math.random() * 200,
+          vx: (Math.random() - .5) * 4,
+          vy: 2 + Math.random() * 5,
+          rot: Math.random() * 360,
+          vrot: (Math.random() - .5) * 10,
+          w: 6 + Math.random() * 8, h: 8 + Math.random() * 12,
+          col: cols[Math.floor(Math.random() * cols.length)],
+          alpha: 1
+        });
+      }
+    }
+    function animConfetti() {
+      confCv.width = window.innerWidth; confCv.height = window.innerHeight;
+      if (!confettiActive) { confCv.width = confCv.width; requestAnimationFrame(animConfetti); return; }
+      confetti.forEach(c => {
+        c.x += c.vx; c.y += c.vy; c.rot += c.vrot; c.vy += 0.1;
+        if (c.y > confCv.height + 20) c.alpha -= 0.02;
+        confCtx.save();
+        confCtx.translate(c.x, c.y); confCtx.rotate(c.rot * Math.PI / 180);
+        confCtx.globalAlpha = Math.max(0, c.alpha);
+        confCtx.fillStyle = c.col;
+        confCtx.fillRect(-c.w / 2, -c.h / 2, c.w, c.h);
+        confCtx.restore();
+      });
+      confetti = confetti.filter(c => c.alpha > 0);
+      if (confetti.length === 0) confettiActive = false;
+      requestAnimationFrame(animConfetti);
+    }
+
+    // ═══ CANVAS REFS ═══
+    const pCanvas = document.getElementById('pitch');
+    const tlCanvas = document.getElementById('timeline');
+    const drawCv = document.getElementById('drawCanvas');
+    let pCtx, tCtx, dCtx;
+
+    function selectTeam(t) {
+      myTeam = t;
+      document.getElementById('btnSpa').className = 'ts-btn' + (t === 'Spain' ? ' spa-active' : '');
+      document.getElementById('btnEng').className = 'ts-btn' + (t === 'England' ? ' eng-active' : '');
+    }
+    window.selectTeam = selectTeam;
+
+    function init() {
+      pCtx = pCanvas.getContext('2d');
+      tCtx = tlCanvas.getContext('2d');
+      dCtx = drawCv.getContext('2d');
+      resize();
+      window.addEventListener('resize', () => { resize(); render() });
+      tlCanvas.addEventListener('click', onTlClick);
+      drawCv.addEventListener('mousedown', onDrawStart);
+      drawCv.addEventListener('mousemove', onDrawMove);
+      drawCv.addEventListener('mouseup', onDrawEnd);
+      drawCv.addEventListener('touchstart', e => { e.preventDefault(); const t = e.touches[0]; onDrawStart({ clientX: t.clientX, clientY: t.clientY }) });
+      drawCv.addEventListener('touchmove', e => { e.preventDefault(); const t = e.touches[0]; onDrawMove({ clientX: t.clientX, clientY: t.clientY }) });
+      drawCv.addEventListener('touchend', e => { e.preventDefault(); onDrawEnd({}) });
+      render(); drawTimeline(); renderPanel();
+      initBg();
+      requestAnimationFrame(loop);
+      requestAnimationFrame(animBg);
+      requestAnimationFrame(animConfetti);
+    }
+
+    function resize() {
+      const w = document.getElementById('pitchWrap');
+      pitchW = w.clientWidth; pitchH = w.clientHeight;
+      pCanvas.width = pitchW; pCanvas.height = pitchH;
+      drawCv.width = pitchW; drawCv.height = pitchH;
+      tlCanvas.width = tlCanvas.clientWidth; tlCanvas.height = 34;
+    }
+
+    function onTlClick(e) {
+      const r = tlCanvas.getBoundingClientRect();
+      const pct = (e.clientX - r.left) / r.width;
+      frameIdx = Math.round(pct * (FRAMES.length - 1));
+      accumT = 0; render(); drawTimeline(); renderPanel();
+    }
+
+    // ═══ DRAWING ═══
+    function toggleDrawMode() {
+      drawMode = !drawMode;
+      const btn = document.getElementById('btnDrawMode');
+      const toolbar = document.getElementById('drawToolbar');
+      const dc = document.getElementById('drawCanvas');
+      if (drawMode) {
+        btn.classList.add('active');
+        toolbar.classList.add('visible');
+        dc.style.display = 'block';
+        playing = false;
+        document.getElementById('btnPlay').textContent = '▶ PLAY';
+        document.getElementById('btnPlay').className = 'btn btn-play paused';
+      } else {
+        btn.classList.remove('active');
+        toolbar.classList.remove('visible');
+        dc.style.display = 'none';
+      }
+    }
+    function setDrawMode(m) {
+      drawTool = m;
+      document.querySelectorAll('.draw-btn').forEach(b => { b.classList.remove('active') });
+      document.getElementById('dt' + m.charAt(0).toUpperCase() + m.slice(1)).classList.add('active');
+    }
+    function clearDrawings() { drawings = []; redrawDrawings(); }
+    function onDrawStart(e) {
+      if (!drawMode) return;
+      const r = drawCv.getBoundingClientRect();
+      drawStart = { x: e.clientX - r.left, y: e.clientY - r.top };
+      isDrawing = true; currentDrawing = null;
+    }
+    function onDrawMove(e) {
+      if (!drawMode || !isDrawing || !drawStart) return;
+      const r = drawCv.getBoundingClientRect();
+      const end = { x: e.clientX - r.left, y: e.clientY - r.top };
+      currentDrawing = { tool: drawTool, start: drawStart, end };
+      redrawDrawings();
+    }
+    function onDrawEnd(e) {
+      if (!drawMode || !isDrawing || !drawStart) return;
+      if (currentDrawing) drawings.push(currentDrawing);
+      isDrawing = false; currentDrawing = null;
+      redrawDrawings();
+    }
+    function redrawDrawings() {
+      dCtx.clearRect(0, 0, drawCv.width, drawCv.height);
+      const all = [...drawings, ...(currentDrawing ? [currentDrawing] : [])];
+      all.forEach(d => {
+        dCtx.save();
+        dCtx.strokeStyle = 'rgba(255,200,0,0.9)';
+        dCtx.fillStyle = 'rgba(255,200,0,0.9)';
+        dCtx.lineWidth = 3;
+        dCtx.shadowColor = 'rgba(255,200,0,0.7)';
+        dCtx.shadowBlur = 8;
+        dCtx.lineCap = 'round';
+        if (d.tool === 'arrow') {
+          dCtx.beginPath(); dCtx.moveTo(d.start.x, d.start.y); dCtx.lineTo(d.end.x, d.end.y); dCtx.stroke();
+          const angle = Math.atan2(d.end.y - d.start.y, d.end.x - d.start.x);
+          dCtx.beginPath();
+          dCtx.moveTo(d.end.x, d.end.y);
+          dCtx.lineTo(d.end.x - 18 * Math.cos(angle - 0.4), d.end.y - 18 * Math.sin(angle - 0.4));
+          dCtx.lineTo(d.end.x - 18 * Math.cos(angle + 0.4), d.end.y - 18 * Math.sin(angle + 0.4));
+          dCtx.closePath(); dCtx.fill();
+        } else if (d.tool === 'line') {
+          dCtx.beginPath(); dCtx.moveTo(d.start.x, d.start.y); dCtx.lineTo(d.end.x, d.end.y); dCtx.stroke();
+        } else if (d.tool === 'circle') {
+          const r = Math.hypot(d.end.x - d.start.x, d.end.y - d.start.y);
+          dCtx.beginPath(); dCtx.arc(d.start.x, d.start.y, r, 0, Math.PI * 2); dCtx.stroke();
+        }
+        dCtx.restore();
+      });
+    }
+    window.setDrawMode = setDrawMode;
+    window.clearDrawings = clearDrawings;
+    window.toggleDrawMode = toggleDrawMode;
+
+    // ═══ COORDS ═══
+    function sb(sx, sy) {
+      const pad = 22;
+      const px = pad + (sx / 120) * (pitchW - pad * 2);
+      const py = 16 + (sy / 80) * (pitchH - 32);
+      return [px, py];
+    }
+    function lerp(a, b, t) { return a + (b - a) * t }
+
+    // ═══ PITCH ═══
+    function drawPitch() {
+      const c = pCtx, w = pitchW, h = pitchH;
+      // Striped grass — vibrant transparent green
+      const stripes = 12;
+      const sw = w / stripes;
+      for (let i = 0; i < stripes; i++) {
+        c.fillStyle = i % 2 === 0 ? 'rgba(0, 255, 128, 0.2)' : 'rgba(0, 200, 100, 0.2)';
+        c.fillRect(i * sw, 0, sw + 1, h);
+      }
+      // Center glow
+      const grd = c.createRadialGradient(w * .5, h * .5, 0, w * .5, h * .5, w * .7);
+      grd.addColorStop(0, 'rgba(0,255,100,.3)');
+      grd.addColorStop(.5, 'rgba(0,200,80,.15)');
+      grd.addColorStop(1, 'rgba(0,100,40,.3)');
+      c.fillStyle = grd; c.fillRect(0, 0, w, h);
+
+      function ln(x1, y1, x2, y2, col, blur, lw) {
+        const [ax, ay] = sb(x1, y1), [bx, by] = sb(x2, y2);
+        c.save(); c.strokeStyle = col; c.lineWidth = lw || 1.5;
+        c.shadowColor = col; c.shadowBlur = blur || 6;
+        c.beginPath(); c.moveTo(ax, ay); c.lineTo(bx, by); c.stroke(); c.restore();
+      }
+      const lineCol = 'rgba(120,255,120,.6)', lineBlur = 8;
+      // Boundary
+      c.save(); c.strokeStyle = lineCol; c.lineWidth = 2; c.shadowColor = lineCol; c.shadowBlur = lineBlur;
+      c.strokeRect(22, 16, w - 44, h - 32); c.restore();
+      // Halfway
+      ln(60, 0, 60, 80, lineCol, lineBlur, 1.5);
+      // Center circle
+      const [mx, my] = sb(60, 40);
+      const rcir = (10 / 120) * (w - 44);
+      c.save(); c.strokeStyle = lineCol; c.lineWidth = 1.5; c.shadowColor = lineCol; c.shadowBlur = lineBlur;
+      c.beginPath(); c.arc(mx, my, rcir, 0, Math.PI * 2); c.stroke(); c.restore();
+      // Center spot
+      const cSpot = c.createRadialGradient(mx, my, 0, mx, my, 9);
+      cSpot.addColorStop(0, 'rgba(120,255,120,.9)'); cSpot.addColorStop(1, 'rgba(120,255,120,0)');
+      c.fillStyle = cSpot; c.beginPath(); c.arc(mx, my, 9, 0, Math.PI * 2); c.fill();
+      c.fillStyle = 'rgba(150,255,150,.95)'; c.beginPath(); c.arc(mx, my, 3, 0, Math.PI * 2); c.fill();
+      // Penalty boxes
+      ln(0, 18, 18, 18, lineCol, 5); ln(18, 18, 18, 62, lineCol, 5); ln(18, 62, 0, 62, lineCol, 5);
+      ln(0, 30, 6, 30, lineCol, 4); ln(6, 30, 6, 50, lineCol, 4); ln(6, 50, 0, 50, lineCol, 4);
+      ln(120, 18, 102, 18, lineCol, 5); ln(102, 18, 102, 62, lineCol, 5); ln(102, 62, 120, 62, lineCol, 5);
+      ln(120, 30, 114, 30, lineCol, 4); ln(114, 30, 114, 50, lineCol, 4); ln(114, 50, 120, 50, lineCol, 4);
+      // Penalty arcs
+      const aR = (10 / 120) * (w - 44);
+      const [ac1x, ac1y] = sb(12, 40);
+      c.save(); c.strokeStyle = lineCol; c.lineWidth = 1.5; c.shadowColor = lineCol; c.shadowBlur = 5;
+      c.beginPath(); c.arc(ac1x, ac1y, aR, Math.PI * .65, Math.PI * 1.35); c.stroke();
+      const [ac2x, ac2y] = sb(108, 40);
+      c.beginPath(); c.arc(ac2x, ac2y, aR, -Math.PI * .35, Math.PI * .35); c.stroke();
+      c.restore();
+      // Penalty spots
+      [[12, 40], [108, 40]].forEach(([x, y]) => {
+        const [px, py] = sb(x, y);
+        c.save(); c.fillStyle = 'rgba(150,255,150,.9)'; c.shadowColor = lineCol; c.shadowBlur = 6;
+        c.beginPath(); c.arc(px, py, 2.5, 0, Math.PI * 2); c.fill(); c.restore();
+      });
+      // Goals
+      const gd = 10, gh = (8 / 80) * (h - 32);
+      const [g1x, g1y] = sb(0, 36), [g2x, g2y] = sb(120, 36);
+      c.save(); c.strokeStyle = 'rgba(255,80,120,.7)'; c.lineWidth = 2.5; c.shadowColor = 'rgba(255,30,70,.5)'; c.shadowBlur = 18;
+      c.strokeRect(g1x - gd, g1y, gd, gh);
+      c.fillStyle = 'rgba(255,30,70,.05)'; c.fillRect(g1x - gd, g1y, gd, gh); c.restore();
+      c.save(); c.strokeStyle = 'rgba(0,180,255,.7)'; c.lineWidth = 2.5; c.shadowColor = 'rgba(0,150,255,.5)'; c.shadowBlur = 18;
+      c.strokeRect(g2x, g2y, gd, gh);
+      c.fillStyle = 'rgba(0,100,255,.05)'; c.fillRect(g2x, g2y, gd, gh); c.restore();
+      // Goal labels
+      c.save(); c.font = 'bold 9px "Barlow Condensed",sans-serif'; c.textAlign = 'center'; c.textBaseline = 'bottom';
+      c.fillStyle = 'rgba(255,80,120,.5)'; c.fillText('ENG GOAL', (g1x - gd / 2), g1y - 3);
+      c.fillStyle = 'rgba(0,180,255,.5)'; c.fillText('SPA GOAL', (g2x + gd / 2), g2y - 3);
+      c.restore();
+    }
+
+    function drawJersey(c, cx, cy, isHome, isActor, isKeeper) {
+      const base = isKeeper ? '#6b4400' : isHome ? '#0c3d8a' : '#800020';
+      const lit = isKeeper ? '#c49020' : isHome ? '#1a6ae0' : '#c0102e';
+      const glowC = isKeeper ? '#ffaa00' : isHome ? '#00ccff' : '#ff1a4a';
+      const s = 10;
+      if (isActor) {
+        const gr = c.createRadialGradient(cx, cy, 0, cx, cy, 36);
+        gr.addColorStop(0, glowC + '66'); gr.addColorStop(.5, glowC + '22'); gr.addColorStop(1, glowC + '00');
+        c.fillStyle = gr; c.beginPath(); c.arc(cx, cy, 36, 0, Math.PI * 2); c.fill();
+        c.strokeStyle = glowC; c.lineWidth = 2; c.setLineDash([5, 3]);
+        c.shadowColor = glowC; c.shadowBlur = 14;
+        c.beginPath(); c.arc(cx, cy, 25, 0, Math.PI * 2); c.stroke();
+        c.setLineDash([]); c.shadowBlur = 0;
+      }
+      c.beginPath();
+      c.moveTo(cx - s - 4, cy - 2); c.lineTo(cx - s, cy - s + 2); c.lineTo(cx - s + 3, cy - s);
+      c.lineTo(cx, cy - s + 4); c.lineTo(cx + s - 3, cy - s); c.lineTo(cx + s, cy - s + 2);
+      c.lineTo(cx + s + 4, cy - 2); c.lineTo(cx + s, cy + s + 2); c.lineTo(cx - s, cy + s + 2); c.closePath();
+      const bg = c.createLinearGradient(cx, cy - s, cx, cy + s);
+      bg.addColorStop(0, lit); bg.addColorStop(1, base);
+      c.fillStyle = bg;
+      if (isActor) { c.shadowColor = glowC; c.shadowBlur = 18 }
+      else if (isKeeper) { c.shadowColor = glowC; c.shadowBlur = 8 }
+      c.fill(); c.shadowBlur = 0;
+      c.strokeStyle = isActor ? glowC : isKeeper ? glowC + '88' : 'rgba(255,255,255,.18)';
+      c.lineWidth = isActor ? 2 : isKeeper ? 1.3 : .7; c.stroke();
+      if (isKeeper) {
+        c.strokeStyle = 'rgba(255,255,255,.55)'; c.lineWidth = 1.2;
+        c.beginPath(); c.moveTo(cx - 3, cy); c.lineTo(cx + 3, cy); c.stroke();
+        c.beginPath(); c.moveTo(cx, cy - 3); c.lineTo(cx, cy + 3); c.stroke();
+      }
+    }
+
+    function drawPlayerName(c, cx, cy, name) {
+      const last = name.split(' ').slice(-1)[0];
+      c.font = 'bold 8px "Barlow Condensed",sans-serif';
+      c.textAlign = 'center'; c.textBaseline = 'top';
+      c.strokeStyle = 'rgba(0,0,0,.9)'; c.lineWidth = 2.5; c.strokeText(last, cx, cy + 13);
+      c.fillStyle = 'rgba(255,255,255,.95)'; c.fillText(last, cx, cy + 13);
+    }
+
+    function drawBall(c, bx, by, t) {
+      const [sx, sy] = sb(bx, by), r = 9;
+      const sh = c.createRadialGradient(sx + 3, sy + 5, 0, sx + 3, sy + 5, r * 2.2);
+      sh.addColorStop(0, 'rgba(0,0,0,.5)'); sh.addColorStop(1, 'rgba(0,0,0,0)');
+      c.fillStyle = sh; c.beginPath(); c.ellipse(sx + 3, sy + 5, r * 1.8, r * .75, 0, 0, Math.PI * 2); c.fill();
+      const trail = c.createRadialGradient(sx, sy, 0, sx, sy, r * 3);
+      trail.addColorStop(0, 'rgba(255,200,0,.18)'); trail.addColorStop(1, 'rgba(255,100,0,0)');
+      c.fillStyle = trail; c.beginPath(); c.arc(sx, sy, r * 3, 0, Math.PI * 2); c.fill();
+      c.shadowColor = 'rgba(255,200,0,.95)'; c.shadowBlur = 24;
+      const bg = c.createRadialGradient(sx - 3, sy - 3, 0, sx, sy, r);
+      bg.addColorStop(0, '#fffde8'); bg.addColorStop(.35, '#ffe040');
+      bg.addColorStop(.75, '#dd8800'); bg.addColorStop(1, '#aa5500');
+      c.fillStyle = bg; c.beginPath(); c.arc(sx, sy, r, 0, Math.PI * 2); c.fill(); c.shadowBlur = 0;
+      c.strokeStyle = 'rgba(120,60,0,.5)'; c.lineWidth = 1;
+      c.beginPath(); c.arc(sx, sy, r, 0, Math.PI * 2); c.stroke();
+      const spin = t * 4;
+      c.strokeStyle = 'rgba(40,15,0,.45)'; c.lineWidth = 1.2;
+      for (let i = 0; i < 3; i++) {
+        const a = i * Math.PI * 2 / 3 + spin;
+        c.beginPath(); c.arc(sx + Math.cos(a) * 4, sy + Math.sin(a) * 4, 2.5, 0, Math.PI * 2); c.stroke();
+      }
+      c.fillStyle = 'rgba(255,255,255,.82)'; c.beginPath(); c.arc(sx - 3.5, sy - 3.5, 2.5, 0, Math.PI * 2); c.fill();
+    }
+
+    // ═══ RENDER ═══
+    function render() {
+      if (!pCtx || !FRAMES.length) return;
+      const f = FRAMES[frameIdx];
+      const t = Math.min(1, accumT / frameInterval);
+      const c = pCtx;
+      c.clearRect(0, 0, pitchW, pitchH);
+      drawPitch();
+
+      // Trajectory arrow
+      if (['Pass', 'Shot', 'Carry', 'Dribble'].includes(f.type)) {
+        const [x1, y1] = sb(f.bx, f.by), [x2, y2] = sb(f.ex, f.ey);
+        const dist = Math.hypot(x2 - x1, y2 - y1);
+        if (dist > 5) {
+          c.save();
+          const lCol = f.isHome ? 'rgba(0,180,255,.55)' : 'rgba(255,30,80,.55)';
+          c.setLineDash([9, 5]); c.strokeStyle = lCol; c.lineWidth = 2;
+          c.shadowColor = lCol; c.shadowBlur = 8;
+          c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2, y2); c.stroke();
+          c.setLineDash([]); c.shadowBlur = 0;
+          const ang = Math.atan2(y2 - y1, x2 - x1);
+          const mx2 = (x1 + x2) / 2, my2 = (y1 + y2) / 2;
+          c.fillStyle = f.isHome ? 'rgba(0,200,255,.85)' : 'rgba(255,50,90,.85)';
+          c.shadowColor = c.fillStyle; c.shadowBlur = 6;
+          c.beginPath();
+          c.moveTo(mx2 + Math.cos(ang) * 12, my2 + Math.sin(ang) * 12);
+          c.lineTo(mx2 + Math.cos(ang + 2.5) * 7, my2 + Math.sin(ang + 2.5) * 7);
+          c.lineTo(mx2 + Math.cos(ang - 2.5) * 7, my2 + Math.sin(ang - 2.5) * 7);
+          c.closePath(); c.fill(); c.shadowBlur = 0;
+          c.restore();
+        }
+      }
+
+      // Players
+      if (f.players && f.players.length) {
+        f.players.forEach(p => { if (!p.act) { const [sx, sy] = sb(p.x, p.y); drawJersey(c, sx, sy, !!p.t, false, !!p.k); if (p.name && p.name != '?') drawPlayerName(c, sx, sy, p.name); } });
+        f.players.forEach(p => { if (p.act) { const [sx, sy] = sb(p.x, p.y); drawJersey(c, sx, sy, !!p.t, true, !!p.k); if (p.name && p.name != '?') drawPlayerName(c, sx, sy, p.name); } });
+      }
+
+      // Ball
+      const bx = lerp(f.bx, f.ex, t);
+      const by = lerp(f.by, f.ey, t);
+      drawBall(c, bx, by, animT);
+
+      // Goal flash
+      if (goalFlashTimer > 0) {
+        const alpha = Math.min(1, goalFlashTimer / .5) * .5 * (0.5 + 0.5 * Math.abs(Math.sin(animT * 6)));
+        const isOur = (goalFlashType === 'our');
+        const flashGrd = c.createRadialGradient(pitchW / 2, pitchH / 2, 0, pitchW / 2, pitchH / 2, pitchW * .9);
+        if (isOur) {
+          flashGrd.addColorStop(0, `rgba(0,180,255,${alpha * 1.1})`);
+          flashGrd.addColorStop(.5, `rgba(0,80,255,${alpha * .4})`);
+          flashGrd.addColorStop(1, `rgba(0,0,100,0)`);
+        } else {
+          flashGrd.addColorStop(0, `rgba(255,30,60,${alpha * 1.1})`);
+          flashGrd.addColorStop(.5, `rgba(200,0,30,${alpha * .4})`);
+          flashGrd.addColorStop(1, `rgba(100,0,0,0)`);
+        }
+        c.fillStyle = flashGrd; c.fillRect(0, 0, pitchW, pitchH);
+        if (Math.random() > .4) {
+          for (let i = 0; i < 10; i++) {
+            const px = Math.random() * pitchW, py = Math.random() * pitchH;
+            c.fillStyle = isOur ? '#00d4ff' : '#ff1a4a';
+            c.fillRect(px, py, Math.random() * 6 + 2, Math.random() * 10 + 3);
+          }
+        }
+        const scl = 1 + Math.sin(animT * 5) * .06;
+        c.save(); c.translate(pitchW / 2, pitchH / 2); c.scale(scl, scl);
+        c.font = `bold 70px 'Orbitron',monospace`;
+        c.textAlign = 'center'; c.textBaseline = 'middle';
+        c.strokeStyle = 'rgba(0,0,0,.9)'; c.lineWidth = 9;
+        const gt = isOur ? '⚽ GOOOL!' : '⚽ GOL SOS!';
+        c.strokeText(gt, 0, 0);
+        const tGrd = c.createLinearGradient(-170, -35, 170, 35);
+        if (isOur) { tGrd.addColorStop(0, '#00d4ff'); tGrd.addColorStop(.5, '#ffffff'); tGrd.addColorStop(1, '#00d4ff'); }
+        else { tGrd.addColorStop(0, '#ff1a4a'); tGrd.addColorStop(.5, '#ffffff'); tGrd.addColorStop(1, '#ff1a4a'); }
+        c.fillStyle = tGrd; c.shadowColor = isOur ? '#00d4ff' : '#ff1a4a'; c.shadowBlur = 60;
+        c.fillText(gt, 0, 0); c.restore();
+      }
+
+      // Score update
+      document.getElementById('liveScore').textContent = `${f.scoreH} — ${f.scoreA}`;
+      document.getElementById('ss-spain').textContent = f.scoreH;
+      document.getElementById('ss-england').textContent = f.scoreA;
+      document.getElementById('timePill').textContent = `${f.min}'${String(f.sec).padStart(2, '0')}"`;
+    }
+
+    // ═══ TIMELINE ═══
+    function drawTimeline() {
+      if (!tCtx) return;
+      const tw = tlCanvas.width, th = 34;
+      const bgG = tCtx.createLinearGradient(0, 0, tw, 0);
+      bgG.addColorStop(0, '#010814'); bgG.addColorStop(.5, '#011020'); bgG.addColorStop(1, '#010814');
+      tCtx.fillStyle = bgG; tCtx.fillRect(0, 0, tw, th);
+      const pct = frameIdx / Math.max(1, FRAMES.length - 1);
+      const pgG = tCtx.createLinearGradient(0, 0, tw * pct, 0);
+      pgG.addColorStop(0, 'rgba(0,50,150,.4)'); pgG.addColorStop(1, 'rgba(0,150,255,.25)');
+      tCtx.fillStyle = pgG; tCtx.fillRect(0, 0, tw * pct, th);
+      FRAMES.forEach((f, i) => {
+        const fx = tw * i / Math.max(1, FRAMES.length - 1);
+        if (f.type === 'Shot') {
+          const isGoal = f.outcome === 'Goal';
+          const col = isGoal ? (f.isHome ? '#00ffaa' : '#ff4466') : (f.isHome ? '#00aaff' : '#ff1a4a');
+          tCtx.fillStyle = col; tCtx.shadowColor = col; tCtx.shadowBlur = isGoal ? 18 : 7;
+          tCtx.beginPath(); tCtx.arc(fx, th / 2, isGoal ? 9 : 5, 0, Math.PI * 2); tCtx.fill(); tCtx.shadowBlur = 0;
+        } else if (f.type === 'Substitution') {
+          tCtx.fillStyle = 'rgba(255,200,0,.55)'; tCtx.shadowColor = 'rgba(255,200,0,.4)'; tCtx.shadowBlur = 4;
+          tCtx.fillRect(fx - 1.5, 4, 3, th - 8); tCtx.shadowBlur = 0;
+        }
+      });
+      PAUSES.forEach(p => {
+        const fx = tw * p.frameIdx / Math.max(1, FRAMES.length - 1);
+        tCtx.fillStyle = 'rgba(255,180,0,.55)'; tCtx.shadowColor = 'rgba(255,180,0,.3)'; tCtx.shadowBlur = 3;
+        tCtx.fillRect(fx - 1, 0, 2, th); tCtx.shadowBlur = 0;
+      });
+      tCtx.fillStyle = 'rgba(80,140,255,.4)'; tCtx.font = '8.5px "Barlow Condensed"';
+      tCtx.textAlign = 'center'; tCtx.textBaseline = 'top';
+      FRAMES.forEach((f, i) => {
+        if (f.type === 'Shot') {
+          const fx = tw * i / Math.max(1, FRAMES.length - 1);
+          tCtx.fillText(`${f.min}'`, fx, 2);
+        }
+      });
+      const cx2 = tw * pct;
+      tCtx.fillStyle = '#0099ff'; tCtx.shadowColor = '#0099ff'; tCtx.shadowBlur = 16;
+      tCtx.beginPath(); tCtx.arc(cx2, th / 2, 8, 0, Math.PI * 2); tCtx.fill(); tCtx.shadowBlur = 0;
+      tCtx.fillStyle = '#ffffff'; tCtx.beginPath(); tCtx.arc(cx2, th / 2, 3, 0, Math.PI * 2); tCtx.fill();
+    }
+
+    // ═══ PANEL ═══
+    const EVT_COLORS = { Shot: '#ff1a4a', Pass: '#00aaff', Carry: '#00cc66', Substitution: '#ffcc00', Dribble: '#cc44ff', Block: '#00aacc', Interception: '#9900cc', Foul: '#ff6600' };
+    const SCEN_TIPS = {
+      Normal: [['green', '⚡', 'Menține posesia — pase în triunghi constant'], ['blue', '🔵', 'Fullback urcă pe flanc doar la posesie sigură'], ['green', '🟢', 'Bloc compact — max 35m între linii defensive']],
+      Pressing: [['red', '🔴', 'Pressing imediat după pierderea mingii!'], ['amber', '🟡', 'Risc — spații la spatele liniei de pressing'], ['red', '🔴', 'Atacanții: prima linie de apărare imediată']],
+      Counter: [['blue', '🔵', 'Atacanți sus — gata de sprint instant la pierdere'], ['green', '🟢', 'Pase lungi precise la primul contraatac'], ['amber', '🟡', 'Linie înaltă — atenție la mingile lungi']],
+      Corner: [['red', '🔴', 'Marcaj om-la-om strict în careu la faze fixe!'], ['green', '🟢', 'CDM la punctul de penalty blocat'], ['amber', '🟡', 'Jucător la 16m pentru respingeri!']]
+    };
+
+    function renderPanel() {
+      const f = FRAMES[frameIdx];
+      const ec = EVT_COLORS[f.type] || '#888';
+      document.getElementById('evtType').textContent = f.type || '—';
+      document.getElementById('evtType').style.color = ec;
+      document.getElementById('evtPlayer').textContent = `${f.player} — ${f.team}`;
+      let badges = '';
+      badges += `<span style="padding:2px 8px;border-radius:9px;font-size:10px;font-weight:800;background:${f.isHome ? 'rgba(0,100,255,.18)' : 'rgba(200,0,50,.18)'};color:${f.isHome ? '#00ccff' : '#ff4470'};border:1px solid ${f.isHome ? 'rgba(0,180,255,.28)' : 'rgba(255,20,70,.28)'}">${f.team}</span>`;
+      if (f.xg > 0) badges += `<span style="padding:2px 8px;border-radius:9px;font-size:10px;font-weight:800;background:rgba(255,180,0,.1);color:#ffd700;border:1px solid rgba(255,180,0,.22)">xG ${f.xg.toFixed(3)}</span>`;
+      if (f.outcome) badges += `<span style="padding:2px 8px;border-radius:9px;font-size:10px;font-weight:800;background:rgba(255,255,255,.05);color:rgba(180,210,255,.65);border:1px solid rgba(255,255,255,.09)">${f.outcome}</span>`;
+      document.getElementById('evtBadges').innerHTML = badges;
+      const xgHv = Math.min(100, (f.cumXgH || 0) * 60);
+      const xgAv = Math.min(100, (f.cumXgA || 0) * 60);
+      document.getElementById('xgH').style.width = xgHv + '%';
+      document.getElementById('xgA').style.width = xgAv + '%';
+      document.getElementById('xgHval').textContent = (f.cumXgH || 0).toFixed(3);
+      document.getElementById('xgAval').textContent = (f.cumXgA || 0).toFixed(3);
+      const dynTips = getDynTips(f);
+      const scenTips = SCEN_TIPS[scenario] || [];
+      const allTips = [...dynTips, ...scenTips].slice(0, 5);
+      document.getElementById('tipList').innerHTML = allTips.map(([col, ic, txt]) =>
+        `<div class="tip-item tip-${col}"><span class="tip-icon">${ic}</span>${txt}</div>`
+      ).join('');
+      const h = (f.players || []).filter(p => p.t).length;
+      const a = (f.players || []).length - h;
+      document.getElementById('playerCnt').textContent = `${(f.players || []).length} vizibili: ${h} Spania, ${a} Anglia`;
+      document.getElementById('frameCnt').textContent = `Frame ${frameIdx + 1} / ${FRAMES.length}`;
+    }
+
+    function getDynTips(f) {
+      const tips = [];
+      const weAttack = (myTeam === 'Spain' && f.isHome) || (myTeam === 'England' && !f.isHome);
+      if (f.type === 'Shot') {
+        if (weAttack) {
+          tips.push(['green', '⚡', `${f.player} suteaza! xG=${f.xg.toFixed(3)}`]);
+          if (f.outcome === 'Goal') tips.push(['green', '🏆', 'GOL AL NOSTRU! Reset rapid la centru!']);
+          else if (f.xg > .18) tips.push(['amber', '⚠️', 'Șansă mare! Urmărit respingerea imediat!']);
+        } else {
+          tips.push(['red', '🔴', `ATENȚIE! ${f.player} suteaza! xG=${f.xg.toFixed(3)}`]);
+          if (f.outcome === 'Goal') tips.push(['red', '💔', 'GOL PRIMIT! RESET — recuperați posesia urgent!']);
+          else if (f.xg > .15) tips.push(['red', '🚨', 'PERICOL MAXIM — blocat/salvat cu greu!']);
+          else tips.push(['blue', '🛡️', 'Sut blocat! Repoziționare bloc defensiv complet!']);
+        }
+      } else if (f.type === 'Pass') {
+        if (weAttack) tips.push(['green', '🟢', 'Pasă precisă — menține triunghiul, caută adâncimea!']);
+        else tips.push(['amber', '🟡', 'Adversarul construiește — pressing colectiv imediat!']);
+      } else if (f.type === 'Carry') {
+        if (weAttack) tips.push(['blue', '🔵', 'Avansare cu mingea — caută deschidere pe flanc!']);
+        else tips.push(['red', '🔴', 'Adversar avansează — tăiați culoarul, forțați exterior!']);
+      } else if (f.type === 'Substitution') {
+        tips.push(['amber', '🔄', `Schimbare: ${f.outcome}`]);
+        tips.push(['blue', '💡', 'Energie nouă! Exploatați oboseala adversarului în primele 5 minute!']);
+      }
+      return tips;
+    }
+
+    // ═══ OVERLAY ═══
+    function showOverlay(p) {
+      const f = FRAMES[frameIdx];
+      document.getElementById('mBadge').textContent = p.badgeText;
+      document.getElementById('mBadge').style.color = p.badgeColor;
+      document.getElementById('mBadge').style.borderColor = p.badgeColor;
+      document.getElementById('mBadge').style.background = p.badgeBg;
+      document.getElementById('mTitle').textContent = p.title;
+      document.getElementById('mTitle').style.color = p.titleColor;
+      document.getElementById('mBody').textContent = p.body;
+      // Defense tips
+      const tips = p.defenseTips || [];
+      // Filter for the team we're playing as
+      document.getElementById('mDefenseTips').innerHTML = tips.map(t =>
+        `<div class="def-tip" style="background:rgba(0,0,0,.2);border-left-color:${t.color}">
+      <div class="def-tip-icon">🛡️</div>
+      <div><span style="color:${t.color};font-weight:900;font-size:10.5px;letter-spacing:1px">${t.label}: </span>${t.text}</div>
+    </div>`
+      ).join('');
+      document.getElementById('mAnalysis').textContent = p.analysis;
+      document.getElementById('mAnalysis').style.borderLeftColor = p.badgeColor;
+      document.getElementById('mAnalysis').style.background = p.badgeBg;
+      document.getElementById('mXgH').textContent = (f.cumXgH || 0).toFixed(3);
+      document.getElementById('mXgA').textContent = (f.cumXgA || 0).toFixed(3);
+      document.getElementById('mFrame').textContent = frameIdx + 1;
+      document.getElementById('overlay').style.display = 'flex';
+      overlayOpen = true; playing = false;
+      document.getElementById('btnPlay').textContent = '▶ PLAY';
+      document.getElementById('btnPlay').className = 'btn btn-play paused';
+      pausedAt.add(frameIdx);
+      // Goal effects
+      if (p.title.includes('GOL') || p.title.includes('CAMPIONI') || p.title.includes('EGALARE')) {
+        const isOurGoal = (myTeam === 'Spain' && p.title.includes('CAMPIONI')) ||
+          (myTeam === 'Spain' && p.title.includes('N.WILLIAMS')) ||
+          (myTeam === 'England' && p.title.includes('PALMER'));
+        const isSOS = p.title.includes('SOS') || p.title.includes('EGALARE');
+        goalFlashType = isSOS ? 'their' : 'our';
+        goalFlashTimer = 4;
+        if (goalFlashType === 'our') spawnConfetti();
+        showGoalAnnounce(p, isSOS);
+      }
+    }
+
+    function showGoalAnnounce(p, isSOS) {
+      const el = document.getElementById('goalAnnounce');
+      const txt = document.getElementById('goalAnnounceText');
+      const sub = document.getElementById('goalAnnounceSub');
+      const isOur = !isSOS;
+      txt.className = 'goal-announce-text ' + (isOur ? 'goal-our' : 'goal-their');
+      txt.textContent = isOur ? '⚽ G O O O L !' : '⚽ G O L   S O S !';
+      txt.style.fontSize = isOur ? '80px' : '72px';
+      sub.textContent = isOur ? `🏆 ${p.player || 'GOLGHETER'} MARCHEAZĂ!` : `❗ GOL PRIMIT! REZISTAȚI!`;
+      el.style.opacity = '1';
+      goalAnnounceTimer = 3;
+    }
+
+    function closeOverlay() {
+      document.getElementById('overlay').style.display = 'none';
+      overlayOpen = false;
+    }
+    function closeOverlayAndDraw() {
+      closeOverlay();
+      if (!drawMode) toggleDrawMode();
+    }
+    window.closeOverlay = closeOverlay;
+    window.closeOverlayAndDraw = closeOverlayAndDraw;
+
+    // ═══ CONTROLS ═══
+    function togglePlay() {
+      playing = !playing;
+      document.getElementById('btnPlay').textContent = playing ? '⏸ PAUZA' : '▶ PLAY';
+      document.getElementById('btnPlay').className = 'btn btn-play' + (playing ? '' : ' paused');
+      if (playing) lastTs = null;
+    }
+    function step(d) {
+      playing = false;
+      document.getElementById('btnPlay').textContent = '▶ PLAY';
+      document.getElementById('btnPlay').className = 'btn btn-play paused';
+      frameIdx = Math.max(0, Math.min(FRAMES.length - 1, frameIdx + d));
+      accumT = 0; render(); drawTimeline(); renderPanel();
+    }
+    function cycleSpeed() {
+      speedIdx = (speedIdx + 1) % SPEEDS.length;
+      speed = SPEEDS[speedIdx];
+      document.getElementById('spdTxt').textContent = speed + '×';
+    }
+    function resetSim() {
+      frameIdx = 0; accumT = 0; playing = false; pausedAt.clear(); goalFlashTimer = 0; goalAnnounceTimer = 0;
+      drawings = []; if (dCtx) dCtx.clearRect(0, 0, drawCv.width, drawCv.height);
+      document.getElementById('btnPlay').textContent = '▶ PLAY';
+      document.getElementById('btnPlay').className = 'btn btn-play paused';
+      document.getElementById('overlay').style.display = 'none';
+      document.getElementById('goalAnnounce').style.opacity = '0';
+      overlayOpen = false;
+      render(); drawTimeline(); renderPanel();
+    }
+    function setScen(s, el) {
+      scenario = s;
+      document.querySelectorAll('.scen-btn').forEach(b => b.className = 'scen-btn');
+      el.className = `scen-btn active-${s.toLowerCase()}`;
+      document.getElementById('scenLabel').textContent = s.toUpperCase();
+      renderPanel();
+    }
+    window.togglePlay = togglePlay; window.step = step; window.cycleSpeed = cycleSpeed;
+    window.resetSim = resetSim; window.setScen = setScen;
+
+    // ═══ MAIN LOOP ═══
+    function loop(ts) {
+      if (!lastTs) lastTs = ts;
+      const dt = Math.min((ts - lastTs) / 1000, .05);
+      lastTs = ts; animT += dt;
+
+      if (goalFlashTimer > 0) goalFlashTimer = Math.max(0, goalFlashTimer - dt);
+      if (goalAnnounceTimer > 0) {
+        goalAnnounceTimer = Math.max(0, goalAnnounceTimer - dt);
+        if (goalAnnounceTimer === 0) document.getElementById('goalAnnounce').style.opacity = '0';
+      }
+
+      if (playing && !overlayOpen) {
+        accumT += dt * speed;
+        if (accumT >= frameInterval) {
+          accumT = 0;
+          if (frameIdx < FRAMES.length - 1) {
+            frameIdx++;
+            const pause = PAUSES.find(p => p.frameIdx === frameIdx && !pausedAt.has(frameIdx));
+            if (pause) { render(); drawTimeline(); renderPanel(); showOverlay(pause); requestAnimationFrame(loop); return; }
+            if (FRAMES[frameIdx].outcome === 'Goal') { goalFlashTimer = 4; }
+          } else {
+            playing = false;
+            document.getElementById('btnPlay').textContent = '▶ PLAY';
+            document.getElementById('btnPlay').className = 'btn btn-play paused';
+          }
+        }
+      }
+      render(); drawTimeline(); renderPanel();
+      requestAnimationFrame(loop);
+    }
+
+    window.addEventListener('load', init);
+    window.addEventListener('keydown', e => {
+      if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
+      else if (e.code === 'ArrowLeft') step(-1);
+      else if (e.code === 'ArrowRight') step(1);
+      else if (e.code === 'KeyR') resetSim();
+      else if (e.code === 'KeyD') toggleDrawMode();
+    });
+    window.addEventListener('resize', () => {
+      bgCv.width = window.innerWidth; bgCv.height = window.innerHeight;
+      confCv.width = window.innerWidth; confCv.height = window.innerHeight;
+    });
+
+    // ═══ HORIZONTAL DRAG RESIZER (pitch ↔ panel) ═══
+    (function () {
+      const resizer = document.getElementById('mainResizer');
+      const panel = document.getElementById('mainPanel');
+      let isResizing = false, startX = 0, startW = 0;
+
+      resizer.addEventListener('mousedown', function (e) {
+        isResizing = true;
+        startX = e.clientX;
+        startW = panel.offsetWidth;
+        resizer.classList.add('dragging');
+        document.body.style.cursor = 'col-resize';
+        document.body.style.userSelect = 'none';
+        e.preventDefault();
+      });
+
+      document.addEventListener('mousemove', function (e) {
+        if (!isResizing) return;
+        const dx = startX - e.clientX;
+        const newW = Math.max(200, Math.min(700, startW + dx));
+        panel.style.width = newW + 'px';
+      });
+
+      document.addEventListener('mouseup', function () {
+        if (!isResizing) return;
+        isResizing = false;
+        resizer.classList.remove('dragging');
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+        resize(); render();
+      });
+    })();
+
+    // ═══ VERTICAL DRAG RESIZERS (between panel cards) ═══
+    (function () {
+      let activeVR = null, startY = 0, startH = 0, targetCard = null;
+
+      document.querySelectorAll('.v-resizer').forEach(function (vr) {
+        vr.addEventListener('mousedown', function (e) {
+          const cardId = vr.getAttribute('data-target');
+          targetCard = document.getElementById(cardId);
+          if (!targetCard) return;
+          activeVR = vr;
+          startY = e.clientY;
+          startH = targetCard.offsetHeight;
+          vr.classList.add('dragging');
+          document.body.style.cursor = 'ns-resize';
+          document.body.style.userSelect = 'none';
+          e.preventDefault();
+          e.stopPropagation();
+        });
+      });
+
+      document.addEventListener('mousemove', function (e) {
+        if (!activeVR || !targetCard) return;
+        const dy = e.clientY - startY;
+        const newH = Math.max(40, startH + dy);
+        targetCard.style.height = newH + 'px';
+        targetCard.style.minHeight = newH + 'px';
+        targetCard.style.flexShrink = '0';
+      });
+
+      document.addEventListener('mouseup', function () {
+        if (!activeVR) return;
+        activeVR.classList.remove('dragging');
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+        activeVR = null;
+        targetCard = null;
+      });
+    })();
+
+    // ═══ FULLSCREEN ═══
+    function toggleFullscreen() {
+      const btn = document.getElementById('btnFullscreen');
+      const el = document.documentElement;
+
+      // Detect if already fullscreen (cross-browser)
+      const isFS = !!(document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.mozFullScreenElement ||
+        document.msFullscreenElement);
+
+      if (!isFS) {
+        // Enter fullscreen (cross-browser)
+        const req = el.requestFullscreen ||
+          el.webkitRequestFullscreen ||
+          el.mozRequestFullScreen ||
+          el.msRequestFullscreen;
+        if (req) {
+          req.call(el).then(function () {
+            btn.textContent = '✕ IEȘI FULLSCREEN';
+            btn.style.borderColor = 'rgba(0,255,170,.5)';
+            btn.style.color = 'var(--green)';
+          }).catch(function (err) {
+            // fallback: try on body
+            try { document.body.webkitRequestFullscreen && document.body.webkitRequestFullscreen(); } catch (e) { }
+          });
+        }
+      } else {
+        // Exit fullscreen (cross-browser)
+        const ex = document.exitFullscreen ||
+          document.webkitExitFullscreen ||
+          document.mozCancelFullScreen ||
+          document.msExitFullscreen;
+        if (ex) {
+          ex.call(document).then(function () {
+            btn.textContent = '⛶ FULLSCREEN';
+            btn.style.borderColor = 'rgba(255,200,0,.35)';
+            btn.style.color = 'var(--gold)';
+          }).catch(function () { });
+        }
+      }
+    }
+    window.toggleFullscreen = toggleFullscreen;
+
+    // F key = fullscreen
+    document.addEventListener('keydown', function (e) {
+      if (e.code === 'KeyF' && !e.ctrlKey && !e.altKey && !e.shiftKey) toggleFullscreen();
+    });
+
+    // Update button when ESC exits fullscreen
+    ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange', 'MSFullscreenChange'].forEach(function (ev) {
+      document.addEventListener(ev, function () {
+        const btn = document.getElementById('btnFullscreen');
+        if (!btn) return;
+        const isFS = !!(document.fullscreenElement ||
+          document.webkitFullscreenElement ||
+          document.mozFullScreenElement ||
+          document.msFullscreenElement);
+        if (!isFS) {
+          btn.textContent = '⛶ FULLSCREEN';
+          btn.style.borderColor = 'rgba(255,200,0,.35)';
+          btn.style.color = 'var(--gold)';
+        } else {
+          btn.textContent = '✕ IEȘI FULLSCREEN';
+          btn.style.borderColor = 'rgba(0,255,170,.5)';
+          btn.style.color = 'var(--green)';
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>

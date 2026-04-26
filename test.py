@@ -1,13 +1,9 @@
-import pandas as pd
+from google import genai
 
-# Încarcă datele
-df = pd.read_csv('data_finala_cu_nume.csv')
+# Folosește cheia ta
+GOOGLE_API_KEY = "AIzaSyAsdRZFEL12WFeJmGh83IXQVC1u75HHeHQ"
+client = genai.Client(api_key=GOOGLE_API_KEY)
 
-# SCHIMBĂ NUMELE AICI cu cel la care îți dă 0 pe ecran
-NUME_JUCATOR = "T. Seto" 
-
-jucator_date = df[df['shortName'] == NUME_JUCATOR]
-
-print(f"Meciuri totale în baza de date: {len(jucator_date)}")
-print("\nStatistici Brute (pe meci):")
-print(jucator_date[['matchId', 'average.shots', 'average.dribbles', 'average.interceptions']])
+print("Modelele disponibile pentru cheia ta sunt:")
+for model in client.models.list():
+    print(f"- {model.name}")
